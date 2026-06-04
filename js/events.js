@@ -93,11 +93,12 @@ var _ACTION_ALLOWLIST = new Set([
   'openItemModal','saveItemModal','closeItemModal',
   'deleteItem','delExpItem','deleteItemFromModal',
   'togglePaid','toggleExp',
+  'toggleItemCurrencyRow','clearItemDueDay','hideItemDeleteConfirm',
   'confirmDeleteItem','recurringAutoFill','openBulkBudgetModal','closeBulkBudgetModal',
   'saveBulkBudgets','openEnvelopeDetail','closeEnvelopeDetail',
   'drillDownCategory','openEnvModal','closeEnvModal','saveEnvCap',
   'toggleWeekCollapse','setTagFilter','openDueDateModal','toggleExpHeatmap',
-  'openNoteModal','openReceiptModal','editAmt','bulkMarkPaid',
+  'openNoteModal','openReceiptModal','closeReceiptModal','clearReceipt','editAmt','bulkMarkPaid',
   'delExpConfirm','delExpCancel',
   'enterBulkMode','exitBulkMode',
   'bulkMarkAllPaid','bulkMarkAllUnpaid','bulkDeleteSelected',
@@ -110,6 +111,7 @@ var _ACTION_ALLOWLIST = new Set([
   'toggleRevReceived','toggleRev',
   'setRevWin','editRevCell',
   'showRevDeleteConfirm','hideRevDeleteConfirm','confirmDeleteRev',
+  'setRevStatus','toggleRevCurrencyRow',
   // Loans
   'openLoanModal','saveLoanModal','closeLoanModal','confirmDeleteLoan','doDeleteLoan',
   'showLoanDeleteConfirm','hideLoanDeleteConfirm',
@@ -126,6 +128,7 @@ var _ACTION_ALLOWLIST = new Set([
   // Sync & cloud
   'generateSyncQR','consumeSyncToken','enableCloudSync','disableCloudSync',
   'confirmSyncPassphrase','cancelSyncPassphrase','switchBackend','doFullCloudPull',
+  'toggleSyncPassphraseVis','switchToFirebase',
   'conflictPickLocal','conflictPickCloud',
   'linkLocalFileFromSettings','unlinkLocalFileFromSettings',
   'openCloudSyncSetupFromSettings','openCloudSyncManageFromSettings',
@@ -135,6 +138,7 @@ var _ACTION_ALLOWLIST = new Set([
   'closeDriveConnectModal','confirmDriveConnect',
   // Import / export
   'openImport','closeImport','doImport','importFromSettings',
+  'bankSetFilter',
   'exportData','exportCSV','exportFromSettings','exportCSVFromSettings','exportTaxCSV',
   'openBankImport','closeBankImport','handleBankFileFromEl','bankImportFromSettings',
   'bankImportAndCloseMenu','bankToggleTxn','bankEditName','bankEditCat',
@@ -153,7 +157,8 @@ var _ACTION_ALLOWLIST = new Set([
   'showOnboardingFromSettings','showOnboarding',
   'openHealthModal','closeHealthModal',
   'openSearch','closeSearch','doSearch','openShortcutsModal','closeShortcutsModal',
-  'setItemStatus','setPinLen',
+  'setItemStatus','setRevStatus','setPinLen',
+  'toggleTaxFilter','replayTour','saveUserNamePage',
   'openCatManager','closeCatManager','addCustomCategory',
   // Notifications
   'toggleNotifications','notifAndCloseMenu','markNotifRead','clearAllNotifs',
@@ -163,7 +168,7 @@ var _ACTION_ALLOWLIST = new Set([
   'showRecoveryPanel','verifyRecovery','removePin',
   'submitPinSetupPassphrase','cancelPinPassphrase',
   // Dark mode & themes
-  'toggleDark','activateThemeFromBtn',
+  'toggleDark','activateThemeFromBtn','setTheme',
   // AI coach
   'coachAsk','coachClear','coachRunMode','runAiInsights',
   'openAISetupClaude','openAISetupOpenai','openClaudeSetup','openAISetup',
@@ -178,7 +183,7 @@ var _ACTION_ALLOWLIST = new Set([
   // Calendar
   'openCalendar','closeCalendar','calDayClick',
   // Analytics & dashboard
-  'openScorecardModal','dismissDashAlerts','toggleDtiTooltip',
+  'openScorecardModal','closeScorecardModal','dismissDashAlerts','toggleDtiTooltip','askAIAboutDTI',
   // Onboarding
   'obGoTo','obFinish','obSkip','obHandleReceiptFileFromEl',
   'obAdvanceStep1','obAdvanceStep2','obSelectStorage','obSaveIncome',

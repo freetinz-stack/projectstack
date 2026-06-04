@@ -656,7 +656,7 @@
         <strong>Debt-to-Income ratio</strong><br>
         Monthly loan payments &divide; monthly income.<br>
         <span id="dtiTooltipDetail" style="display:block;margin-top:4px;"></span>
-        <button class="tooltip-ai-link" onclick="askAIAboutDTI()">Ask AI Coach about my DTI &rarr;</button>
+        <button class="tooltip-ai-link" data-action="askAIAboutDTI">Ask AI Coach about my DTI &rarr;</button>
       </div>
     </div>
     <div class="dash-kpi dkpi-purple">
@@ -1450,7 +1450,7 @@
           <div class="settings-row-sub">Replay the guided walkthrough of key features</div>
         </div>
         <div class="settings-row-right">
-          <button class="tbtn" onclick="replayTour()" style="font-size:12px;">&#9654; Replay tour</button>
+          <button class="tbtn" data-action="replayTour" style="font-size:12px;">&#9654; Replay tour</button>
         </div>
       </div>
     </div>
@@ -1894,7 +1894,7 @@
           <label for="iCurrency" class="fl">Currency</label>
           <select class="fi" id="iCurrency" aria-label="Select currency"></select>
         </div>
-        <button class="link-btn" id="iCurrencyToggle" onclick="toggleItemCurrencyRow()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 0;margin-top:2px;text-decoration:underline;">+ Different currency</button>
+        <button class="link-btn" id="iCurrencyToggle" data-action="toggleItemCurrencyRow" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 0;margin-top:2px;text-decoration:underline;">+ Different currency</button>
       </div>
     </div>
     <div style="margin-bottom:9px;">
@@ -2009,7 +2009,7 @@
     <div class="fg" style="margin-bottom:9px;"><label for="rName" class="fl">Source Name</label><input class="fi" id="rName" type="text" placeholder="e.g. Salary, Freelance" maxlength="60"></div>
     <div class="fg" style="margin-bottom:9px;"><label for="rAmount" class="fl">Amount</label><input class="fi" id="rAmount" type="number" min="0" step="0.01" placeholder="0.00" inputmode="decimal">
       <div id="rCurrencyRow" style="display:none;margin-top:4px;"><label for="rCurrency" class="fl">Currency</label><select class="fi" id="rCurrency" aria-label="Select currency"></select></div>
-      <button class="link-btn" id="rCurrencyToggle" onclick="toggleRevCurrencyRow()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 0;text-decoration:underline;">+ Different currency</button>
+      <button class="link-btn" id="rCurrencyToggle" data-action="toggleRevCurrencyRow" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 0;text-decoration:underline;">+ Different currency</button>
     </div>
     <div style="margin-bottom:9px;">
       <div class="fl" style="margin-bottom:6px;">Status</div>
@@ -2558,7 +2558,7 @@
       <button id="searchClose" data-action="closeSearch" aria-label="Close search">&#215;</button>
     </div>
     <div id="searchFilterBar" style="padding:6px 16px 0;display:flex;gap:6px;flex-wrap:wrap;">
-      <button class="search-filter-chip" id="filterTax" onclick="toggleTaxFilter()" aria-pressed="false" title="Show only tax-deductible items">Tax deductible</button>
+      <button class="search-filter-chip" id="filterTax" data-action="toggleTaxFilter" aria-pressed="false" title="Show only tax-deductible items">Tax deductible</button>
     </div>
     <div id="searchResults"></div>
   </div>
