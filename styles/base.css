@@ -1,0 +1,156 @@
+/* base.css — "The Spread · Soft Sage" global design system */
+
+:root {
+  /* ── PAGE CANVAS ── */
+  --bg: #eef3ec;
+  --surface: rgba(255,255,255,0.55);
+  --ink: #222a22;
+  --muted: #4e5a4a;
+  --hairline: rgba(34,42,34,0.14);
+  --hairline-soft: rgba(34,42,34,0.06);
+  --accent: #5a6e3f;
+
+  /* ── SEMANTIC POLARITY ── */
+  --green: #3a6b48;
+  --red: #ad4f3f;
+
+  /* ── LEGACY ALIASES — preserved for JS-rendered inline styles ── */
+  --sage: #5a6e3f;
+  --sage-light: #dce8d4;
+  --sage-mid: #b8ccaa;
+  --sage-dark: #3d5028;
+  --gold: #9a7b35;
+  --gold-light: #ece6d0;
+  --gold-mid: #d0be88;
+  --slate: #4e5a4a;
+  --slate-light: rgba(34,42,34,0.04);
+  --slate-mid: rgba(34,42,34,0.09);
+  --danger: #ad4f3f;
+  --danger-light: #eddad6;
+  --danger-mid: #c49c94;
+  --success: #3a6b48;
+  --success-light: #d4ead0;
+  --success-mid: #a4c89c;
+  --amber: #9a7b35;
+  --amber-light: #ece6d0;
+  --amber-mid: #d0be88;
+  --blue: #3d5f6e;
+  --blue-light: #d0dfe8;
+  --blue-mid: #96b4c0;
+  --purple: #5e4d72;
+  --purple-light: #ddd0ec;
+  --text-primary: #222a22;
+  --text-secondary: #4e5a4a;
+  --text-muted: #4e5a4a;
+  --border: rgba(34,42,34,0.14);
+  --border-strong: rgba(34,42,34,0.24);
+  --white: #ffffff;
+
+  /* ── SPACE & SHAPE — NO SHADOWS, SQUARE CORNERS ── */
+  --shadow: none;
+  --shadow-lg: none;
+  --radius: 3px;
+  --radius-sm: 2px;
+  --radius-xs: 2px;
+
+  /* ── FONT FAMILY TOKENS (overridden per design theme) ── */
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Hanken Grotesk', sans-serif;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+input, select, textarea, button { font-family: inherit; }
+html { scroll-behavior: smooth; }
+
+/* ── BASE BODY ── */
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background .25s, color .25s;
+}
+
+/* ── SKIP NAV ── */
+.skip-nav { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.skip-nav:focus {
+  position: fixed; top: 0; left: 0; width: auto; height: auto; z-index: 9999;
+  background: var(--accent); color: white; padding: 8px 16px; font-size: 14px;
+  font-weight: 600; border-radius: 0 0 2px 0; outline: none;
+}
+
+/* ── SCROLLBAR ── */
+.tab-bar::-webkit-scrollbar { display: none; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: rgba(34,42,34,0.04); border-radius: 4px; }
+*::-webkit-scrollbar-thumb { background: rgba(34,42,34,0.32); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(34,42,34,0.52); background-clip: content-box; }
+html { scrollbar-width: thin; scrollbar-color: rgba(34,42,34,0.32) rgba(34,42,34,0.06); }
+
+/* ── EDITORIAL TYPOGRAPHY OVERRIDES ── */
+/* ALL dollar amounts, section/page titles, stat values → Instrument Serif */
+.mv, .dkv, .efv, .hero-net, .net-amount,
+.week-grand, .sv, .debt-bal, .ba,
+.be .be-spent, .sc-stat-val, .rv, .erv,
+.section-title, .card-title, .dct, h3, h4,
+.ob-h, .ob-logo, .lock-logo,
+.prog-header .pa, .amt-col, .acol, .aim,
+.sav-bal-val {
+  font-family: 'Instrument Serif', serif !important;
+  font-weight: 400 !important;
+}
+
+/* Tabular numerals for all money */
+.mv, .dkv, .efv, .hero-net, .net-amount,
+.week-grand, .sv, .debt-bal, .ba, .be .be-spent,
+.sc-stat-val, .rv, .erv, .amt-col, .acol,
+.prog-header .pa, .aim, .sav-bal-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ALL kicker / label text → Hanken Grotesk uppercase */
+.ml, .dkl, .efl, .fl, .modal-field-label, .modal-section-lbl,
+.ob-label, .qa-lbl, .sr-group-hdr, .week-title,
+.be .be-lbl, .epb-label, .archive-section-title,
+.cal-hdr-day, .hm-header span {
+  font-family: 'Hanken Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+/* ── KEYFRAMES ── */
+@keyframes pinShake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+@keyframes shimmer { 0%{transform:translateX(-100%);} 100%{transform:translateX(200%);} }
+@keyframes chipPaid { 0%{transform:scale(1);} 40%{transform:scale(1.18);} 100%{transform:scale(1);} }
+@keyframes rowReceivedFlash { 0%{background:var(--success-light);} 100%{background:transparent;} }
+@keyframes scorePulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12);} }
+@keyframes goalPop { 0%{transform:scale(1);} 50%{transform:scale(1.04);} 100%{transform:scale(1);} }
+@keyframes badgeBounce { 0%{transform:scale(0) rotate(-8deg);} 70%{transform:scale(1.1) rotate(2deg);} 100%{transform:scale(1) rotate(0);} }
+@keyframes rowPaidFlash { 0%{background:var(--success-light);} 100%{background:transparent;} }
+@keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8);} 50%{opacity:1;transform:scale(1.2);} }
+@keyframes obFadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+@keyframes tier-pop { 0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)} }
+@keyframes ach-burst { 0%{transform:scale(1)} 50%{transform:scale(1.35)} 100%{transform:scale(1)} }
+@keyframes hm-pulse { 0%,100%{outline-color:var(--accent);} 50%{outline-color:var(--amber);} }
+@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+@keyframes searchPulse { 0%,100%{background:transparent;} 20%,80%{background:var(--sage-light);} }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── THEME VARIANTS — now in themes.css as body[data-theme] with higher priority ── */
+
+/* Theme swatch picker */
+.theme-swatch-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.theme-swatch { width:22px; height:22px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .15s,border-color .15s; flex-shrink:0; }
+.theme-swatch:hover { transform:scale(1.15); }
+.theme-swatch.ts-active { border-color:var(--ink); box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink); }

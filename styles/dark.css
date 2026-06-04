@@ -1,0 +1,221 @@
+/* dark.css — dark mode overrides for "The Spread · Soft Sage" */
+
+body.dark {
+  --bg: #141a13;
+  --surface: rgba(255,255,255,0.06);
+  --ink: #dce8d4;
+  --muted: #7a8a72;
+  --hairline: rgba(220,232,212,0.12);
+  --hairline-soft: rgba(220,232,212,0.06);
+  --accent: #7a9a55;
+
+  /* Legacy aliases */
+  --sage: #7a9a55;
+  --sage-light: rgba(122,154,85,0.14);
+  --sage-mid: rgba(122,154,85,0.28);
+  --sage-dark: #5a7a3a;
+  --gold: #b8962a;
+  --gold-light: rgba(184,150,42,0.14);
+  --gold-mid: rgba(184,150,42,0.28);
+  --slate: #7a8a72;
+  --slate-light: rgba(220,232,212,0.06);
+  --slate-mid: rgba(220,232,212,0.1);
+  --danger: #c46858;
+  --danger-light: rgba(196,104,88,0.16);
+  --danger-mid: rgba(196,104,88,0.3);
+  --success: #5a8a68;
+  --success-light: rgba(90,138,104,0.16);
+  --success-mid: rgba(90,138,104,0.3);
+  --amber: #b8962a;
+  --amber-light: rgba(184,150,42,0.14);
+  --amber-mid: rgba(184,150,42,0.28);
+  --blue: #5a7a8a;
+  --blue-light: rgba(90,122,138,0.16);
+  --blue-mid: rgba(90,122,138,0.3);
+  --purple: #7a6a90;
+  --purple-light: rgba(122,106,144,0.16);
+  --text-primary: #dce8d4;
+  --text-secondary: #7a8a72;
+  --text-muted: #7a8a72;
+  --border: rgba(220,232,212,0.12);
+  --border-strong: rgba(220,232,212,0.2);
+  --white: rgba(255,255,255,0.06);
+
+  --shadow: none;
+  --shadow-lg: none;
+}
+
+/* ── CATEGORY BADGES DARK ── */
+body.dark .cat-bank    { background: rgba(90,122,138,0.2); color: #7aace0; }
+body.dark .cat-telecom { background: rgba(122,106,144,0.2); color: #b094e0; }
+body.dark .cat-auto    { background: rgba(184,150,42,0.2); color: #d4b060; }
+body.dark .cat-utility { background: rgba(90,138,104,0.2); color: #7ab890; }
+body.dark .cat-health  { background: rgba(196,104,88,0.2); color: #e09080; }
+body.dark .cat-loan    { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-other   { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-savings { background: rgba(90,122,138,0.2); color: #7aace0; }
+
+/* Category pill opts dark */
+body.dark .cat-pill-opt.cat-bank    { background: rgba(90,122,138,0.2); color: #7aace0; }
+body.dark .cat-pill-opt.cat-telecom { background: rgba(122,106,144,0.2); color: #b094e0; }
+body.dark .cat-pill-opt.cat-auto    { background: rgba(184,150,42,0.2); color: #d4b060; }
+body.dark .cat-pill-opt.cat-utility { background: rgba(90,138,104,0.2); color: #7ab890; }
+body.dark .cat-pill-opt.cat-health  { background: rgba(196,104,88,0.2); color: #e09080; }
+body.dark .cat-pill-opt.cat-loan    { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-pill-opt.cat-other   { background: var(--slate-light); color: var(--muted); }
+
+/* ── LOCK SCREEN DARK ── */
+body.dark #lockScreen .pin-key { background: var(--slate-light); }
+body.dark #lockScreen { background: var(--bg); }
+
+/* ── FORM INPUTS DARK ── */
+body.dark .fi { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .fi:focus { border-color: var(--accent); }
+body.dark .pmodal input, body.dark .pmodal select, body.dark .pmodal textarea { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .modal-field-input { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .amt-input-big { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .item-name-input { background: var(--slate-light); color: var(--ink); }
+body.dark .ob-input, body.dark .ob-select { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .ob-amount-wrap { background: var(--slate-light); border-color: var(--border); }
+body.dark .ob-amount-prefix { background: rgba(255,255,255,0.06); border-right-color: var(--border); }
+body.dark .note-input { background: var(--slate-light); }
+body.dark .ie { background: var(--bg); border-color: var(--accent); color: var(--ink); }
+
+/* ── MODALS DARK ── */
+body.dark .modal, body.dark .pmodal, body.dark .item-modal-wrap { background: var(--bg); border-color: var(--hairline); }
+body.dark .item-modal-footer { background: var(--bg); }
+body.dark #quickAddSheet { background: var(--bg); border-top-color: var(--hairline); }
+body.dark #searchPanel { background: var(--bg); border-color: var(--hairline); }
+body.dark #mobileMenuSheet { background: var(--bg); }
+body.dark .mbtn { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .mbtn:hover { background: var(--ink); color: var(--bg); }
+
+/* ── ONBOARDING DARK ── */
+body.dark .ob-card { background: var(--bg); border-color: var(--hairline); }
+body.dark .ob-sync-card { background: var(--slate-light); border-color: var(--border); }
+body.dark .ob-sync-card.ob-sync-active { background: var(--sage-light); border-color: var(--sage-mid); }
+body.dark .ob-info-tip { background: var(--slate-light); border-color: var(--border); }
+body.dark .ob-item-list { background: var(--slate-light); border-color: var(--border); }
+
+/* ── DASHBOARD PANELS DARK ── */
+body.dark .dash-3col > *,
+body.dark .dash-2col > * {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(220,232,212,0.14);
+}
+
+/* ── DASHBOARD HERO DARK ── */
+body.dark .dash-hero::before { display: none; }
+body.dark .net-flow-card { background: transparent; }
+
+/* ── DEBT / SAVINGS DARK ── */
+body.dark .debt-item { background: transparent; }
+body.dark .debt-item:hover { background: var(--surface); }
+body.dark .sav-card { background: transparent; }
+body.dark .sav-card:hover { background: var(--surface); }
+body.dark .sav-card.sav-complete { background: var(--success-light); }
+
+/* ── SLIDER / CALC DARK ── */
+body.dark .calc-result { background: transparent; border-top-color: var(--hairline); }
+body.dark .strategy-tip { background: transparent; border-top-color: var(--hairline-soft); }
+
+/* ── GOALS DARK ── */
+body.dark .goal-card { background: transparent; }
+body.dark .goal-card:hover { background: var(--surface); }
+body.dark .goal-card.type-met { background: var(--success-light) !important; }
+
+/* ── QUICK CONFIRM DARK ── */
+body.dark .qc-no { background: var(--slate-light); color: var(--ink); }
+
+/* ── ARCHIVE DARK ── */
+body.dark .archive-month-group-hdr { background: transparent; border-color: var(--hairline); }
+body.dark .archive-month-group-hdr:hover { background: var(--surface); }
+body.dark .archive-month-body { border-color: var(--hairline); }
+body.dark .archive-section-block { border-color: var(--hairline-soft); }
+body.dark .archive-item-row { border-color: var(--hairline-soft); }
+body.dark .archive-readonly-banner { background: var(--slate-light); border-color: var(--hairline); }
+body.dark .auto-archive-banner { background: var(--blue-light); border-color: var(--blue-mid); }
+
+/* ── AI DARK ── */
+body.dark .ai-insight-card { background: transparent; border-top-color: var(--hairline); }
+body.dark .ai-tab-btn { background: transparent; }
+body.dark .ai-provider-row { border-color: var(--hairline-soft); }
+body.dark .ai-mode-btn { background: transparent; }
+body.dark .ai-default-row { background: var(--slate-light); border-color: var(--border); }
+body.dark .claude-masked { background: var(--slate-light); border-color: var(--border); }
+
+/* ── CSV IMPORT DARK ── */
+body.dark .csv-drop-zone { background: transparent; border-color: var(--hairline); }
+body.dark .csv-drop-zone:hover { background: var(--sage-light); }
+body.dark .import-preview { border-color: var(--hairline); }
+
+/* ── BANK IMPORT DARK ── */
+body.dark .bi-name-input:focus { background: var(--slate-light); }
+body.dark .bi-sel { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark #bankReviewTable th { background: var(--bg); }
+
+/* ── DEMO BANNER DARK ── */
+body.dark .demo-banner { background: var(--slate-light); border-bottom-color: var(--hairline); }
+
+/* ── RESET / DANGER DARK ── */
+body.dark .full-reset-input { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark .full-reset-input.matched { background: var(--danger-light); color: var(--danger); border-color: var(--danger); }
+body.dark .dz-card { background: var(--slate-light); border-color: var(--border-strong); }
+body.dark .danger-modal-body { background: rgba(196,104,88,0.18); border-color: var(--danger); }
+body.dark .danger-confirm-input { background: var(--slate-light); border-color: var(--danger-mid); color: var(--ink); }
+
+/* ── WIN/CELEBRATION DARK ── */
+body.dark .debt-item.loan-paid-off { background: var(--success-light) !important; border-color: var(--success) !important; }
+body.dark .debt-free-card { background: var(--success-light); border-color: var(--success); }
+body.dark .savings-all-complete { background: var(--success-light); }
+body.dark .month-complete-banner { background: var(--success-light); }
+body.dark .week-table tbody tr.row-paid { background: var(--success-light) !important; }
+body.dark .week-table tbody tr.row-paid .item-name { color: var(--success); }
+body.dark .week-table tbody tr.row-paid .amt-col { color: var(--success); }
+body.dark .week-card.all-paid-card .week-header { background: var(--success-light) !important; }
+
+/* ── SCORECARD DARK ── */
+body.dark .sc-stat { background: var(--slate-light); border-color: var(--hairline-soft); }
+
+/* ── ITEM NOTE DARK ── */
+body.dark .item-note-inline { background: rgba(184,150,42,0.14); border-color: var(--gold-mid); }
+
+/* ── RECEIPT UPLOAD DARK ── */
+body.dark .receipt-upload-zone { background: var(--slate-light); border-color: var(--hairline); }
+
+/* ── QUICK ADD / SEARCH DARK ── */
+body.dark #qaOverlay { background: rgba(20,26,19,.42); }
+body.dark .qa-input { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+body.dark #searchInput { color: var(--ink); }
+body.dark .sr-group-hdr { background: var(--slate-light); }
+
+/* ── CHALLENGE CARD DARK ── */
+body.dark .challenge-card { background: transparent; border-color: var(--hairline); }
+body.dark .challenge-card.ch-met { background: var(--success-light); border-color: var(--success-mid); }
+
+/* ── HEATMAP DARK ── */
+body.dark #hm-pop { background: var(--bg); border-color: var(--hairline); }
+body.dark .hm-cell { border-color: var(--hairline-soft); }
+
+/* ── DUE DAY BUTTONS DARK ── */
+body.dark .due-day-btn { background: var(--slate-light); border-color: var(--border); color: var(--ink); }
+
+/* ── ENVELOPES DARK ── */
+body.dark .be { background: transparent; }
+body.dark .be:not(.over):not(.warn):hover { background: var(--surface); }
+
+/* ── WEEKS DARK ── */
+body.dark .week-card { background: transparent; }
+body.dark .week-header { background: transparent; }
+
+/* ── TABLES DARK ── */
+body.dark tbody tr:hover td { background: var(--surface); }
+body.dark th { background: transparent; }
+body.dark .amort-wrap { border-color: var(--hairline); }
+body.dark .amort-wrap tr.payoff-row td { background: var(--gold-light); color: var(--gold); }
+
+/* ── LOCK SCREEN DARK ── */
+body.dark .lock-card { background: var(--slate-light); border-color: var(--border); }
+
+/* ── TOAST DARK ── */
+body.dark .toast { background: var(--ink); color: var(--bg); }
