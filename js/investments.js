@@ -75,10 +75,10 @@ function getInvFullLabel(acc) {
   return esc(getInvTypeEntry(acc.type).label);
 }
 function totalInvValue() {
-  return (S.investments || []).reduce((s, a) => s + amt(a.currentValue), 0);
+  return (S.investments || []).reduce((s, a) => s + _cvt(a.currentValue, a.currency), 0);
 }
 function totalInvBasis() {
-  return (S.investments || []).reduce((s, a) => s + amt(a.costBasis), 0);
+  return (S.investments || []).reduce((s, a) => s + _cvt(a.costBasis, a.currency), 0);
 }
 
 // ── Render: investment cards grid + KPIs + charts ────────────────────────────
@@ -89,7 +89,7 @@ function renderInvestments() {
   const gain = Math.round((totalVal - totalBasis) * 100) / 100;
   const gainPct = totalBasis > 0 ? ((gain / totalBasis) * 100).toFixed(1) : '0.0';
   const weightedReturn = accounts.length
-    ? accounts.reduce((s, a) => s + amt(a.currentValue) * (a.annualReturn || 0), 0) / (totalVal || 1)
+    ? accounts.reduce((s, a) => s + _cvt(a.currentValue, a.currency) * (a.annualReturn || 0), 0) / (totalVal || 1)
     : 0;
 
   // KPI tiles
@@ -112,13 +112,15 @@ function renderInvestments() {
   }
 
   grid.innerHTML = accounts.map((a, i) => {
-    const val = amt(a.currentValue);
-    const basis = amt(a.costBasis);
+    const val     = _cvt(a.currentValue, a.currency);
+    const basis   = _cvt(a.costBasis,    a.currency);
     const gl = Math.round((val - basis) * 100) / 100;
     const glPct = basis > 0 ? ((gl / basis) * 100).toFixed(1) : '0.0';
     const glColor = gl >= 0 ? 'var(--success)' : 'var(--danger)';
     const typeShort = getInvShortLabel(a);
     const lastUpd = a.lastUpdated ? `<span style="font-size:10px;color:var(--text-muted);">Updated ${esc(a.lastUpdated)}</span>` : '';
+    const valDisplay = typeof fmtItemAmount === 'function' ? fmtItemAmount(amt(a.currentValue), a.currency) : fmt(val);
+    const basisDisplay = typeof fmtItemAmount === 'function' ? fmtItemAmount(amt(a.costBasis), a.currency) : fmt(basis);
     return `<div class="sav-card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
         <div>
@@ -131,10 +133,10 @@ function renderInvestments() {
         <button class="del-btn" style="opacity:1;" data-action="deleteInvestment" data-arg="${i}" title="Delete account" aria-label="Delete investment account">✕</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 2px;">
-        <span style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;color:var(--blue);">${fmt(val)}</span>
+        <span style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;color:var(--blue);">${valDisplay}</span>
         <span style="font-size:12px;font-weight:600;color:${glColor};">${gl >= 0 ? '+' : ''}${glPct}%</span>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Invested: ${fmt(basis)} &nbsp;·&nbsp; G/L: <span style="color:${glColor};font-weight:600;">${gl >= 0 ? '+' : ''}${fmt(Math.abs(gl))}</span></div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Invested: ${basisDisplay} &nbsp;·&nbsp; G/L: <span style="color:${glColor};font-weight:600;">${gl >= 0 ? '+' : ''}${fmt(Math.abs(gl))}</span></div>
       ${lastUpd}
       ${a.notes ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:4px;font-style:italic;">${esc(a.notes)}</div>` : ''}
       <div class="sav-actions" style="margin-top:8px;">
@@ -154,7 +156,7 @@ function renderInvAllocChart(accounts) {
   if (!accounts.length) { dc('invAllocChart'); return; }
 
   const labels = accounts.map(a => esc(a.name) + ' (' + getInvShortLabel(a) + ')');
-  const data = accounts.map(a => Math.round(amt(a.currentValue) * 100) / 100);
+  const data = accounts.map(a => Math.round(_cvt(a.currentValue, a.currency) * 100) / 100);
 
   // Generate colors: cycle through group palettes
   const usedGroupCount = {};
@@ -196,7 +198,7 @@ function renderInvGrowthChart(accounts) {
   const PALETTE = ['#2B6CB0','#276749','#744210','#6B46C1','#C53030','#B7791F','#2C7A7B','#553C9A','#2D3748'];
   const datasets = accounts.map((a, idx) => {
     const r = (a.annualReturn || 0) / 100 / 12;
-    const v = amt(a.currentValue);
+    const v = _cvt(a.currentValue, a.currency);
     return {
       label: esc(a.name),
       data: Array.from({ length: 13 }, (_, n) => Math.round(v * Math.pow(1 + r, n) * 100) / 100),
@@ -211,7 +213,7 @@ function renderInvGrowthChart(accounts) {
     const totalData = Array.from({ length: 13 }, (_, n) =>
       Math.round(accounts.reduce((s, a) => {
         const r = (a.annualReturn || 0) / 100 / 12;
-        return s + amt(a.currentValue) * Math.pow(1 + r, n);
+        return s + _cvt(a.currentValue, a.currency) * Math.pow(1 + r, n);
       }, 0) * 100) / 100
     );
     datasets.push({
@@ -271,6 +273,7 @@ function openInvModal(idx) {
   if (customRow) customRow.style.display = (isEdit && a.type === 'other') ? 'block' : 'none';
 
   document.getElementById('invLastUpdated').value = isEdit ? (a.lastUpdated || '') : new Date().toISOString().slice(0, 10);
+  _populateCurrencySelect('invCurrency', isEdit ? (a.currency || getCurrency().code) : getCurrency().code);
 
   const modal = document.getElementById('invModal');
   modal.classList.add('open');
@@ -312,9 +315,11 @@ function saveInvModal() {
   const existingId = (_invEditIdx >= 0 && (S.investments || [])[_invEditIdx])
     ? S.investments[_invEditIdx]._id : null;
 
+  const currency = (document.getElementById('invCurrency') || {}).value || getCurrency().code;
+
   const account = {
     _id: existingId || (Date.now().toString(36) + Math.random().toString(36).slice(2, 7)),
-    name, type, customLabel, currentValue, costBasis, annualReturn, notes, lastUpdated
+    name, type, customLabel, currentValue, costBasis, annualReturn, notes, lastUpdated, currency
   };
 
   dispatch('INVESTMENTS_UPSERT', { idx: _invEditIdx, account });
