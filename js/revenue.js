@@ -9,7 +9,8 @@ function renderRevenue(){
     tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">No income sources yet. Click <strong>+ Add Income</strong> to get started.</td></tr>';
   }
   revItems.forEach((item,i)=>{
-    tot+=item.amount;if(item.received)rcvd+=item.amount;else pend+=item.amount;
+    const converted=_cvt(item.amount,item.currency);
+    tot+=converted;if(item.received)rcvd+=converted;else pend+=converted;
     const tr=document.createElement('tr');
     tr.dataset.action='openRevModal';tr.dataset.arg=i;
     tr.title='Click to edit';
@@ -23,7 +24,7 @@ function renderRevenue(){
   document.getElementById('rev-total').textContent=fmt(tot);
   document.getElementById('rev-received').textContent=fmt(rcvd);
   document.getElementById('rev-pending').textContent=fmt(pend);
-  const ytd=Object.values(S.months).reduce((s,m)=>s+m.revenue.reduce((a,r)=>a+r.amount,0),0);
+  const ytd=Object.values(S.months).reduce((s,m)=>s+m.revenue.reduce((a,r)=>a+_cvt(r.amount,r.currency),0),0);
   document.getElementById('rev-ytd').textContent=fmt(ytd);
   // MoM delta
   const keys=Object.keys(S.months),idx=keys.indexOf(CMK);
@@ -47,10 +48,10 @@ function renderRevTable(){
   const revTots=keys.map(k=>totalRev(k));
   const expTots=keys.map(k=>totalExp(k));
   let rows=srcArr.map(src=>{
-    const rTot=keys.reduce((s,k)=>{const r=S.months[k].revenue.find(r=>r.name===src);return s+(r?r.amount:0);},0);
+    const rTot=keys.reduce((s,k)=>{const r=S.months[k].revenue.find(r=>r.name===src);return s+(r?_cvt(r.amount,r.currency):0);},0);
     return`<tr><td style="font-weight:500;font-size:12px;white-space:nowrap;">${esc(src)}</td>
-      ${keys.map(k=>{const r=S.months[k].revenue.find(r=>r.name===src);const amt=r?r.amount:0;const ri=r?S.months[k].revenue.indexOf(r):-1;
-        return`<td class="acol" style="${k===CMK?'background:var(--sage-light);':''}">${amt>0?`<span class="ea" data-action="editRevCell" data-arg="${k}" data-arg2="${ri}">${fmt(amt)}</span>`:'<span style="color:var(--text-muted);">—</span>'}</td>`;
+      ${keys.map(k=>{const r=S.months[k].revenue.find(r=>r.name===src);const rawAmt=r?r.amount:0;const dispAmt=r?_cvt(r.amount,r.currency):0;const ri=r?S.months[k].revenue.indexOf(r):-1;
+        return`<td class="acol" style="${k===CMK?'background:var(--sage-light);':''}">${rawAmt>0?`<span class="ea" data-action="editRevCell" data-arg="${k}" data-arg2="${ri}">${fmt(dispAmt)}</span>`:'<span style="color:var(--text-muted);">—</span>'}</td>`;
       }).join('')}
       <td class="acol" style="font-weight:600;color:var(--sage);">${fmt(rTot)}</td></tr>`;
   }).join('');
