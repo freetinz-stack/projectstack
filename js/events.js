@@ -172,7 +172,7 @@ var _ACTION_ALLOWLIST = new Set([
   // Dark mode & themes
   'toggleDark','activateThemeFromBtn','activateTheme','setTheme',
   // AI coach
-  'coachAsk','coachClear','coachRunMode','runAiInsights',
+  'coachAsk','coachClear','coachRunMode','coachRunAnomaly','runAiInsights',
   'openAISetupClaude','openAISetupOpenai','openClaudeSetup','openAISetup',
   'closeClaudeSetup','connectAI','connectClaude',
   'openClaudeManage','closeClaudeManage','openClaudeManageFromLink',
