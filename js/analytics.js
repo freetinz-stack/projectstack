@@ -561,7 +561,8 @@ function generateDashAlerts(){
         return s+(S.months[k].weeks||[]).reduce((ws,w)=>ws+w.items.filter(i=>getCat(i.name)===catCls).reduce((a,i)=>a+i.amount,0),0);
       },0)/prevKeys.length;
       if(prevAvg>50&&currSpent>prevAvg*1.5){
-        alerts.push({icon:'⚠️',text:'<b>'+esc(catLbl)+'</b> is '+(currSpent/prevAvg).toFixed(1)+'× your recent average ('+fmt(prevAvg)+'/mo)',action:'coachRunAnomaly',actionLabel:'Ask Coach'});
+        const _anomalyMsg=catLbl+' spending is '+(currSpent/prevAvg).toFixed(1)+'x my recent average of '+fmt(prevAvg)+'/mo. This month I\'ve spent '+fmt(currSpent)+'. Why might this be high and what should I do?';
+        alerts.push({icon:'⚠️',text:'<b>'+esc(catLbl)+'</b> is '+(currSpent/prevAvg).toFixed(1)+'× your recent average ('+fmt(prevAvg)+'/mo)',action:'coachRunAnomaly',actionArg:_anomalyMsg,actionLabel:'Ask Coach'});
       }
     });
   }
@@ -569,9 +570,31 @@ function generateDashAlerts(){
   return alerts.slice(0,3);
 }
 
-function coachRunAnomaly(){
-  switchTab('coach',document.getElementById('tab-coach'));
-  setTimeout(()=>{if(typeof coachRunMode==='function')coachRunMode('anomaly');},300);
+function coachRunAnomaly(question){
+  // Switch to analytics tab and reveal the coach panel
+  switchTab('analytics',document.getElementById('tab-analytics'));
+  setTimeout(function(){
+    // Expand coach panel if collapsed
+    var body=document.getElementById('coachPanelBody');
+    var btn=document.getElementById('coachCollapseBtn');
+    if(body&&body.style.display==='none'){
+      body.style.display='';
+      if(btn)btn.textContent='▲ Collapse';
+      try{localStorage.setItem('fincwin_coach_collapsed','0');}catch(e){}
+    }
+    // Scroll to coach section
+    var sec=document.getElementById('coachSection');
+    if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+    // Pre-fill question and submit
+    setTimeout(function(){
+      var input=document.getElementById('coachQuestion');
+      if(input&&question){
+        input.value=question;
+        input.dispatchEvent(new Event('input'));
+      }
+      if(typeof coachAsk==='function') coachAsk();
+    },300);
+  },260);
 }
 
 function renderDashAlerts(){
@@ -584,7 +607,7 @@ function renderDashAlerts(){
     `<div class="da-row">
       <span class="da-icon">${a.icon}</span>
       <div class="da-text">${a.text}</div>
-      ${a.action?`<button class="da-btn" data-action="${a.action}">${a.actionLabel}</button>`:''}
+      ${a.action?`<button class="da-btn" data-action="${a.action}"${a.actionArg?' data-arg="'+a.actionArg.replace(/"/g,'&quot;')+'"':''}>${a.actionLabel}</button>`:''}
     </div>`
   ).join('')+'<button class="da-dismiss" data-action="dismissDashAlerts" title="Dismiss alerts" aria-label="Dismiss">&#215;</button>';
 }
