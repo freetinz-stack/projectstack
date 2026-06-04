@@ -2140,63 +2140,90 @@
     <h4 id="bulkAddModalLabel">&#43; Bulk Add</h4>
 
     <!-- Tab bar -->
-    <div style="display:flex;gap:4px;margin-bottom:12px;">
-      <button class="ba-tab-btn active" data-action="bulkAddTab" data-arg="expenses" style="flex:1;padding:7px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);cursor:pointer;">&#128197; Expenses</button>
-      <button class="ba-tab-btn" data-action="bulkAddTab" data-arg="savings" style="flex:1;padding:7px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);cursor:pointer;">&#127777; Savings</button>
-      <button class="ba-tab-btn" data-action="bulkAddTab" data-arg="loans" style="flex:1;padding:7px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);cursor:pointer;">&#128179; Loans</button>
+    <div style="display:flex;gap:4px;margin-bottom:14px;">
+      <button class="ba-tab-btn" data-action="bulkAddTab" data-arg="expenses">&#128197; Expenses <span class="ba-tab-count" id="baTabCount-expenses"></span></button>
+      <button class="ba-tab-btn" data-action="bulkAddTab" data-arg="savings">&#127777; Savings <span class="ba-tab-count" id="baTabCount-savings"></span></button>
+      <button class="ba-tab-btn" data-action="bulkAddTab" data-arg="loans">&#128179; Loans <span class="ba-tab-count" id="baTabCount-loans"></span></button>
     </div>
 
     <!-- Expenses panel -->
     <div class="ba-panel active" id="baPanel-expenses">
-      <div style="display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:6px;">
-        <input class="fi" id="baExpName" type="text" placeholder="Expense name" maxlength="60">
-        <input class="fi" id="baExpAmt" type="number" placeholder="Amount" min="0" step="0.01">
+      <div style="display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:8px;">
+        <div class="fg">
+          <label class="fl" for="baExpName">Expense name</label>
+          <input class="fi" id="baExpName" type="text" placeholder="e.g. Groceries, Netflix" maxlength="60" autocomplete="off">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baExpAmt">Amount ($)</label>
+          <input class="fi" id="baExpAmt" type="number" placeholder="0.00" min="0" step="0.01">
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 80px 100px;gap:8px;margin-bottom:6px;">
-        <select class="fi" id="baExpCat"></select>
-        <select class="fi" id="baExpWeek">
-          <option value="1">Week 1</option>
-          <option value="2">Week 2</option>
-          <option value="3">Week 3</option>
-          <option value="4">Week 4</option>
-        </select>
-        <input class="fi" id="baExpDate" type="date" title="Optional date — auto-derives week">
+      <div style="display:grid;grid-template-columns:1fr 130px;gap:8px;margin-bottom:6px;">
+        <div class="fg">
+          <label class="fl" for="baExpCat">Category <span id="baExpCatHint" style="font-weight:400;font-size:10px;color:var(--text-muted);">auto-detects from name</span></label>
+          <select class="fi" id="baExpCat"></select>
+        </div>
+        <div class="fg">
+          <label class="fl" for="baExpDate">Date <span style="font-weight:400;font-size:10px;color:var(--text-muted);">sets week auto</span></label>
+          <input class="fi" id="baExpDate" type="date">
+        </div>
       </div>
-      <div id="baExpErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:4px;"></div>
-      <button class="ob-btn-sec" data-action="bulkAddAddExpense" style="margin-bottom:10px;">+ Add expense</button>
-      <div id="baExpList"></div>
-      <div id="baRouteBanner" style="font-size:12px;margin-top:8px;"></div>
+      <div id="baExpErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:2px;"></div>
+      <button class="ob-btn-sec" data-action="bulkAddAddExpense" style="margin-bottom:8px;border:1px dashed var(--border);border-radius:var(--radius-xs);padding:7px;">+ Add to list &nbsp;<kbd style="font-size:10px;opacity:.5;">Enter</kbd></button>
+      <div id="baExpList" class="ob-item-list"></div>
+      <div id="baRouteBanner" style="font-size:11px;color:var(--text-muted);margin-top:6px;"></div>
     </div>
 
     <!-- Savings panel -->
     <div class="ba-panel" id="baPanel-savings" style="display:none;">
-      <div style="display:grid;grid-template-columns:1fr 100px 100px;gap:8px;margin-bottom:6px;">
-        <input class="fi" id="baSavName" type="text" placeholder="Goal name" maxlength="60">
-        <input class="fi" id="baSavTarget" type="number" placeholder="Target $" min="0" step="0.01">
-        <input class="fi" id="baSavBal" type="number" placeholder="Current $" min="0" step="0.01">
+      <div style="display:grid;grid-template-columns:1fr 110px 110px;gap:8px;margin-bottom:8px;">
+        <div class="fg">
+          <label class="fl" for="baSavName">Goal name</label>
+          <input class="fi" id="baSavName" type="text" placeholder="e.g. Emergency fund" maxlength="60" autocomplete="off">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baSavTarget">Target ($)</label>
+          <input class="fi" id="baSavTarget" type="number" placeholder="1000" min="0" step="0.01">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baSavBal">Already saved ($)</label>
+          <input class="fi" id="baSavBal" type="number" placeholder="0" min="0" step="0.01">
+        </div>
       </div>
-      <div id="baSavErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:4px;"></div>
-      <button class="ob-btn-sec" data-action="bulkAddAddSaving" style="margin-bottom:10px;">+ Add savings goal</button>
-      <div id="baSavList"></div>
+      <div id="baSavErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:2px;"></div>
+      <button class="ob-btn-sec" data-action="bulkAddAddSaving" style="margin-bottom:8px;border:1px dashed var(--border);border-radius:var(--radius-xs);padding:7px;">+ Add to list &nbsp;<kbd style="font-size:10px;opacity:.5;">Enter</kbd></button>
+      <div id="baSavList" class="ob-item-list"></div>
     </div>
 
     <!-- Loans panel -->
     <div class="ba-panel" id="baPanel-loans" style="display:none;">
-      <div style="display:grid;grid-template-columns:1fr 80px 70px 80px;gap:8px;margin-bottom:6px;">
-        <input class="fi" id="baLoanName" type="text" placeholder="Loan name" maxlength="60">
-        <input class="fi" id="baLoanBal" type="number" placeholder="Balance" min="0" step="0.01">
-        <input class="fi" id="baLoanRate" type="number" placeholder="Rate %" min="0" step="0.01">
-        <input class="fi" id="baLoanMin" type="number" placeholder="Min pmt" min="0" step="0.01">
+      <div style="display:grid;grid-template-columns:1fr 90px 70px 90px;gap:8px;margin-bottom:8px;">
+        <div class="fg">
+          <label class="fl" for="baLoanName">Loan name</label>
+          <input class="fi" id="baLoanName" type="text" placeholder="e.g. Car loan" maxlength="60" autocomplete="off">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baLoanBal">Balance ($)</label>
+          <input class="fi" id="baLoanBal" type="number" placeholder="5000" min="0" step="0.01">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baLoanRate">Rate (%)</label>
+          <input class="fi" id="baLoanRate" type="number" placeholder="4.5" min="0" step="0.01">
+        </div>
+        <div class="fg">
+          <label class="fl" for="baLoanMin">Min pmt ($)</label>
+          <input class="fi" id="baLoanMin" type="number" placeholder="150" min="0" step="0.01">
+        </div>
       </div>
-      <div id="baLoanErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:4px;"></div>
-      <button class="ob-btn-sec" data-action="bulkAddAddLoan" style="margin-bottom:10px;">+ Add loan</button>
-      <div id="baLoanList"></div>
+      <div id="baLoanErr" style="color:var(--danger);font-size:12px;min-height:16px;margin-bottom:2px;"></div>
+      <button class="ob-btn-sec" data-action="bulkAddAddLoan" style="margin-bottom:8px;border:1px dashed var(--border);border-radius:var(--radius-xs);padding:7px;">+ Add to list &nbsp;<kbd style="font-size:10px;opacity:.5;">Enter</kbd></button>
+      <div id="baLoanList" class="ob-item-list"></div>
     </div>
 
     <!-- Footer -->
-    <div class="btn-row" style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+    <div class="btn-row" style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;align-items:center;">
       <button class="btn-s" data-action="closeBulkAdd">Cancel</button>
-      <button class="ob-btn-primary" data-action="bulkAddSubmit">Save all items</button>
+      <button class="btn-p" data-action="bulkAddSubmit">Save all items</button>
     </div>
   </div>
 </div>
