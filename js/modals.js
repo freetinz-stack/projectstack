@@ -463,7 +463,6 @@ function openLoanModal(idx) {
   document.getElementById('lMinPmt').value = isEdit ? amt(loan.minPayment) : '';
   _populateCurrencySelect('lCurrency', isEdit ? (loan.currency || getCurrency().code) : getCurrency().code);
 
-  document.getElementById('lDeleteBtn').style.display = isEdit ? 'block' : 'none';
   document.getElementById('loanDeleteConfirm').classList.remove('show');
 
   const _lm=document.getElementById('loanModal');
