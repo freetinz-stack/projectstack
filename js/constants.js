@@ -113,8 +113,8 @@ function getWeekForDay(day,monthKey){
   if(mo<0||isNaN(yr))return 0;
   var firstDayOfMonth=new Date(yr,mo,1).getDay(); // 0=Sun … 6=Sat
   var daysInMonth=new Date(yr,mo+1,0).getDate();
-  // Cap at index 3 (week 4) — the state schema always has exactly 4 weeks (audit M-06).
-  return Math.min(3,Math.floor((day-1+firstDayOfMonth)/7));
+  // Allow up to index 4 (week 5) for months whose calendar spans 5 weeks.
+  return Math.min(4,Math.floor((day-1+firstDayOfMonth)/7));
 }
 
 // Frequency labels used across the app
