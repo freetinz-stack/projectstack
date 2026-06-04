@@ -176,15 +176,16 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
   font-size: 22px; font-weight: 400 !important;
   color: var(--ink); margin-bottom: 4px;
 }
-.close-btn { float: right; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--muted); line-height: 1; padding: 0; transition: color .15s; }
+.close-btn { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--muted); line-height: 1; padding: 4px; transition: color .15s; }
 .close-btn:hover { color: var(--ink); }
 
 .pmodal {
+  position: relative;
   background: var(--bg);
   border-radius: 6px;
   box-shadow: 0 8px 32px rgba(34,42,34,0.16);
   border: 1px solid var(--hairline);
-  padding: 20px 24px;
+  padding: 20px 44px 20px 24px;
   max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
 }
 .pmodal h4 {
