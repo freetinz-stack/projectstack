@@ -65,7 +65,20 @@ function replayTour() {
   localStorage.removeItem(TOUR_FLAG);
   _tourStep = 0;
   _tourActive = true;
-  _renderStep();
+  _clearOverlay();
+  // Navigate to the first step's tab and reset scroll BEFORE rendering,
+  // so getBoundingClientRect returns correct values after the repaint.
+  if (typeof switchTab === 'function') {
+    switchTab('dashboard', document.getElementById('tab-dashboard'));
+  }
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  // Use a two-frame delay to let the tab switch and scroll settle in the browser.
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      setTimeout(function() { _renderStep(true); }, 80);
+    });
+  });
 }
 
 function skipTour() {
@@ -83,14 +96,15 @@ function _advanceTour() {
   _renderStep();
 }
 
-function _renderStep() {
+function _renderStep(skipSwitch) {
   _clearOverlay();
   var step = TOUR_STEPS[_tourStep];
 
-  if (typeof switchTab === 'function') {
+  if (!skipSwitch && typeof switchTab === 'function') {
     switchTab(step.tab, document.getElementById('tab-' + step.tab));
   }
 
+  // 350ms — enough for switchTab's slide animation (180ms) + renderSection + layout pass
   setTimeout(function() {
     var targetEl = _resolveTarget(step);
     if (!targetEl) {
@@ -100,7 +114,7 @@ function _renderStep() {
       return;
     }
     _buildOverlay(step, targetEl);
-  }, 260);
+  }, 350);
 }
 
 function _resolveTarget(step) {
@@ -114,7 +128,7 @@ function _resolveTarget(step) {
 }
 
 function _buildOverlay(step, targetEl) {
-  targetEl.scrollIntoView({ behavior: 'instant', block: 'nearest' });
+  targetEl.scrollIntoView({ behavior: 'instant', block: 'center' });
 
   var overlay = document.createElement('div');
   overlay.id = 'tourOverlay';
@@ -170,10 +184,12 @@ function _buildOverlay(step, targetEl) {
   if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); _advanceTour(); });
   if (skipBtn) skipBtn.addEventListener('click', function(e) { e.stopPropagation(); skipTour(); });
 
-  // Position ring and card after DOM paint
+  // Two-frame wait: first frame lets scrollIntoView commit, second measures layout
   requestAnimationFrame(function() {
-    _positionRingAndCard(targetEl, card, ring, step.position);
-    if (nextBtn) nextBtn.focus();
+    requestAnimationFrame(function() {
+      _positionRingAndCard(targetEl, card, ring, step.position);
+      if (nextBtn) nextBtn.focus();
+    });
   });
 
   // Keyboard: Escape = skip, Enter/Space on focused next btn = advance
