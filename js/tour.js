@@ -87,22 +87,18 @@ function _renderStep() {
   _clearOverlay();
   var step = TOUR_STEPS[_tourStep];
 
-  // Switch to the right tab first
   if (typeof switchTab === 'function') {
     switchTab(step.tab, document.getElementById('tab-' + step.tab));
   }
 
-  // Give the render a tick to complete before spotlighting
   setTimeout(function() {
     var targetEl = _resolveTarget(step);
     if (!targetEl) {
-      // Target not found — skip to next step silently
       _tourStep++;
-      if (_tourStep < TOUR_STEPS.length) { _renderStep(); }
-      else { skipTour(); }
+      if (_tourStep < TOUR_STEPS.length) _renderStep();
+      else skipTour();
       return;
     }
-
     _buildOverlay(step, targetEl);
   }, 260);
 }
@@ -123,19 +119,19 @@ function _buildOverlay(step, targetEl) {
   var overlay = document.createElement('div');
   overlay.id = 'tourOverlay';
 
-  // Semi-transparent backdrop
+  // Backdrop — dims the page behind the spotlight
   var backdrop = document.createElement('div');
   backdrop.id = 'tourBackdrop';
   backdrop.setAttribute('aria-hidden', 'true');
   overlay.appendChild(backdrop);
 
-  // Spotlight ring — positioned around the target
+  // Spotlight ring — outlines the highlighted element
   var ring = document.createElement('div');
   ring.id = 'tourRing';
   ring.setAttribute('aria-hidden', 'true');
   overlay.appendChild(ring);
 
-  // Tooltip card
+  // Tooltip card — built without inline onclick for reliability
   var card = document.createElement('div');
   card.id = 'tourCard';
   card.setAttribute('role', 'dialog');
@@ -144,31 +140,46 @@ function _buildOverlay(step, targetEl) {
   card.setAttribute('aria-describedby', 'tourCardBody');
 
   var progress = (_tourStep + 1) + ' / ' + TOUR_STEPS.length;
+
+  // Build step dots
+  var dots = '';
+  for (var d = 0; d < TOUR_STEPS.length; d++) {
+    dots += '<span class="tour-dot' + (d === _tourStep ? ' active' : '') + '"></span>';
+  }
+
   card.innerHTML =
-    '<div class="tour-progress" aria-label="Step ' + (_tourStep+1) + ' of ' + TOUR_STEPS.length + '">' + progress + '</div>' +
+    '<div class="tour-header">' +
+      '<div class="tour-progress">' + dots + '</div>' +
+      '<div class="tour-step-label">Step ' + (_tourStep + 1) + ' of ' + TOUR_STEPS.length + '</div>' +
+    '</div>' +
     '<div class="tour-title" id="tourCardTitle">' + _esc(step.title) + '</div>' +
     '<div class="tour-body" id="tourCardBody">' + _esc(step.body) + '</div>' +
     '<div class="tour-actions">' +
-      '<button class="tour-skip-btn" id="tourSkipBtn" onclick="window._tourSkip()">Skip tour</button>' +
-      '<button class="tour-next-btn" id="tourNextBtn" onclick="window._tourNext()">' +
-        (step.isLast ? 'Done' : 'Next &rarr;') +
+      '<button class="tour-skip-btn" id="tourSkipBtn">Skip tour</button>' +
+      '<button class="tour-next-btn" id="tourNextBtn">' +
+        (step.isLast ? '&#10003; Done' : 'Next &rarr;') +
       '</button>' +
     '</div>';
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 
+  // Wire buttons via addEventListener — not inline onclick (more reliable)
+  var nextBtn = document.getElementById('tourNextBtn');
+  var skipBtn = document.getElementById('tourSkipBtn');
+  if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); _advanceTour(); });
+  if (skipBtn) skipBtn.addEventListener('click', function(e) { e.stopPropagation(); skipTour(); });
+
   // Position ring and card after DOM paint
   requestAnimationFrame(function() {
     _positionRingAndCard(targetEl, card, ring, step.position);
-    var focusEl = document.getElementById('tourNextBtn');
-    if (focusEl) focusEl.focus();
+    if (nextBtn) nextBtn.focus();
   });
 
-  // Keyboard: Escape = skip, Enter = advance
+  // Keyboard: Escape = skip, Enter/Space on focused next btn = advance
   overlay._keyHandler = function(e) {
     if (e.key === 'Escape') { e.preventDefault(); skipTour(); }
-    else if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'tourNextBtn') {
+    else if ((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.id === 'tourNextBtn') {
       e.preventDefault(); _advanceTour();
     }
   };
@@ -177,32 +188,42 @@ function _buildOverlay(step, targetEl) {
 
 function _positionRingAndCard(targetEl, card, ring, position) {
   var rect = targetEl.getBoundingClientRect();
-  var pad = 8;
-  var vw = window.innerWidth, vh = window.innerHeight;
+  var pad  = 8;
+  var vw   = window.innerWidth;
+  var vh   = window.innerHeight;
 
-  // Ring: position:fixed so coordinates are always viewport-relative (no scrollY needed)
+  // Spotlight ring (position:fixed = viewport-relative)
   ring.style.top    = (rect.top  - pad) + 'px';
   ring.style.left   = (rect.left - pad) + 'px';
   ring.style.width  = (rect.width  + pad * 2) + 'px';
   ring.style.height = (rect.height + pad * 2) + 'px';
 
-  // Card: position:fixed, viewport-relative
-  var cardW = Math.min(300, vw - 24);
+  // Card width — clamp to viewport
+  var cardW = Math.min(320, vw - 32);
   card.style.width = cardW + 'px';
-  card.style.maxWidth = (vw - 24) + 'px';
 
-  var leftPos = Math.max(12, Math.min(rect.left, vw - cardW - 12));
+  // Horizontal: centre on target, clamp to viewport edges
+  var idealLeft = rect.left + rect.width / 2 - cardW / 2;
+  var leftPos   = Math.max(12, Math.min(idealLeft, vw - cardW - 12));
   card.style.left = leftPos + 'px';
 
-  var estCardH = 180;
+  // Vertical: prefer requested position, flip if no room
+  var gapFromTarget = pad + 12;
+  var estCardH = 200;
+
+  var topPos;
   if (position === 'bottom') {
-    var topPos = rect.bottom + pad + 10;
-    if (topPos + estCardH > vh) topPos = Math.max(12, rect.top - estCardH - pad);
-    card.style.top = topPos + 'px';
+    topPos = rect.bottom + gapFromTarget;
+    if (topPos + estCardH > vh - 12) {
+      topPos = Math.max(12, rect.top - estCardH - gapFromTarget);
+    }
   } else {
-    var topPos2 = Math.max(12, rect.top - estCardH - pad);
-    card.style.top = topPos2 + 'px';
+    topPos = rect.top - estCardH - gapFromTarget;
+    if (topPos < 12) {
+      topPos = rect.bottom + gapFromTarget;
+    }
   }
+  card.style.top = Math.max(12, topPos) + 'px';
 }
 
 function _clearOverlay() {
@@ -221,11 +242,11 @@ function _esc(s) {
     .replace(/"/g, '&quot;');
 }
 
-// Window-exposed callbacks (used by inline onclick in the card)
-window.startTour   = startTour;
-window.replayTour  = replayTour;
-window.skipTour    = skipTour;
-window._tourNext   = _advanceTour;
-window._tourSkip   = skipTour;
+window.startTour  = startTour;
+window.replayTour = replayTour;
+window.skipTour   = skipTour;
+// Legacy aliases kept in case other code calls them
+window._tourNext  = _advanceTour;
+window._tourSkip  = skipTour;
 
 })();
