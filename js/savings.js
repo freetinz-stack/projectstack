@@ -208,20 +208,22 @@ function confirmTxn(){
   if(!g){closeTxnModal();return;}
   const prevPct=amt(g.target)>0?amt(g.balance)/amt(g.target):0;
   const aAmt=Math.round(a*100)/100;
-  if(_txnMode==='deposit'){g.balance=Math.round((amt(g.balance)+aAmt)*100)/100;}
+  let newBalance;
+  if(_txnMode==='deposit'){newBalance=Math.round((amt(g.balance)+aAmt)*100)/100;}
   else{
-    if(aAmt>amt(g.balance)){g.balance=0;showToast('Balance set to $0');}
-    else g.balance=Math.round((amt(g.balance)-aAmt)*100)/100;
+    if(aAmt>amt(g.balance)){newBalance=0;showToast('Balance set to $0');}
+    else newBalance=Math.round((amt(g.balance)-aAmt)*100)/100;
   }
-  if(!g.transactions)g.transactions=[];
-  g.transactions.unshift({
-    date:new Date().toISOString().slice(0,10),
-    type:_txnMode,
-    amount:aAmt,
-    note:document.getElementById('txnNote').value.trim(),
-    balance:g.balance
+  const date=new Date().toISOString().slice(0,10);
+  const type=_txnMode;
+  const amount=aAmt;
+  const note=document.getElementById('txnNote').value.trim();
+  dispatch('SAVINGS_UPDATE_BALANCE', {
+    idx: _txnIdx,
+    balance: newBalance,
+    txn: { date, type, amount, note, balance: newBalance }
   });
-  const newPct=amt(g.target)>0?amt(g.balance)/amt(g.target):0;
+  const newPct=amt(g.target)>0?newBalance/amt(g.target):0;
   persist();closeTxnModal();renderSavings();updateHealth();
   if(_txnMode==='deposit'){
     if(typeof awardXP==='function') awardXP('sav_deposit');

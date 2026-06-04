@@ -554,6 +554,8 @@ function _aiCooldownCheck() {
   var remaining = Math.ceil((_aiLastRequest + _AI_COOLDOWN_MS - now) / 1000);
   if (remaining > 0) {
     showToast('Please wait ' + remaining + 's before another AI request', 'warn-t');
+    document.querySelectorAll('.ai-mode-btn, #coachAskBtn').forEach(function(b){ b.disabled=true; });
+    setTimeout(function(){ document.querySelectorAll('.ai-mode-btn, #coachAskBtn').forEach(function(b){ b.disabled=false; }); }, remaining * 1000);
     return false;
   }
   _aiLastRequest = now;
@@ -561,7 +563,7 @@ function _aiCooldownCheck() {
 }
 
 async function coachRunMode(mode){
-  if(!getActiveProvider()){openAISetup('claude');return;}
+  if(!getActiveProvider()){showToast('Connect an AI provider first to use the coach', 'warn-t');openAISetup('claude');return;}
   if(!_aiCooldownCheck()) return;
   document.querySelectorAll('#coachActionGrid .ai-mode-btn').forEach(function(b){b.classList.remove('ai-active');});
   var ab=document.getElementById('coachBtn-'+mode);
@@ -575,7 +577,7 @@ async function coachRunMode(mode){
 }
 
 async function coachAsk(){
-  if(!getActiveProvider()){openAISetup('claude');return;}
+  if(!getActiveProvider()){showToast('Connect an AI provider first to use the coach', 'warn-t');openAISetup('claude');return;}
   if(!_aiCooldownCheck()) return;
   var q=(document.getElementById('coachQuestion').value||'').trim();
   if(!q){showToast('Type a question first');return;}

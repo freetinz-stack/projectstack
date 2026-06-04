@@ -21,6 +21,7 @@ async function fetchFXRates(baseCurrency) {
   if (_fxRates && _fxRates.base === baseCurrency && (Date.now() - (_fxRates.fetched || 0)) < FX_TTL) {
     return _fxRates;
   }
+  if (typeof showToast === 'function') showToast('Updating exchange rates…');
   try {
     var res = await fetch('https://open.er-api.com/v6/latest/' + encodeURIComponent(baseCurrency));
     if (!res.ok) throw new Error('FX ' + res.status);
@@ -28,9 +29,11 @@ async function fetchFXRates(baseCurrency) {
     if (data.result !== 'success') throw new Error('FX api error');
     _fxRates = { base: baseCurrency, rates: data.rates, fetched: Date.now() };
     sessionStorage.setItem(FX_CACHE_KEY, JSON.stringify(_fxRates));
+    if (typeof showToast === 'function') showToast('✓ Exchange rates updated');
   } catch(e) {
     // Network/API failure — leave _fxRates as-is (may be stale but better than nothing)
     console.warn('[FX] Rate fetch failed:', e.message);
+    if (typeof showToast === 'function') showToast('⚠ Could not update exchange rates', 'warn-t');
   }
   return _fxRates;
 }

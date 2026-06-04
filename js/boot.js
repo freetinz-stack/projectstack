@@ -439,7 +439,9 @@ function checkMonthComplete(){
     const grade=score!==null?(score>=95?'A+':score>=85?'A':score>=75?'B':score>=60?'C':score>=40?'D':'F'):'—';
     const gradeColor=grade==='A+'||grade==='A'?'var(--success)':grade==='B'?'var(--blue)':grade==='C'?'var(--amber)':'var(--danger)';
     if(score!==null)dispatch('MONTH_SET_SCORE',{mk:CMK,score},false);
+    const _capturedCMK = CMK;
     setTimeout(()=>{
+      if (CMK !== _capturedCMK) return; // user navigated away
       launchConfetti(180);
       showToast('🎊 '+CMK+' is complete — all paid & all income received!');
       let banner=document.getElementById('monthCompleteBanner');

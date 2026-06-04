@@ -332,6 +332,13 @@ function dispatch(type, payload, toast) {
     case 'SAVINGS_REMOVE':
       if (S.savings) S.savings.splice(p.idx, 1);
       break;
+    case 'SAVINGS_UPDATE_BALANCE':
+      if(S.savings[p.idx]){
+        S.savings[p.idx].balance = p.balance;
+        if(!S.savings[p.idx].transactions) S.savings[p.idx].transactions = [];
+        S.savings[p.idx].transactions.unshift(p.txn);
+      }
+      break;
     // ── FINANCIAL GOALS ───────────────────────
     case 'GOAL_UPSERT':
       if (!S.financialGoals) S.financialGoals = [];
