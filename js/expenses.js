@@ -249,8 +249,8 @@ function renderExpenses(){
   const today=isCurMonth?new Date().getDate():0; // only flag overdue in current real month
   const grid=document.getElementById('weeksGrid');grid.innerHTML='';
   cw().forEach((week,wi)=>{
-    const wTotal=week.items.reduce((s,i)=>s+i.amount,0);
-    const wPaid=week.items.filter(i=>i.paid).reduce((s,i)=>s+i.amount,0);
+    const wTotal=week.items.reduce((s,i)=>s+_cvt(i.amount,i.currency),0);
+    const wPaid=week.items.filter(i=>i.paid).reduce((s,i)=>s+_cvt(i.amount,i.currency),0);
     const wPend=wTotal-wPaid;
     const allItemsPaid=week.items.length>0&&week.items.every(i=>i.paid);
     const hasOverdue=week.items.some(i=>i.dueDay&&!i.paid&&i.dueDay<today);
@@ -340,10 +340,10 @@ function renderExpSumChart() {
   var weeks = cw();
   var labels = weeks.map(function(_, i) { return 'Wk ' + (i + 1); });
   var paid = weeks.map(function(w) {
-    return w.items.filter(function(i) { return i.paid; }).reduce(function(s, i) { return s + amt(i.amount); }, 0);
+    return w.items.filter(function(i) { return i.paid; }).reduce(function(s, i) { return s + _cvt(i.amount,i.currency); }, 0);
   });
   var pend = weeks.map(function(w) {
-    return w.items.filter(function(i) { return !i.paid; }).reduce(function(s, i) { return s + amt(i.amount); }, 0);
+    return w.items.filter(function(i) { return !i.paid; }).reduce(function(s, i) { return s + _cvt(i.amount,i.currency); }, 0);
   });
   if (CH['expSum']) {
     CH['expSum'].data.labels = labels;
@@ -439,8 +439,8 @@ function updateExpRowSurgical(wi, ii){
 
   // 2. Recompute week totals
   const week = cw()[wi];
-  const wTotal = week.items.reduce((s,i)=>s+amt(i.amount),0);
-  const wPaid  = week.items.filter(i=>i.paid).reduce((s,i)=>s+amt(i.amount),0);
+  const wTotal = week.items.reduce((s,i)=>s+_cvt(i.amount,i.currency),0);
+  const wPaid  = week.items.filter(i=>i.paid).reduce((s,i)=>s+_cvt(i.amount,i.currency),0);
   const wPend  = wTotal - wPaid;
   const allItemsPaid = week.items.length>0 && week.items.every(i=>i.paid);
 
