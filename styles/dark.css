@@ -46,23 +46,35 @@ body.dark {
 }
 
 /* ── CATEGORY BADGES DARK ── */
-body.dark .cat-bank    { background: rgba(90,122,138,0.2); color: #7aace0; }
-body.dark .cat-telecom { background: rgba(122,106,144,0.2); color: #b094e0; }
-body.dark .cat-auto    { background: rgba(184,150,42,0.2); color: #d4b060; }
-body.dark .cat-utility { background: rgba(90,138,104,0.2); color: #7ab890; }
-body.dark .cat-health  { background: rgba(196,104,88,0.2); color: #e09080; }
-body.dark .cat-loan    { background: var(--slate-light); color: var(--muted); }
-body.dark .cat-other   { background: var(--slate-light); color: var(--muted); }
-body.dark .cat-savings { background: rgba(90,122,138,0.2); color: #7aace0; }
+body.dark .cat-bank     { background: rgba(90,122,138,0.2); color: #7aace0; }
+body.dark .cat-telecom  { background: rgba(122,106,144,0.2); color: #b094e0; }
+body.dark .cat-subs     { background: rgba(140,90,160,0.2); color: #d098f0; }
+body.dark .cat-auto     { background: rgba(184,150,42,0.2); color: #d4b060; }
+body.dark .cat-utility  { background: rgba(90,138,104,0.2); color: #7ab890; }
+body.dark .cat-housing  { background: rgba(160,130,60,0.2); color: #d4aa60; }
+body.dark .cat-food     { background: rgba(70,140,90,0.2); color: #7acc90; }
+body.dark .cat-entertain{ background: rgba(100,80,180,0.2); color: #a090e0; }
+body.dark .cat-fees     { background: rgba(180,80,80,0.2); color: #e09090; }
+body.dark .cat-health   { background: rgba(196,104,88,0.2); color: #e09080; }
+body.dark .cat-loan     { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-tuition  { background: rgba(60,100,180,0.2); color: #80aaee; }
+body.dark .cat-other    { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-savings  { background: rgba(90,122,138,0.2); color: #7aace0; }
 
 /* Category pill opts dark */
-body.dark .cat-pill-opt.cat-bank    { background: rgba(90,122,138,0.2); color: #7aace0; }
-body.dark .cat-pill-opt.cat-telecom { background: rgba(122,106,144,0.2); color: #b094e0; }
-body.dark .cat-pill-opt.cat-auto    { background: rgba(184,150,42,0.2); color: #d4b060; }
-body.dark .cat-pill-opt.cat-utility { background: rgba(90,138,104,0.2); color: #7ab890; }
-body.dark .cat-pill-opt.cat-health  { background: rgba(196,104,88,0.2); color: #e09080; }
-body.dark .cat-pill-opt.cat-loan    { background: var(--slate-light); color: var(--muted); }
-body.dark .cat-pill-opt.cat-other   { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-pill-opt.cat-bank     { background: rgba(90,122,138,0.2); color: #7aace0; }
+body.dark .cat-pill-opt.cat-telecom  { background: rgba(122,106,144,0.2); color: #b094e0; }
+body.dark .cat-pill-opt.cat-subs     { background: rgba(140,90,160,0.2); color: #d098f0; }
+body.dark .cat-pill-opt.cat-auto     { background: rgba(184,150,42,0.2); color: #d4b060; }
+body.dark .cat-pill-opt.cat-utility  { background: rgba(90,138,104,0.2); color: #7ab890; }
+body.dark .cat-pill-opt.cat-housing  { background: rgba(160,130,60,0.2); color: #d4aa60; }
+body.dark .cat-pill-opt.cat-food     { background: rgba(70,140,90,0.2); color: #7acc90; }
+body.dark .cat-pill-opt.cat-entertain{ background: rgba(100,80,180,0.2); color: #a090e0; }
+body.dark .cat-pill-opt.cat-fees     { background: rgba(180,80,80,0.2); color: #e09090; }
+body.dark .cat-pill-opt.cat-health   { background: rgba(196,104,88,0.2); color: #e09080; }
+body.dark .cat-pill-opt.cat-loan     { background: var(--slate-light); color: var(--muted); }
+body.dark .cat-pill-opt.cat-tuition  { background: rgba(60,100,180,0.2); color: #80aaee; }
+body.dark .cat-pill-opt.cat-other    { background: var(--slate-light); color: var(--muted); }
 
 /* ── LOCK SCREEN DARK ── */
 body.dark #lockScreen .pin-key { background: var(--slate-light); }

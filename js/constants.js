@@ -7,13 +7,17 @@ const CAT_MAP={
   'bank charges':'cat-bank','bank fee':'cat-bank','service charge':'cat-bank',
   'od protection':'cat-bank','od interest':'cat-bank','overdraft':'cat-bank',
   'interest charge':'cat-bank','annual fee':'cat-bank',
-  // Telecom / subscriptions
+  // Telecom
   'verizon':'cat-telecom','at&t':'cat-telecom','t-mobile':'cat-telecom',
   'vodafone':'cat-telecom','telstra':'cat-telecom','sky broadband':'cat-telecom',
   'virgin media':'cat-telecom','bt internet':'cat-telecom',
-  'netflix':'cat-telecom','spotify':'cat-telecom','apple music':'cat-telecom',
-  'disney+':'cat-telecom','hulu':'cat-telecom','amazon prime':'cat-telecom',
-  'youtube premium':'cat-telecom','hosting':'cat-telecom',
+  'phone plan':'cat-telecom','mobile plan':'cat-telecom','cell phone':'cat-telecom',
+  'internet bill':'cat-telecom','broadband':'cat-telecom','hosting':'cat-telecom',
+  // Subscriptions
+  'netflix':'cat-subs','spotify':'cat-subs','apple music':'cat-subs',
+  'disney+':'cat-subs','hulu':'cat-subs','amazon prime':'cat-subs',
+  'youtube premium':'cat-subs','subscription':'cat-subs','membership':'cat-subs',
+  'adobe':'cat-subs','dropbox':'cat-subs','icloud':'cat-subs','google one':'cat-subs',
   // Auto
   'car insurance':'cat-auto','auto insurance':'cat-auto',
   'car payment':'cat-auto','vehicle':'cat-auto','gas station':'cat-auto',
@@ -22,22 +26,43 @@ const CAT_MAP={
   'electricity':'cat-utility','electric bill':'cat-utility','water bill':'cat-utility',
   'gas bill':'cat-utility','natural gas':'cat-utility',
   'council tax':'cat-utility','rates':'cat-utility','waste':'cat-utility',
-  'internet bill':'cat-utility','broadband':'cat-utility',
+  // Housing
+  'rent':'cat-housing','mortgage':'cat-housing','property tax':'cat-housing',
+  'home insurance':'cat-housing','renters insurance':'cat-housing',
+  'hoa':'cat-housing','maintenance':'cat-housing','repair':'cat-housing',
+  'lawn':'cat-housing','pest control':'cat-housing',
+  // Food / Meals
+  'grocery':'cat-food','groceries':'cat-food','supermarket':'cat-food',
+  'restaurant':'cat-food','dining':'cat-food','takeout':'cat-food','takeaway':'cat-food',
+  'doordash':'cat-food','ubereats':'cat-food','grubhub':'cat-food',
+  'coffee':'cat-food','lunch':'cat-food','dinner':'cat-food','breakfast':'cat-food',
+  // Entertainment
+  'entertainment':'cat-entertain','movie':'cat-entertain','cinema':'cat-entertain',
+  'concert':'cat-entertain','event':'cat-entertain','ticket':'cat-entertain',
+  'gaming':'cat-entertain','steam':'cat-entertain','playstation':'cat-entertain',
+  'xbox':'cat-entertain','bowling':'cat-entertain','bar':'cat-entertain',
+  // Fees
+  'late fee':'cat-fees','overdraft fee':'cat-fees','penalty':'cat-fees',
+  'processing fee':'cat-fees','transaction fee':'cat-fees','atm fee':'cat-fees',
+  'wire fee':'cat-fees','foreign transaction':'cat-fees',
   // Health
   'health insurance':'cat-health','dental':'cat-health','pharmacy':'cat-health',
   'doctor':'cat-health','medical':'cat-health','hospital':'cat-health',
   'gym':'cat-health','fitness':'cat-health','vision':'cat-health',
   // Loans / credit
   'student loan':'cat-loan','personal loan':'cat-loan','credit card payment':'cat-loan',
-  'loan payment':'cat-loan','mortgage payment':'cat-loan','car loan':'cat-loan',
-  'minimum payment':'cat-loan',
+  'loan payment':'cat-loan','car loan':'cat-loan','minimum payment':'cat-loan',
+  // Tuition / Education
+  'tuition':'cat-tuition','school fee':'cat-tuition','college':'cat-tuition',
+  'university':'cat-tuition','course':'cat-tuition','education':'cat-tuition',
+  'books':'cat-tuition','textbook':'cat-tuition','class':'cat-tuition',
   // Savings
   'savings':'cat-savings','emergency fund':'cat-savings','vacation fund':'cat-savings',
   'retirement':'cat-savings','investment':'cat-savings'
 };
-const CAT_LABELS={'cat-bank':'Banking','cat-telecom':'Telecom','cat-auto':'Auto','cat-utility':'Utilities','cat-health':'Health','cat-loan':'Loan Pmt','cat-savings':'Savings','cat-other':'Other'};
-const CAT_COLORS={'Banking':'#2B6CB0','Telecom':'#6B46C1','Auto':'#B7791F','Utilities':'#276749','Health':'#9D174D','Loan Pmt':'#718096','Savings':'#2B6CB0','Other':'#A0AEC0'};
-const BDFT={'Banking':100,'Telecom':300,'Auto':600,'Utilities':250,'Health':200,'Loan Pmt':2500,'Savings':500,'Other':300};
+const CAT_LABELS={'cat-bank':'Banking','cat-telecom':'Telecom','cat-subs':'Subscriptions','cat-auto':'Auto','cat-utility':'Utilities','cat-housing':'Housing','cat-food':'Food/Meals','cat-entertain':'Entertainment','cat-fees':'Fees','cat-health':'Health','cat-loan':'Loan Pmt','cat-tuition':'Tuition','cat-savings':'Savings','cat-other':'Other'};
+const CAT_COLORS={'Banking':'#2B6CB0','Telecom':'#6B46C1','Subscriptions':'#9D174D','Auto':'#B7791F','Utilities':'#276749','Housing':'#744210','Food/Meals':'#276749','Entertainment':'#553C9A','Fees':'#718096','Health':'#9D174D','Loan Pmt':'#718096','Tuition':'#2B6CB0','Savings':'#2B6CB0','Other':'#A0AEC0'};
+const BDFT={'Banking':100,'Telecom':300,'Subscriptions':150,'Auto':600,'Utilities':250,'Housing':1500,'Food/Meals':400,'Entertainment':200,'Fees':50,'Health':200,'Loan Pmt':2500,'Tuition':800,'Savings':500,'Other':300};
 
 // Safe tagged template — auto-escapes all interpolated values against XSS.
 // Usage: el.innerHTML = safeHTML`<b>${userName}</b> owes <b>${fmt(amount)}</b>`;
@@ -87,14 +112,20 @@ const DSV=[{name:'Demo Emergency Fund',target:8000,balance:3200,contribution:250
 
 
 const CAT_ALL=[
-  {cls:'cat-bank',   lbl:'Banking',   icon:'🏦'},
-  {cls:'cat-telecom',lbl:'Telecom',   icon:'📱'},
-  {cls:'cat-auto',   lbl:'Auto',      icon:'🚗'},
-  {cls:'cat-utility',lbl:'Utilities', icon:'💡'},
-  {cls:'cat-health', lbl:'Health',    icon:'🏥'},
-  {cls:'cat-loan',   lbl:'Loan Pmt',  icon:'💳'},
-  {cls:'cat-savings',lbl:'Savings',   icon:'🏦'},
-  {cls:'cat-other',  lbl:'Other',     icon:'📦'},
+  {cls:'cat-bank',    lbl:'Banking',       icon:'🏦'},
+  {cls:'cat-telecom', lbl:'Telecom',       icon:'📱'},
+  {cls:'cat-subs',    lbl:'Subscriptions', icon:'🔄'},
+  {cls:'cat-auto',    lbl:'Auto',          icon:'🚗'},
+  {cls:'cat-utility', lbl:'Utilities',     icon:'💡'},
+  {cls:'cat-housing', lbl:'Housing',       icon:'🏠'},
+  {cls:'cat-food',    lbl:'Food/Meals',    icon:'🍽'},
+  {cls:'cat-entertain',lbl:'Entertainment',icon:'🎬'},
+  {cls:'cat-fees',    lbl:'Fees',          icon:'⚡'},
+  {cls:'cat-health',  lbl:'Health',        icon:'🏥'},
+  {cls:'cat-loan',    lbl:'Loan Pmt',      icon:'💳'},
+  {cls:'cat-tuition', lbl:'Tuition',       icon:'🎓'},
+  {cls:'cat-savings', lbl:'Savings',       icon:'🏦'},
+  {cls:'cat-other',   lbl:'Other',         icon:'📦'},
 ];
 
 // ══════════════════════════════════════════════

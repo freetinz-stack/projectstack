@@ -8,7 +8,7 @@ function toggleWeekCollapse(wi){
 }
 
 function renderTagFilter(){
-  const cats=[...new Set(cw().flatMap(w=>w.items.map(i=>getCatLabel(getCat(i.name)))))];
+  const cats=[...new Set(cw().flatMap(w=>w.items.map(i=>getCatLabel(i.category||getCat(i.name)))))];
   document.getElementById('tagFilterBar').innerHTML=
     `<span class="tag-pill${!tagFilter?' sel':''}" data-action="setTagFilter" data-arg="">All</span>`+
     cats.map(c=>`<span class="tag-pill${tagFilter===c?' sel':''}" data-action="setTagFilter" data-arg="${esc(c)}">${esc(c)}</span>`).join('');
@@ -263,12 +263,12 @@ function renderExpenses(){
     const card=document.createElement('div');card.className='week-card'+statusCls+(isCollapsed?' wk-collapsed':'');
     const rows=week.items
       .map((item,realIi)=>({item,realIi}))
-      .filter(({item})=>!tagFilter||CAT_LABELS[getCat(item.name)]===tagFilter)
+      .filter(({item})=>!tagFilter||CAT_LABELS[item.category||getCat(item.name)]===tagFilter)
       .map(({item,realIi:ii})=>{
         const rec=_recSet.has(item.name.trim().toLowerCase());
         const dd=item.dueDay;
         const isOverdue=dd&&!item.paid&&dd<today;
-        const catCls=getCat(item.name);
+        const catCls=item.category||getCat(item.name);
         const catStyle=getCatStyle(catCls);
         const catLbl=getCatLabel(catCls);
         // Meta row — only show non-empty items to reduce clutter

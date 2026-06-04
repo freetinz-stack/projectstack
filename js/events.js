@@ -93,7 +93,7 @@ var _ACTION_ALLOWLIST = new Set([
   'openItemModal','saveItemModal','closeItemModal',
   'deleteItem','delExpItem','deleteItemFromModal',
   'togglePaid','toggleExp',
-  'toggleItemCurrencyRow','clearItemDueDay','hideItemDeleteConfirm',
+  'toggleItemCurrencyRow','clearItemDueDay','hideItemDeleteConfirm','renderCatPillsAll',
   'confirmDeleteItem','recurringAutoFill','openBulkBudgetModal','closeBulkBudgetModal',
   'saveBulkBudgets','openEnvelopeDetail','closeEnvelopeDetail',
   'drillDownCategory','openEnvModal','closeEnvModal','saveEnvCap',

@@ -67,7 +67,7 @@ function toggleRevCurrencyRow() {
 // ══════════════════════════════════════════════════════════════
 // EXPENSE ITEM MODAL — Add & Edit
 // ══════════════════════════════════════════════════════════════
-let _iModalWi=-1, _iModalIi=-1, _iModalReceipt=null, _iModalCat='cat-other', _iModalStatus='pending';
+let _iModalWi=-1, _iModalIi=-1, _iModalReceipt=null, _iModalCat='cat-other', _iModalStatus='pending', _iModalCatManual=false;
 
 function openItemModal(wi, ii){
   _iModalWi=wi; _iModalIi=ii;
@@ -85,8 +85,9 @@ function openItemModal(wi, ii){
   document.getElementById('iNote').value = isEdit ? (item.note||'') : '';
   document.getElementById('iDueDay').value = isEdit && item.dueDay ? item.dueDay : '';
 
-  // Category — auto-detect from name if new, use stored if editing
-  _iModalCat = isEdit ? getCat(item.name) : 'cat-other';
+  // Category — use stored category when editing, auto-detect for new items
+  _iModalCat = isEdit ? (item.category || getCat(item.name)) : 'cat-other';
+  _iModalCatManual = isEdit; // treat loaded category as a manual choice so auto-tag won't overwrite
   renderCatPills(_iModalCat);
 
   // Status
@@ -138,27 +139,58 @@ function closeItemModal(){
   const _im=document.getElementById('itemModal');
   _im.classList.remove('open');
   releaseTrap(_im);
-  _iModalWi=-1; _iModalIi=-1; _iModalReceipt=null;
+  _iModalWi=-1; _iModalIi=-1; _iModalReceipt=null; _iModalCatManual=false;
 }
 
-function renderCatPills(selectedCls){
+function _getUsedCats(){
+  const used = new Set();
+  try { cw().forEach(w=>(w.items||[]).forEach(it=>{ if(it.category) used.add(it.category); })); } catch(e){}
+  return used;
+}
+
+function renderCatPills(selectedCls, showAll){
   _iModalCat = selectedCls;
-  // Get all cats — built-in + custom
   const allCats = [...CAT_ALL];
   if(S.customCategories&&S.customCategories.length){
     S.customCategories.forEach(cc=>{
       allCats.push({cls:'cat-custom-'+cc.id, lbl:cc.name, icon:'🏷', custom:true, bg:cc.bg, color:cc.color});
     });
   }
-  document.getElementById('catPillGrid').innerHTML = allCats.map(cat=>{
+
+  const usedCats = _getUsedCats();
+  // Always show: selected category + used categories + "Other"; rest hidden behind toggle
+  const alwaysShow = new Set([...usedCats, selectedCls, 'cat-other']);
+  const primary = allCats.filter(c => alwaysShow.has(c.cls));
+  const secondary = allCats.filter(c => !alwaysShow.has(c.cls));
+  const isExpanded = showAll || secondary.some(c => c.cls === selectedCls);
+
+  function pillHTML(cat){
     const isSel = cat.cls===selectedCls;
     const style = cat.custom ? 'background:'+cat.bg+';color:'+cat.color+';' : '';
     return`<button class="cat-pill-opt ${cat.cls}${isSel?' selected':''}" style="${style}" data-action="selectCat" data-arg="${cat.cls}">${cat.icon} ${cat.lbl}</button>`;
-  }).join('');
+  }
+
+  const primaryHTML = primary.map(pillHTML).join('');
+  const secondaryHTML = secondary.map(pillHTML).join('');
+  const moreBtn = secondary.length
+    ? (isExpanded
+        ? `<button class="cat-pill-more-btn" data-action="renderCatPillsAll" data-arg="hide">▲ Less</button>`
+        : `<button class="cat-pill-more-btn" data-action="renderCatPillsAll" data-arg="show">+ ${secondary.length} more</button>`)
+    : '';
+
+  document.getElementById('catPillGrid').innerHTML =
+    primaryHTML +
+    (isExpanded ? secondaryHTML : '') +
+    moreBtn;
 }
 
 function selectCat(cls){
+  _iModalCatManual = true;
   renderCatPills(cls);
+}
+
+function renderCatPillsAll(arg){
+  renderCatPills(_iModalCat, arg==='show');
 }
 
 function setItemStatus(s){
@@ -213,11 +245,9 @@ function clearItemDueDay(){
 }
 
 function itemNameAutoTag(name){
-  // Auto-detect category from name as user types
+  if(_iModalCatManual) return; // user picked a category manually — don't override
   const detected = getCat(name);
-  if(detected !== _iModalCat){
-    renderCatPills(detected);
-  }
+  if(detected !== _iModalCat) renderCatPills(detected);
 }
 
 function renderItemReceiptPreview(){
@@ -290,10 +320,10 @@ function saveItemModal(){
   if(freq==='weekly'){
     if(_iModalIi>=0){
       // Edit: update just this occurrence
-      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'weekly'});
+      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'weekly',category:_iModalCat});
     } else {
       cw().forEach(w=>{
-        w.items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'weekly',currency:getCurrency().code,_savingsItem:false});
+        w.items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'weekly',category:_iModalCat,currency:getCurrency().code,_savingsItem:false});
       });
     }
     persist();
@@ -305,10 +335,10 @@ function saveItemModal(){
   // ── BI-WEEKLY → Week 1 (idx 0) and Week 3 (idx 2) ──
   if(freq==='biweekly'){
     if(_iModalIi>=0){
-      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'biweekly'});
+      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'biweekly',category:_iModalCat});
     } else {
       [0,2].forEach(wi=>{
-        if(cw()[wi])cw()[wi].items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'biweekly',currency:getCurrency().code,_savingsItem:false});
+        if(cw()[wi])cw()[wi].items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'biweekly',category:_iModalCat,currency:getCurrency().code,_savingsItem:false});
       });
     }
     persist();
@@ -330,6 +360,7 @@ function saveItemModal(){
     receipt: _iModalReceipt,
     currency: itemCurrency,
     frequency: 'monthly',
+    category: _iModalCat,
     _savingsItem: false,
     taxDeductible: taxCheck ? taxCheck.checked : false
   };

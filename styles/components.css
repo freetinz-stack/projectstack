@@ -79,14 +79,20 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
    CATEGORY BADGES
    ══════════════════════════════════════════ */
 .cat-badge { font-size: 9px; padding: 1px 5px; border-radius: 2px; font-weight: 600; white-space: nowrap; }
-.cat-bank    { background: var(--blue-light); color: var(--blue); }
-.cat-telecom { background: var(--purple-light); color: var(--purple); }
-.cat-auto    { background: var(--amber-light); color: var(--amber); }
-.cat-utility { background: var(--success-light); color: var(--success); }
-.cat-health  { background: var(--danger-light); color: var(--danger); }
-.cat-loan    { background: var(--slate-mid); color: var(--muted); }
-.cat-savings { background: var(--blue-light); color: var(--blue); }
-.cat-other   { background: var(--slate-light); color: var(--muted); }
+.cat-bank     { background: var(--blue-light); color: var(--blue); }
+.cat-telecom  { background: var(--purple-light); color: var(--purple); }
+.cat-subs     { background: #f0e6fa; color: #6b21a8; }
+.cat-auto     { background: var(--amber-light); color: var(--amber); }
+.cat-utility  { background: var(--success-light); color: var(--success); }
+.cat-housing  { background: #fef3c7; color: #92400e; }
+.cat-food     { background: #dcfce7; color: #166534; }
+.cat-entertain{ background: #ede9fe; color: #5b21b6; }
+.cat-fees     { background: #fee2e2; color: #991b1b; }
+.cat-health   { background: var(--danger-light); color: var(--danger); }
+.cat-loan     { background: var(--slate-mid); color: var(--muted); }
+.cat-tuition  { background: #dbeafe; color: #1e40af; }
+.cat-savings  { background: var(--blue-light); color: var(--blue); }
+.cat-other    { background: var(--slate-light); color: var(--muted); }
 
 .cat-custom-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .cat-custom-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 2px; font-size: 10px; font-weight: 500; cursor: pointer; }
@@ -450,14 +456,22 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 .cat-pill-opt { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 2px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid transparent; transition: all .15s; -webkit-user-select: none; user-select: none; }
 .cat-pill-opt:hover { opacity: .85; }
 .cat-pill-opt.selected { border-color: var(--ink); }
-.cat-pill-opt.cat-bank    { background: var(--blue-light); color: var(--blue); }
-.cat-pill-opt.cat-telecom { background: var(--purple-light); color: var(--purple); }
-.cat-pill-opt.cat-auto    { background: var(--amber-light); color: var(--amber); }
-.cat-pill-opt.cat-utility { background: var(--success-light); color: var(--success); }
-.cat-pill-opt.cat-health  { background: var(--danger-light); color: var(--danger); }
-.cat-pill-opt.cat-loan    { background: var(--slate-mid); color: var(--muted); }
-.cat-pill-opt.cat-savings { background: var(--blue-light); color: var(--blue); }
-.cat-pill-opt.cat-other   { background: var(--slate-light); color: var(--muted); }
+.cat-pill-opt.cat-bank     { background: var(--blue-light); color: var(--blue); }
+.cat-pill-opt.cat-telecom  { background: var(--purple-light); color: var(--purple); }
+.cat-pill-opt.cat-subs     { background: #f0e6fa; color: #6b21a8; }
+.cat-pill-opt.cat-auto     { background: var(--amber-light); color: var(--amber); }
+.cat-pill-opt.cat-utility  { background: var(--success-light); color: var(--success); }
+.cat-pill-opt.cat-housing  { background: #fef3c7; color: #92400e; }
+.cat-pill-opt.cat-food     { background: #dcfce7; color: #166534; }
+.cat-pill-opt.cat-entertain{ background: #ede9fe; color: #5b21b6; }
+.cat-pill-opt.cat-fees     { background: #fee2e2; color: #991b1b; }
+.cat-pill-opt.cat-health   { background: var(--danger-light); color: var(--danger); }
+.cat-pill-opt.cat-loan     { background: var(--slate-mid); color: var(--muted); }
+.cat-pill-opt.cat-tuition  { background: #dbeafe; color: #1e40af; }
+.cat-pill-opt.cat-savings  { background: var(--blue-light); color: var(--blue); }
+.cat-pill-opt.cat-other    { background: var(--slate-light); color: var(--muted); }
+.cat-pill-more-btn { background: none; border: 1.5px dashed var(--slate-mid); color: var(--muted); border-radius: 2px; padding: 5px 11px; font-size: 12px; cursor: pointer; }
+.cat-pill-more-btn:hover { border-color: var(--ink); color: var(--ink); }
 
 /* Due day quick-pick */
 .due-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 6px; }
