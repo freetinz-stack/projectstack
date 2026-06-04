@@ -234,9 +234,9 @@ function confirmTxn(){
   }
 }
 // Warn on withdraw
-(function(){const el=document.getElementById('txnAmount');if(el)el.addEventListener('input',function(){
+document.addEventListener('DOMContentLoaded',function(){const el=document.getElementById('txnAmount');if(el)el.addEventListener('input',function(){
   if(_txnMode==='withdraw'&&_txnIdx>=0&&S.savings[_txnIdx]){const a=parseFloat(this.value)||0;document.getElementById('txnWarnRow').style.display=(a>0&&a>amt(S.savings[_txnIdx].balance))?'block':'none';}
-});})();
+});});
 
 // ══════════════════════════════════════════════
 // FINANCIAL GOALS

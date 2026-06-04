@@ -10,7 +10,7 @@ function renderLoans(){
   const list=document.getElementById('loanList');list.innerHTML='';
   if(!sorted.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;border:2px dashed var(--border);border-radius:var(--radius);">No loans added yet.<br><button class="nm-btn" style="margin-top:10px" data-action="openLoanModal" data-arg="-1">+ Add your first loan</button></div>';document.getElementById('loan-total').textContent='$0';document.getElementById('loan-pmts').textContent='$0';document.getElementById('loan-int').textContent='$0';document.getElementById('loan-free').textContent='—';return;}
   // Debt-free banner when all loans have zero balance
-  if(sorted.every(l=>l.amount<=0)){
+  if(sorted.every(l=>l.loan.amount<=0)){
     const dfBanner=document.createElement('div');
     dfBanner.className='debt-free-card';
     dfBanner.innerHTML='<span class="df-icon">🎉</span><div class="df-title">You\'re Debt-Free!</div><div class="df-sub">All loan balances are at $0. Incredible achievement — keep it up!</div>';

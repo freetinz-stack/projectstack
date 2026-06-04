@@ -87,7 +87,7 @@ var _ACTION_ALLOWLIST = new Set([
   'searchAndCloseMenu','toggleDarkAndCloseMenu','pinAndCloseMenu','healthAndCloseMenu',
   // Month management
   'changeMonth','confirmArchiveMonth','confirmDeleteMonth','closeDeleteMonthModal',
-  'doDeleteMonth','openNewMonthModal','closeNewMonthModal','doNewMonth',
+  'executeDeleteMonth','openNewMonthModal','closeNewMonthModal','createNewMonth',
   'promptArchiveCurrentMonth','openCloneModal','closeCloneModal','executeClone',
   // Expenses / items
   'openItemModal','saveItemModal','closeItemModal',
@@ -144,7 +144,7 @@ var _ACTION_ALLOWLIST = new Set([
   'openSettings','closeSettings','saveSettings','openCurrencyModal','closeCurrencyModal',
   'saveCurrency','currencyFromSettings','currencyAndCloseMenu',
   'openCompareModal','closeCompareModal','compareFromSettings','compareAndCloseMenu',
-  'openResetModal','closeResetModal','doReset','executeReset',
+  'openResetModal','closeResetModal','executeReset',
   'openResetConfirm','closeFullResetConfirm','executeFullReset','confirmDemoReset',
   'resetExpensesFromSettings','resetRevenueFromSettings',
   'resetLoansFromSettings','resetSavingsFromSettings',
@@ -200,7 +200,9 @@ var _ACTION_ALLOWLIST = new Set([
   'openArchiveModal','closeArchiveModal','openRestoreModal','closeRestoreModal',
   'restoreArchivedMonth','executeRestore','toggleArchiveGroup',
   // Bulk-add
-  'openBulkAdd','closeBulkAdd','doBulkAdd',
+  'openBulkAdd','closeBulkAdd','bulkAddSubmit',
+  'bulkAddTab',
+  'bulkAddAddExpense','bulkAddAddSaving','bulkAddAddLoan',
   // Search
   'searchNavToExpenseFromEl','searchNavToIncomeFromEl','searchGoToTab',
   // PWA install

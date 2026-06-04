@@ -81,7 +81,7 @@ function openItemModal(wi, ii){
 
   // Pre-fill fields
   document.getElementById('iName').value = isEdit ? item.name : '';
-  document.getElementById('iAmount').value = isEdit ? item.amount : '';
+  document.getElementById('iAmount').value = isEdit ? amt(item.amount) : '';
   document.getElementById('iNote').value = isEdit ? (item.note||'') : '';
   document.getElementById('iDueDay').value = isEdit && item.dueDay ? item.dueDay : '';
 
