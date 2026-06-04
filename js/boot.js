@@ -325,7 +325,7 @@ function renderEnvelopes(){
       ${rolloverHtml}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
         <span style="font-size:10px;font-weight:600;padding:1px 5px;border-radius:8px;background:${over?'var(--danger-light)':warn?'var(--amber-light)':'var(--success-light)'};color:${col};">${pct.toFixed(0)}%</span>
-        <label title="Roll unused budget to next month" style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:9px;color:var(--text-muted);">
+        <label data-action="noop" data-stop-prop title="Roll unused budget to next month" style="display:flex;align-items:center;gap:3px;cursor:pointer;font-size:9px;color:var(--text-muted);">
           <input type="checkbox" data-change="toggleRolloverFromEl" data-change-self data-cat="${esc(cat)}" ${(S.budgetRollover&&S.budgetRollover[cat])?'checked':''} style="accent-color:var(--sage);width:11px;height:11px;">
           Roll unused to next month
         </label>

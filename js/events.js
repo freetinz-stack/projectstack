@@ -5,6 +5,7 @@
 // ════════════════════════════════════════════════
 // WRAPPER FUNCTIONS — multi-call & special cases
 // ════════════════════════════════════════════════
+function noop(){} // used with data-stop-prop to absorb clicks without triggering a parent data-action
 
 // Mobile action-sheet wrappers
 function notifAndCloseMenu(){toggleNotifications();toggleMobileMenu();}
@@ -82,6 +83,7 @@ function openClaudeManageFromLink(){if(typeof openClaudeManage==='function')open
 // arbitrary window-level functions (resetAllData, doImport, etc.).
 // ════════════════════════════════════════════════
 var _ACTION_ALLOWLIST = new Set([
+  'noop',
   // Tab & navigation
   'switchTab','switchToMonth','switchToExpensesTab','switchTabAndCloseMenu',
   'searchAndCloseMenu','toggleDarkAndCloseMenu','pinAndCloseMenu','healthAndCloseMenu',
