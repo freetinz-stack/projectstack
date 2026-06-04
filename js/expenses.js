@@ -356,12 +356,10 @@ function renderExpSumChart() {
   dc('expSum');
   var _expSumData = { labels: labels, paid: paid, pend: pend };
   requestAnimationFrame(function() {
-    if (!canvas.offsetParent && canvas.getBoundingClientRect().width === 0) {
-      // Still hidden — defer one more frame
-      requestAnimationFrame(function() { _createExpSumChart(canvas, _expSumData); });
-    } else {
-      _createExpSumChart(canvas, _expSumData);
-    }
+    // If the canvas is still in a hidden section, bail — the next renderExpenses()
+    // call (when the tab becomes visible) will create the chart with real dimensions.
+    if (!canvas.offsetParent || canvas.getBoundingClientRect().width === 0) return;
+    _createExpSumChart(canvas, _expSumData);
   });
 }
 function _createExpSumChart(canvas, d) {
