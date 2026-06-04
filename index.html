@@ -1811,23 +1811,22 @@
 
     <div class="fr" style="margin-bottom:9px;">
       <div class="fg">
-        <label for="invValue" class="fl">Current Market Value</label>
+        <label for="invValue" class="fl">Market Value</label>
         <input class="fi" id="invValue" type="number" placeholder="0.00" inputmode="decimal" min="0" step="0.01">
       </div>
       <div class="fg">
-        <label for="invBasis" class="fl">Total Invested (Cost Basis)</label>
+        <label for="invBasis" class="fl">Cost Basis</label>
         <input class="fi" id="invBasis" type="number" placeholder="0.00" inputmode="decimal" min="0" step="0.01">
       </div>
-    </div>
-
-    <div class="fg" style="margin-bottom:9px;">
-      <label for="invCurrency" class="fl">Currency</label>
-      <select class="fi" id="invCurrency"></select>
+      <div class="fg" style="flex:0 0 auto;min-width:130px;">
+        <label for="invCurrency" class="fl">Currency</label>
+        <select class="fi" id="invCurrency"></select>
+      </div>
     </div>
 
     <div class="fr" style="margin-bottom:9px;">
       <div class="fg">
-        <label for="invReturn" class="fl">Assumed Annual Return (%)</label>
+        <label for="invReturn" class="fl">Annual Return (%)</label>
         <input class="fi" id="invReturn" type="number" placeholder="7" inputmode="decimal" min="0" max="100" step="0.1">
       </div>
       <div class="fg">
