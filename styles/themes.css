@@ -56,8 +56,7 @@ body[data-design="glass"] .aurora-layer { display: block; }
 body[data-design="glass"] .topbar,
 body[data-design="glass"] .tab-bar,
 body[data-design="glass"] .main,
-body[data-design="glass"] #lockScreen,
-body[data-design="glass"] .modal-overlay {
+body[data-design="glass"] #lockScreen {
   position: relative; z-index: 1;
 }
 body[data-design="glass"] .topbar,
