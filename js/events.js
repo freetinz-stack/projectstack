@@ -159,7 +159,7 @@ var _ACTION_ALLOWLIST = new Set([
   'openSearch','closeSearch','doSearch','openShortcutsModal','closeShortcutsModal',
   'setItemStatus','setRevStatus','setPinLen',
   'toggleTaxFilter','replayTour','saveUserNamePage',
-  'openCatManager','closeCatManager','addCustomCategory',
+  'openCatManager','closeCatManager','addCustomCategory','saveEditCustomCat','loadCatForEdit','updateEditCatPreview',
   // Notifications
   'toggleNotifications','notifAndCloseMenu','markNotifRead','clearAllNotifs',
   // PIN / lock
@@ -324,7 +324,7 @@ var _CHANGE_ALLOWLIST = new Set([
   'itemFreqChange',
   'handleItemReceiptFromEl','handleReceiptFileFromEl',
   'renderComparison',
-  'updateCatPreview',
+  'updateCatPreview','updateEditCatPreview','loadCatForEdit',
   'handleBankFileFromEl',
   'updateCurrencyPreview',
   'setAIProvider',

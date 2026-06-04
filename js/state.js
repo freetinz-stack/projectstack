@@ -351,6 +351,17 @@ function dispatch(type, payload, toast) {
     case 'CATEGORY_REMOVE':
       if (S.customCategories) S.customCategories.splice(p.idx, 1);
       break;
+    case 'CATEGORY_UPDATE':
+      if (S.customCategories && S.customCategories[p.idx]) {
+        const old = S.customCategories[p.idx];
+        S.customCategories[p.idx] = p.category;
+        // Rename budget key if the category name changed
+        if (S.budgets && old.name !== p.category.name) {
+          S.budgets[p.category.name] = S.budgets[old.name] || 0;
+          delete S.budgets[old.name];
+        }
+      }
+      break;
     case 'BUDGET_SET':
       if (!S.budgets) S.budgets = {};
       S.budgets[p.cat] = Math.max(0, Math.min(9999999, p.val || 0));

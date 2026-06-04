@@ -2076,6 +2076,27 @@
     <button class="close-btn" data-action="closeCatManager" title="Close" aria-label="Close">&#215;</button>
     <h4 id="catManagerModalLabel">&#127991; Manage Custom Categories</h4>
     <div id="customCatList" style="margin-bottom:14px;min-height:30px;"></div>
+
+    <!-- ── EDIT EXISTING ── -->
+    <div id="editCatSection" style="display:none;border-top:1px solid var(--border);padding-top:12px;margin-bottom:12px;">
+      <div style="font-weight:600;font-size:12px;margin-bottom:8px;">Edit Existing Category</div>
+      <div class="fg" style="margin-bottom:7px;">
+        <label for="editCatSelect" class="fl">Select category to edit</label>
+        <select class="fi" id="editCatSelect" data-change="loadCatForEdit"></select>
+      </div>
+      <div id="editCatFields" style="display:none;">
+        <div class="fg" style="margin-bottom:7px;"><label for="editCatName" class="fl">Name</label><input class="fi" id="editCatName" type="text" maxlength="30"></div>
+        <div class="fg" style="margin-bottom:7px;"><label for="editCatKeywords" class="fl">Keywords (comma-separated)</label><input class="fi" id="editCatKeywords" type="text"></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <div class="fg"><label for="editCatBg" class="fl">Background</label><input type="color" id="editCatBg" style="width:100%;height:32px;border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;" data-change="updateEditCatPreview"></div>
+          <div class="fg"><label for="editCatColor" class="fl">Text Color</label><input type="color" id="editCatColor" style="width:100%;height:32px;border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;" data-change="updateEditCatPreview"></div>
+          <div><div class="fl" style="margin-bottom:6px;">Preview</div><span id="editCatPreview" class="cat-badge" style="padding:4px 10px;border-radius:12px;font-size:12px;font-weight:500;">Category</span></div>
+        </div>
+        <button class="btn-p" data-action="saveEditCustomCat" style="width:100%;margin-bottom:4px;">&#10003; Save Changes</button>
+      </div>
+    </div>
+
+    <!-- ── ADD NEW ── -->
     <div style="border-top:1px solid var(--border);padding-top:12px;">
       <div style="font-weight:600;font-size:12px;margin-bottom:8px;">Add New Category</div>
       <div class="fg" style="margin-bottom:7px;"><label for="newCatName" class="fl">Name</label><input class="fi" id="newCatName" type="text" placeholder="e.g. Entertainment" maxlength="30"></div>

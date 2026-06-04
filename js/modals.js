@@ -781,13 +781,80 @@ function closeCatManager(){releaseTrap(document.getElementById('catManagerModal'
 function renderCatManagerList(){
   const cats=S.customCategories||[];
   const el=document.getElementById('customCatList');
-  if(!cats.length){el.innerHTML='<p style="font-size:12px;color:var(--text-muted);">No custom categories yet. Add one below.</p>';return;}
+  const editSec=document.getElementById('editCatSection');
+
+  if(!cats.length){
+    el.innerHTML='<p style="font-size:12px;color:var(--text-muted);">No custom categories yet. Add one below.</p>';
+    if(editSec) editSec.style.display='none';
+    return;
+  }
+
   el.innerHTML=cats.map((c,i)=>`
     <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
-      <span class="cat-badge" style="background:${c.bg};color:${c.color};">${c.name}</span>
-      <span style="font-size:11px;color:var(--text-muted);flex:1;">Keywords: ${c.keywords.join(', ')}</span>
+      <span class="cat-badge" style="background:${c.bg};color:${c.color};">${esc(c.name)}</span>
+      <span style="font-size:11px;color:var(--text-muted);flex:1;">Keywords: ${esc(c.keywords.join(', '))}</span>
       <button class="tbtn" style="font-size:10px;padding:2px 7px;color:var(--danger);" data-action="delCustomCat" data-arg="${i}">Remove</button>
     </div>`).join('');
+
+  // Populate the edit dropdown
+  if(editSec){
+    editSec.style.display='block';
+    const sel=document.getElementById('editCatSelect');
+    const prev=sel?sel.value:'';
+    if(sel){
+      sel.innerHTML='<option value="">— select a category —</option>'+
+        cats.map((c,i)=>`<option value="${i}">${esc(c.name)}</option>`).join('');
+      if(prev!==''&&sel.querySelector(`option[value="${prev}"]`)) sel.value=prev;
+      else sel.value='';
+    }
+    const fields=document.getElementById('editCatFields');
+    if(fields) fields.style.display=sel&&sel.value!==''?'block':'none';
+  }
+}
+
+function loadCatForEdit(){
+  const sel=document.getElementById('editCatSelect');
+  const fields=document.getElementById('editCatFields');
+  if(!sel||!fields) return;
+  const idx=parseInt(sel.value);
+  if(isNaN(idx)){fields.style.display='none';return;}
+  const cat=(S.customCategories||[])[idx];
+  if(!cat){fields.style.display='none';return;}
+  document.getElementById('editCatName').value=cat.name;
+  document.getElementById('editCatKeywords').value=cat.keywords.join(', ');
+  document.getElementById('editCatBg').value=cat.bg||'#EBF4FF';
+  document.getElementById('editCatColor').value=cat.color||'#2B6CB0';
+  updateEditCatPreview();
+  fields.style.display='block';
+}
+
+function updateEditCatPreview(){
+  const bg=document.getElementById('editCatBg').value;
+  const color=document.getElementById('editCatColor').value;
+  const name=document.getElementById('editCatName').value.trim()||'Category';
+  const p=document.getElementById('editCatPreview');
+  if(p){p.style.background=bg;p.style.color=color;p.textContent=name;}
+}
+
+function saveEditCustomCat(){
+  const sel=document.getElementById('editCatSelect');
+  const idx=parseInt(sel?sel.value:'');
+  if(isNaN(idx)){showToast('Select a category to edit','warn-t');return;}
+  const cats=S.customCategories||[];
+  if(!cats[idx]){showToast('Category not found','warn-t');return;}
+  const name=document.getElementById('editCatName').value.trim();
+  const kwStr=document.getElementById('editCatKeywords').value;
+  const bg=document.getElementById('editCatBg').value;
+  const color=document.getElementById('editCatColor').value;
+  if(!name){showToast('Enter a category name','warn-t');return;}
+  const keywords=kwStr.split(',').map(k=>k.trim()).filter(Boolean);
+  if(!keywords.length){showToast('Enter at least one keyword','warn-t');return;}
+  dispatch('CATEGORY_UPDATE',{idx,category:{...cats[idx],name,keywords,bg,color}});
+  renderCatManagerList();
+  // Re-select the same index in the dropdown after re-render
+  const updSel=document.getElementById('editCatSelect');
+  if(updSel){updSel.value=String(idx);loadCatForEdit();}
+  showToast('✓ Category updated: '+name);
 }
 
 function updateCatPreview(){
