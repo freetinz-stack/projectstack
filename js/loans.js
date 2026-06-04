@@ -197,7 +197,26 @@ function saveEditBal(inp,li){
   if(justPaidOff){celebrateLoanPaidOff(S.loans[li].name);checkAllLoansDebtFree();}
   else showToast('✓ Balance updated');
 }
-function addLP(li){dispatch('LOAN_ADD_PAYMENT',{li,payment:{month:CMK,paid:false}});renderLoans();}
+function addLP(li){
+  const loan=S.loans[li];
+  if(!loan)return;
+  // Find the next month starting from CMK that doesn't already have a chip
+  const parts=CMK.split(' ');
+  let mo=MS.indexOf(parts[0]),yr=parseInt(parts[1]);
+  let target=null;
+  for(let i=0;i<120;i++){
+    const key=mk(mo,yr);
+    if(!loan.payments.find(p=>p.month===key)){target=key;break;}
+    mo++;if(mo>11){mo=0;yr++;}
+  }
+  if(!target){showToast('All months already logged','warn-t');return;}
+  if(target!==CMK){
+    const added=target;
+    showToast('Current month already logged — added '+added);
+  }
+  dispatch('LOAN_ADD_PAYMENT',{li,payment:{month:target,paid:false}});
+  renderLoans();
+}
 function addLoan(){openLoanModal(-1);} // now opens modal
 function setStrategy(s){
   dispatch('LOAN_STRATEGY',{strategy:s});
