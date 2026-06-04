@@ -1,5 +1,54 @@
 // === loans.js ===
 
+// Tracks which loan cards have the full history expanded
+const _expandedLoans = new Set();
+
+// Max paid chips to keep visible in collapsed view
+const LOAN_WINDOW_PAID = 12;
+// Auto-archive threshold: once paid chips in the array exceed this, oldest get archived
+const LOAN_ARCHIVE_THRESHOLD = 24;
+
+function toggleLoanHistory(li) {
+  if (_expandedLoans.has(li)) _expandedLoans.delete(li);
+  else _expandedLoans.add(li);
+  renderLoans();
+}
+
+function _buildChipHTML(p, pi, oi) {
+  const isNew = _newChipMonths && _newChipMonths.has(p.month);
+  return `<div class="pchip ${p.paid?'paid':'pending'}${isNew?' chip-new':''}" data-action="toggleLP" data-arg="${oi}" data-arg2="${pi}" title="${p.paid?'Click to mark unpaid — restores estimated balance':'Click to mark paid — reduces balance by principal portion'}">${p.paid?'✓':'○'} ${esc(p.month)}${isNew?' ★':''}</div>`;
+}
+
+function _buildChipsSection(loan, oi) {
+  const archived = loan.archivedPaidCount || 0;
+  const isExpanded = _expandedLoans.has(oi);
+  const paidIdxs   = loan.payments.map((p,pi) => p.paid  ? pi : -1).filter(i => i >= 0);
+  const unpaidIdxs = loan.payments.map((p,pi) => !p.paid ? pi : -1).filter(i => i >= 0);
+
+  let chipsHTML;
+  if (isExpanded) {
+    chipsHTML = loan.payments.map((p,pi) => _buildChipHTML(p,pi,oi)).join('');
+  } else {
+    const visiblePaidIdxs = paidIdxs.slice(-LOAN_WINDOW_PAID);
+    const hiddenInArray   = paidIdxs.length - visiblePaidIdxs.length;
+    const totalHidden     = archived + hiddenInArray;
+    const summaryChip     = totalHidden > 0
+      ? `<div class="pchip paid pchip-archive" title="${totalHidden} older paid payment${totalHidden>1?'s':''} — click History to expand">✓ ${totalHidden} earlier payment${totalHidden>1?'s':''}</div>`
+      : '';
+    chipsHTML = summaryChip
+      + visiblePaidIdxs.map(pi => _buildChipHTML(loan.payments[pi], pi, oi)).join('')
+      + unpaidIdxs.map(pi     => _buildChipHTML(loan.payments[pi], pi, oi)).join('');
+  }
+
+  const totalChips = loan.payments.length + archived;
+  const hasHistory = totalChips > LOAN_WINDOW_PAID || archived > 0;
+  const toggleBtn  = hasHistory
+    ? `<button class="tbtn" style="font-size:10px;padding:2px 8px;margin-left:4px;" data-action="toggleLoanHistory" data-arg="${oi}">${isExpanded ? '▲ Less' : `▼ All ${totalChips}`}</button>`
+    : '';
+
+  return { chipsHTML, toggleBtn };
+}
+
 function renderLoans(){
   const sorted=S.loans.map((loan,oi)=>({loan,oi}));
   if(S.strategy==='avalanche')sorted.sort((a,b)=>b.loan.rate-a.loan.rate);else sorted.sort((a,b)=>a.loan.amount-b.loan.amount);
@@ -21,10 +70,9 @@ function renderLoans(){
     const pdPct=Math.min(100,Math.max(4,((oa-loan.amount)/oa)*100));
     const ml=calcMTP(amt(loan.amount),loan.rate,amt(loan.minPayment));
     const isTop=si===0;
-    const chips=loan.payments.map((p,pi)=>{
-      const isNew=_newChipMonths&&_newChipMonths.has(p.month);
-      return`<div class="pchip ${p.paid?'paid':'pending'}${isNew?' chip-new':''}" data-action="toggleLP" data-arg="${oi}" data-arg2="${pi}" title="${p.paid?'Click to mark unpaid — restores estimated balance':'Click to mark paid — reduces balance by principal portion'}">${p.paid?'✓':'○'} ${esc(p.month)}${isNew?' ★':''}</div>`;
-    }).join('');
+    const {chipsHTML,toggleBtn}=_buildChipsSection(loan,oi);
+    const totalPaid=(loan.payments.filter(p=>p.paid).length)+(loan.archivedPaidCount||0);
+    const totalChipsCount=loan.payments.length+(loan.archivedPaidCount||0);
     const isPaidOff=loan.amount<=0;
     // payoff text — if Never, show minimum payment needed
     let payoffText;
@@ -68,7 +116,7 @@ function renderLoans(){
           ${goalBadge}
           <span style="font-size:10px;color:var(--text-muted);">#${si+1}</span>
         </div>
-        <div class="debt-meta"><span>◆ ${loan.rate}% APR</span><span>◆ Min ${fmt(amt(loan.minPayment))}/mo</span><span>◆ ${loan.payments.filter(p=>p.paid).length}/${loan.payments.length} paid</span></div>
+        <div class="debt-meta"><span>◆ ${loan.rate}% APR</span><span>◆ Min ${fmt(amt(loan.minPayment))}/mo</span><span>◆ ${totalPaid}/${totalChipsCount} paid</span></div>
         </div>
         <div style="text-align:right;">
           <div class="bal-edit-wrap" style="justify-content:flex-end;margin-bottom:2px;">
@@ -82,8 +130,11 @@ function renderLoans(){
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-bottom:2px;"><span>Paid ${fmt(amt(oa)-amt(loan.amount))} of ${fmt(amt(oa))}</span><span>${pdPct.toFixed(0)}%</span></div>
         <div class="pbar" style="height:7px;"><div class="pfill ${loan.rate>15?'pf-danger':loan.rate>10?'pf-amber':'pf-sage'}" style="width:${pdPct}%;"></div></div>
       </div>
-      <div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin:7px 0 4px;">Payment History — tap to toggle</div>
-      <div style="display:flex;flex-wrap:wrap;gap:4px;">${chips}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin:7px 0 4px;">
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);">Payment History</span>
+        ${toggleBtn}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;">${chipsHTML}</div>
       <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" class="no-print">
         <button class="nm-btn" style="font-size:11px;padding:4px 10px;" data-action="openLoanModal" data-arg="${oi}">&#9998; Edit Loan</button>
         <button class="tbtn" style="font-size:11px;padding:4px 9px;" data-action="addLP" data-arg="${oi}" title="Manually add a payment chip for the current month">+ Log Month</button>
@@ -136,10 +187,21 @@ function toggleLP(li,pi){
     const intCharge=Math.round(loan.amount*r*100)/100;
     const principalPaid=Math.max(0,Math.round((loan.minPayment-intCharge)*100)/100);
     loan.amount=Math.max(0,Math.round((loan.amount-principalPaid)*100)/100);
+    // Auto-archive oldest paid chips once threshold exceeded
+    const paidInArray=loan.payments.filter(p=>p.paid);
+    if(paidInArray.length>LOAN_ARCHIVE_THRESHOLD){
+      const toArchive=paidInArray.length-LOAN_ARCHIVE_THRESHOLD;
+      let removed=0;
+      loan.payments=loan.payments.filter(p=>{
+        if(!p.paid||removed>=toArchive)return true;
+        removed++;return false;
+      });
+      loan.archivedPaidCount=(loan.archivedPaidCount||0)+toArchive;
+    }
   }
   // Undo: restore balance estimate when un-marking
   if(!wasUnpaid&&loan.originalAmount){
-    const paidCount=loan.payments.filter(p=>p.paid).length;
+    const paidCount=loan.payments.filter(p=>p.paid).length+(loan.archivedPaidCount||0);
     let bal=loan.originalAmount;
     const r2=loan.rate/100/12;
     for(let m=0;m<paidCount;m++){

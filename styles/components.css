@@ -354,6 +354,7 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 .pchip:hover { border-color: var(--ink); }
 .pchip.chip-flash { animation: chipPaid .28s ease-out; }
 .pchip.chip-new { background: var(--blue-light); border-color: var(--blue); color: var(--blue); animation: chipNew .6s ease-out; }
+.pchip.pchip-archive { background: var(--slate-mid); border-color: var(--border); color: var(--text-muted); cursor: default; font-style: italic; }
 @keyframes chipNew { from { box-shadow: 0 0 0 3px var(--blue); } to { box-shadow: none; } }
 .sav-link-badge { font-size: 9px; background: var(--blue-light); color: var(--blue); border-radius: 3px; padding: 1px 4px; font-weight: 600; cursor: default; }
 .focus-lbl { font-size: 10px; padding: 2px 7px; border-radius: 2px; font-weight: 700; }
