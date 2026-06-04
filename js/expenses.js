@@ -687,6 +687,14 @@ function bulkMarkPaid(wi){
     showToast('All items reset to pending');
   }
 }
+function toggleAllWeekPaid(wi) {
+  const week = cw()[wi];
+  if (!week) return;
+  const allPaid = week.items.every(i => i.paid);
+  week.items.forEach(i => { i.paid = !allPaid; });
+  persist(); renderExpenses(); updateHealth();
+  showToast(allPaid ? 'All items marked unpaid' : '✓ All items marked paid');
+}
 function addExpItem(wi){openItemModal(wi,-1);} // now opens modal
 
 // Due-date modal was removed; badge clicks now open the item modal directly.

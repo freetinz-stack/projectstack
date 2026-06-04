@@ -231,7 +231,7 @@ function toggleLP(li,pi){
     }
     // All chips for this loan are paid?
     else if(loan.payments.length>0&&loan.payments.every(p=>p.paid)){
-      setTimeout(()=>{launchConfetti(70);showToast('🎉 All payments logged for '+loan.name+'!');},200);
+      setTimeout(()=>{launchConfetti(70);showToast('🎉 All payments logged for '+esc(loan.name)+'!');},200);
     }
     if(typeof awardXP==='function') awardXP('loan_payment');
   }
@@ -303,7 +303,7 @@ function generatePaySchedule(li){
   }
   if(added>0){
     persist();renderLoans();
-    showToast('✓ Added '+added+' payment chip'+(added>1?'s':'')+' for '+loan.name+' — new ones are highlighted');
+    showToast('✓ Added '+added+' payment chip'+(added>1?'s':'')+' for '+esc(loan.name)+' — new ones are highlighted');
     // Clear highlight after 4 seconds
     setTimeout(()=>{_newChipMonths=new Set();renderLoans();},4000);
   } else showToast('All 12 months already logged','warn-t');
@@ -372,7 +372,7 @@ function updateBonus(val){
 function celebrateLoanPaidOff(loanName){
   setTimeout(()=>{
     launchConfetti(200);
-    showToast('🏆 Loan paid off: '+loanName+'!');
+    showToast('🏆 Loan paid off: '+esc(loanName)+'!');
   },150);
 }
 

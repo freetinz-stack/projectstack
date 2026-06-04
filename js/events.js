@@ -100,7 +100,7 @@ var _ACTION_ALLOWLIST = new Set([
   'saveBulkBudgets','openEnvelopeDetail','closeEnvelopeDetail',
   'drillDownCategory','openEnvModal','closeEnvModal','saveEnvCap',
   'toggleWeekCollapse','setTagFilter','openDueDateModal','toggleExpHeatmap',
-  'openNoteModal','openReceiptModal','closeReceiptModal','clearReceipt','editAmt','bulkMarkPaid',
+  'openNoteModal','openReceiptModal','closeReceiptModal','clearReceipt','editAmt','bulkMarkPaid','toggleAllWeekPaid',
   'delExpConfirm','delExpCancel',
   'enterBulkMode','exitBulkMode',
   'bulkMarkAllPaid','bulkMarkAllUnpaid','bulkDeleteSelected',
