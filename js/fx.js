@@ -62,7 +62,7 @@ function convertToHome(amount, fromCode) {
 // Format an item amount for row display:
 // If same currency as home: plain fmt(amount)
 // If different: "EUR 45.00 ≈ $49.23"  (or just "EUR 45.00" when no rate)
-function fmtItemAmount(amount, itemCurrency) {
+function fmtItemAmount(amount, itemCurrency, opts) {
   var homeCode = (typeof getCurrency === 'function') ? getCurrency().code : 'USD';
   if (!itemCurrency || itemCurrency === homeCode) {
     return (typeof fmt === 'function') ? fmt(amount) : String(amount);
@@ -77,7 +77,12 @@ function fmtItemAmount(amount, itemCurrency) {
   var conv = convertToHome(amount, itemCurrency);
   if (conv.noRate || !conv.converted) return origStr;
   var homeFmt = (typeof fmt === 'function') ? fmt(conv.value) : String(conv.value.toFixed(2));
-  return origStr + ' <span class="fx-approx" aria-label="approximately">≈</span> ' + homeFmt;
+  // Stacked layout: home amount (primary) on top, original amount (muted) below
+  // opts.inline=true falls back to the old single-line format for contexts like table headers
+  if (opts && opts.inline) {
+    return origStr + ' <span class="fx-approx" aria-label="approximately">≈</span> ' + homeFmt;
+  }
+  return homeFmt + '<br><span class="fx-orig" title="Original: ' + origStr + '">' + origStr + '</span>';
 }
 
 // Exported to window so state.js totalling and render functions can use them

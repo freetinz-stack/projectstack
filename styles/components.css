@@ -1352,3 +1352,13 @@ tr.bulk-sel td { background: var(--sage-light) !important; }
   margin: 0 2px;
   font-style: normal;
 }
+.fx-orig {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-top: 1px;
+  white-space: nowrap;
+}
