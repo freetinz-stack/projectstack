@@ -464,6 +464,8 @@ function openLoanModal(idx) {
   _populateCurrencySelect('lCurrency', isEdit ? (loan.currency || getCurrency().code) : getCurrency().code);
 
   document.getElementById('loanDeleteConfirm').classList.remove('show');
+  const ldb=document.getElementById('lDeleteBtn');
+  if(ldb) ldb.style.display = isEdit ? 'inline-flex' : 'none';
 
   const _lm=document.getElementById('loanModal');
   _lm.classList.add('open');
@@ -487,9 +489,11 @@ function showLoanDeleteConfirm() {
       : 'Delete this loan permanently?';
   }
   document.getElementById('loanDeleteConfirm').classList.add('show');
+  const ldb=document.getElementById('lDeleteBtn'); if(ldb) ldb.style.display='none';
 }
 function hideLoanDeleteConfirm() {
   document.getElementById('loanDeleteConfirm').classList.remove('show');
+  const ldb=document.getElementById('lDeleteBtn'); if(ldb) ldb.style.display='inline-flex';
 }
 
 function confirmDeleteLoan() {
