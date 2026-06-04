@@ -168,7 +168,7 @@ var _ACTION_ALLOWLIST = new Set([
   'showRecoveryPanel','verifyRecovery','removePin',
   'submitPinSetupPassphrase','cancelPinPassphrase',
   // Dark mode & themes
-  'toggleDark','activateThemeFromBtn','setTheme',
+  'toggleDark','activateThemeFromBtn','activateTheme','setTheme',
   // AI coach
   'coachAsk','coachClear','coachRunMode','runAiInsights',
   'openAISetupClaude','openAISetupOpenai','openClaudeSetup','openAISetup',
