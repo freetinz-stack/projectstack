@@ -205,47 +205,9 @@
     </div>
 
     <!-- Step 2: Storage selection -->
+    <!-- Step 2: Income sources -->
     <div id="obStep2" style="display:none;">
-      <div class="ob-h" id="obStepHeading2">Save your data locally</div>
-      <div class="ob-sub">Your data stays on this device — no account or internet needed. In Chrome or Edge you can pick a folder (e.g. Documents) for automatic saving. Other browsers will download a backup file you can keep anywhere.</div>
-
-      <div class="ob-sync-card ob-sync-active" id="obLocalCard" data-action="obSelectStorage" data-arg="local" style="cursor:pointer;">
-        <div class="ob-sync-card-header">
-          <span class="ob-sync-icon">&#128193;</span>
-          <span class="ob-sync-title">Local File</span>
-          <span class="ob-sync-badge" id="obLocalBadge">&#10003; Selected</span>
-        </div>
-        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Chrome / Edge: pick a folder and the app auto-saves fincwin-data.json there. Other browsers: downloads the file on demand — works everywhere.</div>
-      </div>
-
-      <div class="ob-sync-card" id="obDriveCard" style="opacity:0.4;pointer-events:none;" title="Available in Settings after setup">
-        <div class="ob-sync-card-header">
-          <span class="ob-sync-icon">&#9729;</span>
-          <span class="ob-sync-title">Google Drive</span>
-          <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">Set up in Settings</span>
-        </div>
-        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Sync to your own Google Drive — connect in Settings</div>
-      </div>
-
-      <div class="ob-sync-card" id="obFirebaseCard" style="opacity:0.4;pointer-events:none;" title="Available in Settings after setup">
-        <div class="ob-sync-card-header">
-          <span class="ob-sync-icon">&#128274;</span>
-          <span class="ob-sync-title">Firebase</span>
-          <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">Set up in Settings</span>
-        </div>
-        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Encrypted cloud sync via Firebase — connect in Settings</div>
-      </div>
-
-      <div id="obSyncErr" class="ob-err" style="color:var(--danger);font-size:12px;margin-top:4px;"></div>
-      <div class="ob-nav" style="margin-top:14px;">
-        <button class="ob-back" data-action="obGoTo" data-arg="1">&#8592; Back</button>
-        <button class="ob-btn-primary" data-action="obAdvanceStep2">Next &rarr;</button>
-      </div>
-    </div>
-
-    <!-- Step 3: Income sources -->
-    <div id="obStep3" style="display:none;">
-      <div class="ob-h" id="obStepHeading3">Income sources</div>
+      <div class="ob-h" id="obStepHeading2">Income sources</div>
       <div class="ob-sub">Add each income source — salary, freelance, benefits, anything received monthly. Press + or Enter after each one.</div>
       <div class="ob-add-row">
         <input class="ob-input" id="obIncName" type="text" placeholder="Source (e.g. Salary, Freelance)" maxlength="60"
@@ -260,15 +222,15 @@
       <div class="ob-err" id="obIncomeErr"></div>
       <div id="obIncList" class="ob-item-list ob-list-empty"></div>
       <div class="ob-nav" style="margin-top:14px;">
-        <button class="ob-back" data-action="obGoTo" data-arg="2">&#8592; Back</button>
+        <button class="ob-back" data-action="obGoTo" data-arg="1">&#8592; Back</button>
         <button class="ob-btn-primary" data-action="obSaveIncome">Next &rarr;</button>
       </div>
-      <button class="ob-btn-sec" data-action="obGoTo" data-arg="4">Skip — I'll add income later</button>
+      <button class="ob-btn-sec" data-action="obGoTo" data-arg="3">Skip — I'll add income later</button>
     </div>
 
-    <!-- Step 4: Expenses -->
-    <div id="obStep4" style="display:none;">
-      <div class="ob-h" id="obStepHeading4">Monthly expenses</div>
+    <!-- Step 3: Expenses -->
+    <div id="obStep3" style="display:none;">
+      <div class="ob-h" id="obStepHeading3">Monthly expenses</div>
       <div class="ob-sub">Fill in the details below and press <strong>Add Expense</strong> to add each one.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
         <div style="grid-column:1/-1;">
@@ -333,15 +295,15 @@
       <button class="ob-add-btn full" data-action="obAddExpense">+ Add Expense</button>
       <div id="obExpList" class="ob-item-list ob-list-empty"></div>
       <div class="ob-nav" style="margin-top:14px;">
-        <button class="ob-back" data-action="obGoTo" data-arg="3">&#8592; Back</button>
-        <button class="ob-btn-primary" data-action="obGoTo" data-arg="5">Next &rarr;</button>
+        <button class="ob-back" data-action="obGoTo" data-arg="2">&#8592; Back</button>
+        <button class="ob-btn-primary" data-action="obGoTo" data-arg="4">Next &rarr;</button>
       </div>
-      <button class="ob-btn-sec" data-action="obGoTo" data-arg="5">Skip — I'll add expenses later</button>
+      <button class="ob-btn-sec" data-action="obGoTo" data-arg="4">Skip — I'll add expenses later</button>
     </div>
 
-    <!-- Step 5: Loans -->
-    <div id="obStep5" style="display:none;">
-      <div class="ob-h" id="obStepHeading5">Loans &amp; debts</div>
+    <!-- Step 4: Loans -->
+    <div id="obStep4" style="display:none;">
+      <div class="ob-h" id="obStepHeading4">Loans &amp; debts</div>
       <div class="ob-sub">Add credit cards, car loans, student loans — anything you're paying down.</div>
       <div class="ob-loan-form">
         <div class="ob-loan-full">
@@ -373,15 +335,15 @@
       <button class="ob-add-btn full" data-action="obAddLoan">+ Add Loan</button>
       <div id="obLoanList" class="ob-item-list ob-list-empty"></div>
       <div class="ob-nav" style="margin-top:14px;">
-        <button class="ob-back" data-action="obGoTo" data-arg="4">&#8592; Back</button>
-        <button class="ob-btn-primary" data-action="obGoTo" data-arg="6">Next &rarr;</button>
+        <button class="ob-back" data-action="obGoTo" data-arg="3">&#8592; Back</button>
+        <button class="ob-btn-primary" data-action="obGoTo" data-arg="5">Next &rarr;</button>
       </div>
-      <button class="ob-btn-sec" data-action="obGoTo" data-arg="6">Skip — no loans to add</button>
+      <button class="ob-btn-sec" data-action="obGoTo" data-arg="5">Skip — no loans to add</button>
     </div>
 
-    <!-- Step 6: Savings goals -->
-    <div id="obStep6" style="display:none;">
-      <div class="ob-h" id="obStepHeading6">Savings goals</div>
+    <!-- Step 5: Savings goals -->
+    <div id="obStep5" style="display:none;">
+      <div class="ob-h" id="obStepHeading5">Savings goals</div>
       <div class="ob-sub">Set up goals like an Emergency Fund or Vacation. Press + to add each one.</div>
       <div class="ob-add-row" style="flex-wrap:wrap;gap:6px;">
         <input class="ob-input" id="obSavName" type="text" placeholder="Goal name (e.g. Emergency Fund)" maxlength="60"
@@ -419,15 +381,15 @@
       <button class="ob-add-btn full" data-action="obAddSaving">+ Add Goal</button>
       <div id="obSavList" class="ob-item-list ob-list-empty"></div>
       <div class="ob-nav" style="margin-top:14px;">
-        <button class="ob-back" data-action="obGoTo" data-arg="5">&#8592; Back</button>
-        <button class="ob-btn-primary" data-action="obGoTo" data-arg="7">Next &rarr;</button>
+        <button class="ob-back" data-action="obGoTo" data-arg="4">&#8592; Back</button>
+        <button class="ob-btn-primary" data-action="obGoTo" data-arg="6">Next &rarr;</button>
       </div>
-      <button class="ob-btn-sec" data-action="obGoTo" data-arg="7">Skip — no savings goals yet</button>
+      <button class="ob-btn-sec" data-action="obGoTo" data-arg="6">Skip — no savings goals yet</button>
     </div>
 
-    <!-- Step 7: PIN (required) + recovery passphrase -->
-    <div id="obStep7" style="display:none;">
-      <div class="ob-h" id="obStepHeading7">Protect your data</div>
+    <!-- Step 6: PIN (required) + recovery passphrase -->
+    <div id="obStep6" style="display:none;">
+      <div class="ob-h" id="obStepHeading6">Protect your data</div>
       <div class="ob-sub">Set a PIN and recovery passphrase to keep your finances private.</div>
       <!-- PIN entry section -->
       <div id="obPinPadSection">
@@ -463,13 +425,52 @@
         <input type="password" id="obPassphrase" class="ob-input" placeholder="Recovery passphrase (min. 8 chars)" autocomplete="new-password" style="width:100%;margin-bottom:8px;">
         <input type="password" id="obPassphrase2" class="ob-input" placeholder="Confirm recovery passphrase" autocomplete="new-password" style="width:100%;">
         <div class="ob-nav" style="margin-top:12px;">
-          <button class="ob-back" data-action="obGoTo" data-arg="7">&#8592; Re-enter PIN</button>
+          <button class="ob-back" data-action="obGoTo" data-arg="6">&#8592; Re-enter PIN</button>
           <button class="ob-btn-primary" data-action="obSubmitPassphrase">Next &rarr;</button>
         </div>
       </div>
       <div class="ob-err" id="obPinErr" style="text-align:center;margin-top:8px;"></div>
       <div class="ob-nav" id="obPinNavBack" style="margin-top:16px;">
+        <button class="ob-back" data-action="obGoTo" data-arg="5">&#8592; Back</button>
+      </div>
+    </div>
+
+    <!-- Step 7: Save your data locally -->
+    <div id="obStep7" style="display:none;">
+      <div class="ob-h" id="obStepHeading7">Save your data locally</div>
+      <div class="ob-sub">Your data stays on this device — no account or internet needed. In Chrome or Edge you can pick a folder (e.g. Documents) for automatic saving. Other browsers will download a backup file you can keep anywhere.</div>
+
+      <div class="ob-sync-card ob-sync-active" id="obLocalCard" data-action="obSelectStorage" data-arg="local" style="cursor:pointer;">
+        <div class="ob-sync-card-header">
+          <span class="ob-sync-icon">&#128193;</span>
+          <span class="ob-sync-title">Local File</span>
+          <span class="ob-sync-badge" id="obLocalBadge">&#10003; Selected</span>
+        </div>
+        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Chrome / Edge: pick a folder and the app auto-saves fincwin-data.json there. Other browsers: downloads the file on demand — works everywhere.</div>
+      </div>
+
+      <div class="ob-sync-card" id="obDriveCard" style="opacity:0.4;pointer-events:none;" title="Available in Settings after setup">
+        <div class="ob-sync-card-header">
+          <span class="ob-sync-icon">&#9729;</span>
+          <span class="ob-sync-title">Google Drive</span>
+          <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">Set up in Settings</span>
+        </div>
+        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Sync to your own Google Drive — connect in Settings</div>
+      </div>
+
+      <div class="ob-sync-card" id="obFirebaseCard" style="opacity:0.4;pointer-events:none;" title="Available in Settings after setup">
+        <div class="ob-sync-card-header">
+          <span class="ob-sync-icon">&#128274;</span>
+          <span class="ob-sync-title">Firebase</span>
+          <span style="font-size:10px;color:var(--text-muted);margin-left:auto;">Set up in Settings</span>
+        </div>
+        <div class="ob-sub" style="font-size:12px;margin-top:6px;color:var(--text-muted);">Encrypted cloud sync via Firebase — connect in Settings</div>
+      </div>
+
+      <div id="obSyncErr" class="ob-err" style="color:var(--danger);font-size:12px;margin-top:4px;"></div>
+      <div class="ob-nav" style="margin-top:14px;">
         <button class="ob-back" data-action="obGoTo" data-arg="6">&#8592; Back</button>
+        <button class="ob-btn-primary" data-action="obAdvanceStep2">Next &rarr;</button>
       </div>
     </div>
 

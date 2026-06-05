@@ -42,14 +42,14 @@ function obGoTo(step){
   // Keep aria-labelledby pointing at the visible step heading (audit A-02).
   var ov=document.getElementById('onboardOverlay');
   if(ov) ov.setAttribute('aria-labelledby','obStepHeading'+step);
-  if(step===2) obRenderSyncStep();
-  if(step===3||step===4||step===5||step===6) obSyncPrefixes();
-  if(step===4){
+  if(step===7) obRenderSyncStep();
+  if(step===2||step===3||step===4||step===5) obSyncPrefixes();
+  if(step===3){
     _obReceiptData=null;
     document.getElementById('obExpReceiptLabel').textContent='📷 Tap to attach image';
     document.getElementById('obExpReceipt').value='';
   }
-  if(step===7){
+  if(step===6){
     _obPin=''; _obPinFirst=''; _obPinPhase='enter'; _obPinFinal='';
     document.getElementById('obPinPhaseLabel').textContent='Enter a new PIN';
     document.getElementById('obPinErr').textContent='';
@@ -121,7 +121,7 @@ function obFreqChange(){
 
 function obSaveIncome(){
   document.getElementById('obIncomeErr').textContent='';
-  obGoTo(4);
+  obGoTo(3);
 }
 
 // ── Income ──
@@ -390,7 +390,7 @@ async function obSubmitPassphrase(){
   if(pass!==pass2){err.textContent='Passphrases do not match';document.getElementById('obPassphrase2').value='';document.getElementById('obPassphrase2').focus();return;}
   // Save PIN + passphrase using the shared _doFinalPinSetup from state.js
   await _doFinalPinSetup(_obPinFinal, pass);
-  obGoTo(8);
+  obGoTo(7);
 }
 
 // ── Finish ──
@@ -504,7 +504,7 @@ function obAdvanceStep1() {
   obGoTo(2);
 }
 
-// ── Sync step (Step 2) helpers ──────────────────────────────────────────────
+// ── Sync step (Step 7) helpers ──────────────────────────────────────────────
 
 var _OB_CARD_MAP = { local: 'obLocalCard', gdrive: 'obDriveCard', firebase: 'obFirebaseCard' };
 
@@ -532,7 +532,7 @@ function obAdvanceStep2(){
     if(err) err.textContent='Please select Local File to continue. Cloud sync can be configured in Settings after setup.';
     return;
   }
-  obGoTo(3);
+  obGoTo(8);
 }
 
 function obRenderSyncStep() {
