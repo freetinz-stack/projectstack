@@ -592,6 +592,51 @@
 /* ══════════════════════════════════════════
    BUDGET ENVELOPES
    ══════════════════════════════════════════ */
+/* ── Envelope collapse wrapper ── */
+.env-collapse-wrap {
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  /* max-height set dynamically by JS */
+}
+
+/* "N more" pill below the grid */
+.env-more-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  padding: 6px 0 2px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.env-more-pill span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: .03em;
+  transition: color .15s;
+}
+.env-more-pill:hover span { color: var(--sage); }
+
+/* Draining progress bar */
+.env-more-bar {
+  width: 48px;
+  height: 2px;
+  background: var(--sage-mid);
+  border-radius: 2px;
+  margin-top: 5px;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+.env-more-bar.draining {
+  animation: envBarDrain 3s linear forwards;
+}
+@keyframes envBarDrain {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
 .envelopes-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

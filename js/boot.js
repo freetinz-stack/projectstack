@@ -333,7 +333,143 @@ function renderEnvelopes(){
     </div>`;
   }).join('');
   checkBudgetThresholds();
+  initEnvCollapse();
 }
+
+// ── Envelope grid collapse / hover-expand ───────────────────────────────────
+var _envExpanded = false;
+var _envCollapseTimer = null;
+var _envTouchOpen = false; // mobile: stay open until tapped again
+
+function initEnvCollapse() {
+  var wrap = document.getElementById('envCollapseWrap');
+  var grid = document.getElementById('envelopesGrid');
+  var pill = document.getElementById('envMorePill');
+  var label = document.getElementById('envMoreLabel');
+  var bar = document.getElementById('envMoreBar');
+  if (!wrap || !grid || !pill) return;
+
+  // Measure after layout — rAF ensures grid has painted
+  requestAnimationFrame(function() {
+    var allCards = grid.querySelectorAll('.be');
+    if (!allCards.length) { pill.style.display = 'none'; wrap.style.maxHeight = ''; return; }
+
+    // Compute how many columns fit — measure the first card width against grid width
+    var gridW = grid.getBoundingClientRect().width;
+    var cardW = allCards[0].getBoundingClientRect().width;
+    var cols = cardW > 0 ? Math.max(1, Math.round(gridW / cardW)) : 4;
+    var firstRowH = allCards[0].getBoundingClientRect().height;
+    var totalH = grid.scrollHeight;
+    var hiddenCount = Math.max(0, allCards.length - cols);
+
+    if (hiddenCount === 0) {
+      // Everything fits in one row — no collapse needed
+      wrap.style.maxHeight = '';
+      pill.style.display = 'none';
+      _removeEnvListeners(wrap);
+      return;
+    }
+
+    // Collapsed: clip to first row
+    wrap.style.maxHeight = firstRowH + 'px';
+    _envExpanded = false;
+    _envTouchOpen = false;
+    label.textContent = '▾ ' + hiddenCount + ' more ' + (hiddenCount === 1 ? 'category' : 'categories');
+    pill.style.display = 'flex';
+    bar.classList.remove('draining');
+
+    // Store full height for expand
+    wrap._fullH = totalH;
+    wrap._rowH = firstRowH;
+
+    _removeEnvListeners(wrap);
+    _attachEnvListeners(wrap, pill, bar, label, hiddenCount);
+  });
+}
+
+function _attachEnvListeners(wrap, pill, bar, label, hiddenCount) {
+  function expand() {
+    _clearEnvTimer();
+    bar.classList.remove('draining');
+    wrap.style.maxHeight = wrap._fullH + 'px';
+    _envExpanded = true;
+    label.textContent = '▴ hide';
+  }
+  function collapse() {
+    wrap.style.maxHeight = wrap._rowH + 'px';
+    _envExpanded = false;
+    _envTouchOpen = false;
+    label.textContent = '▾ ' + hiddenCount + ' more ' + (hiddenCount === 1 ? 'category' : 'categories');
+    bar.classList.remove('draining');
+  }
+  function startCollapseTimer() {
+    _clearEnvTimer();
+    bar.classList.remove('draining');
+    // Force reflow so animation restarts cleanly
+    void bar.offsetWidth;
+    bar.classList.add('draining');
+    _envCollapseTimer = setTimeout(collapse, 3000);
+  }
+
+  // Desktop: hover on the wrap
+  wrap._envEnter = function() {
+    if (_envTouchOpen) return;
+    expand();
+  };
+  wrap._envLeave = function() {
+    if (_envTouchOpen) return;
+    if (_envExpanded) startCollapseTimer();
+  };
+  wrap.addEventListener('mouseenter', wrap._envEnter);
+  wrap.addEventListener('mouseleave', wrap._envLeave);
+
+  // Cancel timer if mouse re-enters while draining
+  wrap._envReEnter = function() {
+    if (_envTouchOpen) return;
+    _clearEnvTimer();
+    bar.classList.remove('draining');
+  };
+  wrap.addEventListener('mouseenter', wrap._envReEnter);
+
+  // Pill click/tap — works on both desktop and mobile
+  pill._envClick = function(e) {
+    e.stopPropagation();
+    if (_envExpanded && _envTouchOpen) {
+      // Mobile: second tap collapses
+      _clearEnvTimer();
+      collapse();
+    } else if (_envExpanded) {
+      // Desktop: pill click while open collapses immediately
+      _clearEnvTimer();
+      collapse();
+    } else {
+      // Open — on touch mark as touch-open so hover timers don't interfere
+      var isTouch = e.pointerType === 'touch' || window.matchMedia('(hover:none)').matches;
+      _envTouchOpen = isTouch;
+      expand();
+    }
+  };
+  pill.addEventListener('click', pill._envClick);
+}
+
+function _removeEnvListeners(wrap) {
+  var pill = document.getElementById('envMorePill');
+  if (wrap._envEnter) wrap.removeEventListener('mouseenter', wrap._envEnter);
+  if (wrap._envLeave) wrap.removeEventListener('mouseleave', wrap._envLeave);
+  if (wrap._envReEnter) wrap.removeEventListener('mouseenter', wrap._envReEnter);
+  if (pill && pill._envClick) pill.removeEventListener('click', pill._envClick);
+}
+
+function _clearEnvTimer() {
+  if (_envCollapseTimer) { clearTimeout(_envCollapseTimer); _envCollapseTimer = null; }
+}
+
+function toggleEnvExpand() {
+  // Fallback for data-action routing — pill click handles this directly
+  var pill = document.getElementById('envMorePill');
+  if (pill && pill._envClick) pill._envClick({ stopPropagation: function(){}, pointerType: '' });
+}
+
 function drillDownCategory(cat){
   tagFilter=cat;
   switchTab('expenses',document.getElementById('tab-expenses'));

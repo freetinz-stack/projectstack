@@ -853,7 +853,15 @@
         <button class="tbtn no-print" data-action="openBulkBudgetModal" style="font-size:11px;color:var(--sage);border-color:var(--sage-mid);" title="Edit all budget caps at once">&#9998; Edit All</button>
       </div>
     </div>
-    <div style="padding:12px;"><div class="envelopes-grid" id="envelopesGrid"></div></div>
+    <div style="padding:12px;">
+      <div class="env-collapse-wrap" id="envCollapseWrap">
+        <div class="envelopes-grid" id="envelopesGrid"></div>
+      </div>
+      <div class="env-more-pill" id="envMorePill" style="display:none;" data-action="toggleEnvExpand" aria-label="Show all categories">
+        <span id="envMoreLabel">▾ more categories</span>
+        <div class="env-more-bar" id="envMoreBar"></div>
+      </div>
+    </div>
   </div>
 
   <div class="tag-filter-bar" id="tagFilterBar"></div>

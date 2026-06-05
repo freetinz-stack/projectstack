@@ -97,7 +97,7 @@ var _ACTION_ALLOWLIST = new Set([
   'togglePaid','toggleExp',
   'toggleItemCurrencyRow','clearItemDueDay','hideItemDeleteConfirm','renderCatPillsAll',
   'confirmDeleteItem','recurringAutoFill','openBulkBudgetModal','closeBulkBudgetModal',
-  'saveBulkBudgets','catMgrAddRow','openEnvelopeDetail','closeEnvelopeDetail',
+  'saveBulkBudgets','catMgrAddRow','toggleEnvExpand','openEnvelopeDetail','closeEnvelopeDetail',
   'drillDownCategory','openEnvModal','closeEnvModal','saveEnvCap',
   'toggleWeekCollapse','setTagFilter','openDueDateModal','toggleExpHeatmap',
   'openNoteModal','openReceiptModal','closeReceiptModal','clearReceipt','editAmt','bulkMarkPaid','toggleAllWeekPaid',
