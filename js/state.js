@@ -1636,7 +1636,7 @@ async function verifyRecovery(){
   var _autoLockBusy = false;
   setInterval(function(){
     if(_autoLockBusy || !_sessionKey) return;
-    var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 15;
+    var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 240;
     if(mins === 0) return;
     if(Date.now() - _lastActivity > mins * 60000){
       _autoLockBusy = true;
@@ -1652,7 +1652,7 @@ async function verifyRecovery(){
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState !== 'visible') return;
     if(!_sessionKey) return;
-    var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 15;
+    var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 240;
     if(mins === 0) return;
     if(Date.now() - _lastActivity > mins * 60000){
       lockApp().then(function(){ showToast('Locked due to inactivity', 'warn-t'); }).catch(function(){});
