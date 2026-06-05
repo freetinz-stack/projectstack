@@ -739,6 +739,8 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 .ob-amount-input { flex: 1; padding: 10px 12px; border: none; background: none; font-family: var(--font-sans); font-size: 14px; color: var(--ink); outline: none; min-width: 0; }
 .ob-btn-primary { width: 100%; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 2px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s; margin-top: 8px; }
 .ob-btn-primary:hover { background: var(--sage-dark); }
+.ob-btn-ghost { width: 100%; padding: 10px; background: none; color: var(--accent); border: 1px solid var(--accent); border-radius: 2px; font-family: var(--font-sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s, color .15s; }
+.ob-btn-ghost:hover { background: var(--accent); color: white; }
 .ob-btn-sec { width: 100%; padding: 8px; background: none; color: var(--muted); border: none; font-family: var(--font-sans); font-size: 12px; cursor: pointer; margin-top: 4px; }
 .ob-btn-sec:hover { color: var(--ink); text-decoration: underline; }
 .ob-nav { display: flex; gap: 10px; margin-top: 8px; }

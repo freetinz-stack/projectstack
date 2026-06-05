@@ -187,7 +187,7 @@ var _ACTION_ALLOWLIST = new Set([
   // Analytics & dashboard
   'openScorecardModal','closeScorecardModal','dismissDashAlerts','toggleDtiTooltip','askAIAboutDTI',
   // Onboarding
-  'obGoTo','obFinish','obSkip','obHandleReceiptFileFromEl',
+  'obGoTo','obFinish','obSkip','obLoadDemoAndClose','obHandleReceiptFileFromEl',
   'obAdvanceStep1','obAdvanceStep2','obSelectStorage','obSaveIncome',
   'obSubmitPassphrase',
   'obAddIncome','obRemoveIncome',
