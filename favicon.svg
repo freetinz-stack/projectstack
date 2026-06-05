@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="geometricPrecision">
+  <!-- Background: deep sage rounded square -->
+  <rect width="32" height="32" rx="7" fill="#5a6e3f"/>
+  <!-- Serif-style "F" centred in the square -->
+  <!-- Top horizontal bar -->
+  <rect x="9" y="8" width="14" height="2.5" rx="1" fill="#ffffff"/>
+  <!-- Middle horizontal bar (shorter) -->
+  <rect x="9" y="14.5" width="10" height="2.5" rx="1" fill="#ffffff"/>
+  <!-- Vertical stem -->
+  <rect x="9" y="8" width="2.8" height="16" rx="1" fill="#ffffff"/>
+  <!-- Small accent dot — bottom right, gold-ish warm tone -->
+  <circle cx="24" cy="24.5" r="2.8" fill="#d4a853"/>
+</svg>

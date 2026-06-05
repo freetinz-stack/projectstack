@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — FincWin</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sage:    #5a6e3f;
+      --sage-lt: #dce8d4;
+      --sage-dk: #3d4d2b;
+      --ink:     #111111;
+      --muted:   #6b7280;
+      --faint:   #f5f4f0;
+      --white:   #ffffff;
+      --border:  rgba(0,0,0,.09);
+      --danger:  #dc2626;
+      --sans: 'Hanken Grotesk', sans-serif;
+      --serif: 'Instrument Serif', serif;
+    }
+    html, body {
+      height: 100%; font-family: var(--sans); font-weight: 300;
+      color: var(--ink); background: var(--faint);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      background: var(--ink);
+      padding: 48px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative; overflow: hidden;
+    }
+    .left-panel::before {
+      content: '';
+      position: absolute; top: -20%; left: -20%;
+      width: 140%; height: 140%;
+      background: radial-gradient(ellipse at 30% 40%, rgba(90,110,63,.25) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .panel-logo { font-size: 18px; font-weight: 500; color: white; text-decoration: none; }
+    .panel-logo span { color: #a8c48a; }
+
+    .panel-middle { position: relative; z-index: 1; }
+    .panel-headline {
+      font-family: var(--serif);
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 400; line-height: 1.15;
+      color: white; margin-bottom: 20px;
+    }
+    .panel-headline em { font-style: italic; color: #a8c48a; }
+    .panel-sub {
+      font-size: 15px; font-weight: 300;
+      color: rgba(255,255,255,.45); line-height: 1.6;
+      max-width: 340px;
+    }
+    .panel-features { margin-top: 40px; display: flex; flex-direction: column; gap: 14px; }
+    .panel-feature {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 13px; font-weight: 300; color: rgba(255,255,255,.5);
+    }
+    .panel-feature-icon {
+      width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px;
+    }
+    .panel-feature strong { color: rgba(255,255,255,.8); font-weight: 500; }
+
+    .panel-footer {
+      font-size: 12px; color: rgba(255,255,255,.2);
+      position: relative; z-index: 1;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      background: var(--white);
+      padding: 48px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .auth-box { width: 100%; max-width: 400px; }
+
+    /* Tab toggle */
+    .auth-tabs {
+      display: flex; background: var(--faint);
+      border-radius: 10px; padding: 4px; margin-bottom: 36px;
+      gap: 2px;
+    }
+    .auth-tab {
+      flex: 1; padding: 10px; text-align: center;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      border-radius: 8px; cursor: pointer; border: none; background: none;
+      font-family: var(--sans); transition: background .15s, color .15s;
+    }
+    .auth-tab.active { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    .auth-heading {
+      font-family: var(--serif);
+      font-size: 28px; font-weight: 400; color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .auth-sub {
+      font-size: 13px; color: var(--muted); margin-bottom: 32px; line-height: 1.5;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block; font-size: 11px; font-weight: 500;
+      letter-spacing: .8px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 13px 16px;
+      background: var(--faint); border: 1px solid var(--border);
+      border-radius: 10px; font-family: var(--sans); font-size: 14px;
+      font-weight: 300; color: var(--ink); outline: none;
+      transition: border-color .15s, background .15s;
+      -webkit-appearance: none;
+    }
+    input:focus { border-color: var(--sage); background: white; }
+    input::placeholder { color: #c4c9d4; }
+
+    .input-hint { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .btn-submit {
+      width: 100%; padding: 14px; border-radius: 50px;
+      background: var(--ink); color: white;
+      font-family: var(--sans); font-size: 14px; font-weight: 500;
+      border: none; cursor: pointer; margin-top: 8px;
+      transition: background .2s, transform .15s;
+    }
+    .btn-submit:hover { background: var(--sage); transform: translateY(-1px); }
+
+    .divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 24px 0; color: var(--muted); font-size: 12px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .btn-key {
+      width: 100%; padding: 13px 16px;
+      background: white; border: 1px solid var(--border); border-radius: 10px;
+      font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--ink);
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: border-color .15s, background .15s;
+    }
+    .btn-key:hover { border-color: var(--sage); background: var(--faint); }
+
+    .key-input-row { display: none; margin-top: 14px; }
+    .key-input-row.show { display: flex; gap: 10px; }
+    .key-input-row input { flex: 1; font-family: monospace; letter-spacing: 1px; }
+    .btn-activate {
+      padding: 13px 20px; background: var(--sage); color: white;
+      border: none; border-radius: 10px; font-family: var(--sans);
+      font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-activate:hover { background: var(--sage-dk); }
+
+    .auth-footer {
+      text-align: center; margin-top: 28px;
+      font-size: 13px; color: var(--muted);
+    }
+    .auth-footer a { color: var(--sage); text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    .terms-note {
+      margin-top: 20px; text-align: center;
+      font-size: 11px; color: var(--muted); line-height: 1.5;
+    }
+    .terms-note a { color: var(--muted); }
+
+    .error-msg {
+      display: none; background: #fef2f2; border: 1px solid #fecaca;
+      color: var(--danger); font-size: 13px; border-radius: 8px;
+      padding: 11px 14px; margin-bottom: 20px;
+    }
+    .success-msg {
+      display: none; background: #f0fdf4; border: 1px solid #bbf7d0;
+      color: #15803d; font-size: 13px; border-radius: 8px;
+      padding: 11px 14px; margin-bottom: 20px;
+    }
+
+    /* Forgot password link */
+    .forgot { float: right; font-size: 12px; color: var(--muted); text-decoration: none; }
+    .forgot:hover { color: var(--ink); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 36px 24px; align-items: flex-start; padding-top: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- LEFT: Brand panel -->
+    <div class="left-panel">
+      <a href="landing.html" class="panel-logo">Finc<span>Win</span></a>
+
+      <div class="panel-middle">
+        <h2 class="panel-headline">Money clarity<br>starts with<br><em>knowing the number.</em></h2>
+        <p class="panel-sub">Sign in to sync your account, manage your licence, or pick up where you left off.</p>
+
+        <div class="panel-features">
+          <div class="panel-feature">
+            <svg class="panel-feature-icon" viewBox="0 0 24 24" fill="none" stroke="rgba(168,196,138,.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span><strong>End-to-end encrypted</strong> — your data is never readable by us</span>
+          </div>
+          <div class="panel-feature">
+            <svg class="panel-feature-icon" viewBox="0 0 24 24" fill="none" stroke="rgba(168,196,138,.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+            <span><strong>Google Drive backup</strong> — available on Pro & Lifetime plans</span>
+          </div>
+          <div class="panel-feature">
+            <svg class="panel-feature-icon" viewBox="0 0 24 24" fill="none" stroke="rgba(168,196,138,.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>
+            </svg>
+            <span><strong>One-time payment</strong> — no subscriptions, own it forever</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="panel-footer">© 2026 FincWin &nbsp;·&nbsp; <a href="landing.html" style="color:rgba(255,255,255,.2);text-decoration:none;">Back to site</a></p>
+    </div>
+
+    <!-- RIGHT: Auth forms -->
+    <div class="right-panel">
+      <div class="auth-box">
+
+        <!-- Tab switcher -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" onclick="switchTab('signin')">Sign in</button>
+          <button class="auth-tab" onclick="switchTab('register')">Create account</button>
+        </div>
+
+        <!-- SIGN IN -->
+        <div class="auth-panel active" id="tab-signin">
+          <h2 class="auth-heading">Welcome back</h2>
+          <p class="auth-sub">Sign in to your FincWin account to manage your licence and sync settings.</p>
+
+          <div class="error-msg" id="signin-error">Incorrect email or password. Please try again.</div>
+
+          <form onsubmit="handleSignin(event)">
+            <div class="form-group">
+              <label for="si-email">Email</label>
+              <input type="email" id="si-email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="si-pass">
+                Password
+                <a href="#" class="forgot" onclick="showForgot(event)">Forgot?</a>
+              </label>
+              <input type="password" id="si-pass" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn-submit">Sign in</button>
+          </form>
+
+          <div class="divider">or activate with licence key</div>
+
+          <button class="btn-key" onclick="toggleKeyInput('signin')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+            Enter licence key
+          </button>
+          <div class="key-input-row" id="key-row-signin">
+            <input type="text" id="key-signin" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatKey(this)">
+            <button class="btn-activate" onclick="activateLicence()">Activate</button>
+          </div>
+
+          <p class="auth-footer">Don't have an account? <a href="#" onclick="switchTab('register')">Create one free</a></p>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="auth-panel" id="tab-register">
+          <h2 class="auth-heading">Get started free</h2>
+          <p class="auth-sub">Create your account to save settings, manage your licence, and unlock cloud backup.</p>
+
+          <div class="error-msg" id="reg-error"></div>
+          <div class="success-msg" id="reg-success">Account created! Check your email to confirm, then sign in.</div>
+
+          <form onsubmit="handleRegister(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-fname">First name</label>
+                <input type="text" id="reg-fname" placeholder="Jane" autocomplete="given-name" required>
+              </div>
+              <div class="form-group">
+                <label for="reg-lname">Last name</label>
+                <input type="text" id="reg-lname" placeholder="Doe" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-pass">Password</label>
+              <input type="password" id="reg-pass" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+              <p class="input-hint">Min. 8 characters — used only to protect your account settings.</p>
+            </div>
+            <div class="form-group">
+              <label for="reg-key">Licence key <span style="font-weight:300;font-size:10px;color:#9ca3af;">(optional — add later)</span></label>
+              <input type="text" id="reg-key" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" oninput="formatKey(this)">
+              <p class="input-hint">Purchase a key to unlock Pro features. You can add it anytime from Account.</p>
+            </div>
+            <button type="submit" class="btn-submit">Create account</button>
+          </form>
+
+          <p class="terms-note">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+          <p class="auth-footer" style="margin-top:16px;">Already have an account? <a href="#" onclick="switchTab('signin')">Sign in</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (i === 0 && tab === 'signin') || (i === 1 && tab === 'register'));
+      });
+      document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // Check hash on load
+    if (window.location.hash === '#register') switchTab('register');
+
+    // Toggle licence key input
+    function toggleKeyInput(panel) {
+      const row = document.getElementById('key-row-' + panel);
+      row.classList.toggle('show');
+      if (row.classList.contains('show')) row.querySelector('input').focus();
+    }
+
+    // Format key input as XXXX-XXXX-XXXX-XXXX
+    function formatKey(input) {
+      let v = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 16);
+      let parts = v.match(/.{1,4}/g) || [];
+      input.value = parts.join('-');
+    }
+
+    // Activate licence key (calls Lemon Squeezy License API via proxy)
+    async function activateLicence() {
+      const key = document.getElementById('key-signin').value.trim();
+      if (!key || key.length < 19) { alert('Please enter a complete licence key.'); return; }
+      try {
+        // In production: POST to your serverless proxy which calls
+        // https://api.lemonsqueezy.com/v1/licenses/activate
+        const instanceName = navigator.userAgent.slice(0, 60);
+        const res = await fetch('/api/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ license_key: key, instance_name: instanceName })
+        });
+        const data = await res.json();
+        if (data.activated) {
+          localStorage.setItem('fw_license_key', key);
+          localStorage.setItem('fw_instance_id', data.instance.id);
+          localStorage.setItem('fw_plan', data.meta?.variant_name || 'Pro');
+          window.location.href = 'index.html';
+        } else {
+          alert(data.error || 'Activation failed. Check your key and try again.');
+        }
+      } catch {
+        // Demo: accept any well-formed key
+        if (key.replace(/-/g,'').length === 16) {
+          localStorage.setItem('fw_license_key', key);
+          localStorage.setItem('fw_plan', 'Pro');
+          window.location.href = 'index.html';
+        }
+      }
+    }
+
+    function handleSignin(e) {
+      e.preventDefault();
+      const email = document.getElementById('si-email').value;
+      const pass  = document.getElementById('si-pass').value;
+      // TODO: authenticate against your backend
+      // For now redirect to app
+      if (email && pass.length >= 8) {
+        window.location.href = 'account.html';
+      } else {
+        document.getElementById('signin-error').style.display = 'block';
+      }
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      // TODO: POST to registration endpoint
+      document.getElementById('reg-error').style.display = 'none';
+      document.getElementById('reg-success').style.display = 'block';
+      setTimeout(() => switchTab('signin'), 2500);
+    }
+
+    function showForgot(e) {
+      e.preventDefault();
+      alert('Check your email — if an account exists, a reset link will arrive within 2 minutes.');
+    }
+  </script>
+</body>
+</html>

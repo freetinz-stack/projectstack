@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — FincWin</title>
+  <meta name="description" content="Simple, one-time pricing. No subscriptions. Starter $49, Pro $89, Lifetime $149. Own it forever.">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sage:    #5a6e3f;
+      --sage-lt: #dce8d4;
+      --sage-dk: #3d4d2b;
+      --ink:     #111111;
+      --muted:   #6b7280;
+      --faint:   #f5f4f0;
+      --white:   #ffffff;
+      --border:  rgba(0,0,0,.08);
+      --r: 10px;
+      --sans: 'Hanken Grotesk', sans-serif;
+      --serif: 'Instrument Serif', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans); font-weight: 300;
+      color: var(--ink); background: var(--white);
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 48px;
+      background: rgba(255,255,255,.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent; transition: border-color .3s;
+    }
+    nav.scrolled { border-color: var(--border); }
+    .nav-logo { font-size: 17px; font-weight: 500; letter-spacing: -.3px; color: var(--ink); text-decoration: none; }
+    .nav-logo span { color: var(--sage); }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 13px; font-weight: 400; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a.active { color: var(--ink); font-weight: 500; }
+    .nav-cta { font-size: 13px; font-weight: 500; color: var(--white) !important; background: var(--ink); padding: 9px 20px; border-radius: 50px; transition: background .2s !important; }
+    .nav-cta:hover { background: var(--sage) !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 60vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 160px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(90,110,63,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 32px;
+      opacity: 0; animation: fadeUp .6s .1s forwards;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6vw, 76px); font-weight: 400; line-height: 1.05;
+      color: var(--ink); max-width: 760px;
+      opacity: 0; animation: fadeUp .7s .2s forwards;
+    }
+    .hero h1 em { font-style: italic; color: var(--sage); }
+    .hero-sub {
+      margin-top: 24px; font-size: clamp(16px, 2vw, 19px); font-weight: 300;
+      color: var(--muted); max-width: 480px; line-height: 1.6;
+      opacity: 0; animation: fadeUp .7s .35s forwards;
+    }
+
+    /* SHARED */
+    section { padding: 100px 48px; }
+    .section-inner { max-width: 1060px; margin: 0 auto; }
+    .section-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--sage); margin-bottom: 20px; }
+    h2 { font-family: var(--serif); font-size: clamp(32px, 4vw, 52px); font-weight: 400; line-height: 1.1; color: var(--ink); }
+    h2 em { font-style: italic; color: var(--sage); }
+
+    /* PRICING CARDS */
+    .pricing-section { background: var(--faint); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-top: 56px; align-items: start;
+    }
+    .price-card {
+      background: white; border-radius: 16px; border: 1px solid var(--border);
+      padding: 40px 36px; position: relative; transition: transform .2s, box-shadow .2s;
+    }
+    .price-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.08); }
+    .price-card.featured {
+      background: var(--ink); border-color: var(--ink); transform: scale(1.03);
+    }
+    .price-card.featured:hover { transform: scale(1.03) translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+    .price-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--sage); color: white;
+      font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 20px;
+    }
+    .price-plan { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+    .price-card.featured .price-plan { color: rgba(255,255,255,.4); }
+    .price-amount { font-family: var(--serif); font-size: 52px; font-weight: 400; color: var(--ink); line-height: 1; letter-spacing: -1px; }
+    .price-card.featured .price-amount { color: white; }
+    .price-amount sup { font-family: var(--sans); font-size: 22px; font-weight: 300; vertical-align: super; }
+    .price-was { font-size: 13px; color: var(--muted); margin-top: 4px; text-decoration: line-through; }
+    .price-card.featured .price-was { color: rgba(255,255,255,.3); }
+    .price-period { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .price-card.featured .price-period { color: rgba(255,255,255,.4); }
+    .price-divider { height: 1px; background: var(--border); margin: 28px 0; }
+    .price-card.featured .price-divider { background: rgba(255,255,255,.1); }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .price-features li { font-size: 13px; font-weight: 300; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .price-card.featured .price-features li { color: rgba(255,255,255,.55); }
+    .price-features li::before {
+      content: ''; width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+      background: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6e3f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .price-card.featured .price-features li::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a8c48a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    }
+    .price-features li.dim::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d1d5db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+    }
+    .price-features li.dim { opacity: .4; }
+    .price-cta {
+      display: block; width: 100%; margin-top: 32px; padding: 14px; border-radius: 50px;
+      text-align: center; font-family: var(--sans); font-size: 14px; font-weight: 500;
+      text-decoration: none; cursor: pointer; border: none; transition: background .2s, transform .15s;
+    }
+    .price-cta-outline { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+    .price-cta-outline:hover { border-color: var(--ink); transform: translateY(-1px); }
+    .price-cta-inv { background: white; color: var(--ink); }
+    .price-cta-inv:hover { background: var(--faint); transform: translateY(-1px); }
+    .pricing-note { text-align: center; margin-top: 28px; font-size: 13px; color: var(--muted); }
+
+    /* COMPARISON TABLE */
+    .comparison-section { background: var(--white); }
+    .compare-table {
+      width: 100%; border-collapse: collapse; margin-top: 48px;
+      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .compare-table th {
+      padding: 20px 24px; text-align: left;
+      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted); background: var(--faint); border-bottom: 1px solid var(--border);
+    }
+    .compare-table th:not(:first-child) { text-align: center; }
+    .compare-table th.highlight { background: var(--ink); color: rgba(255,255,255,.5); }
+    .compare-table td {
+      padding: 16px 24px; font-size: 13px; font-weight: 300; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table td:not(:first-child) { text-align: center; }
+    .compare-table td.highlight { background: rgba(17,17,17,.02); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--faint); }
+    .compare-table tr:hover td.highlight { background: rgba(17,17,17,.04); }
+    .check { color: var(--sage); font-size: 16px; font-weight: 600; }
+    .cross { color: #d1d5db; font-size: 16px; }
+    .row-label { font-weight: 400; color: var(--ink); }
+
+    /* FAQ */
+    .faq-section { background: var(--faint); }
+    .faq-list { margin-top: 48px; display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .faq-item { background: white; border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-question {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 28px; background: none; border: none; cursor: pointer;
+      font-family: var(--sans); font-size: 15px; font-weight: 500; color: var(--ink);
+      text-align: left; transition: background .15s;
+    }
+    .faq-question:hover { background: var(--faint); }
+    .faq-arrow {
+      width: 20px; height: 20px; flex-shrink: 0; margin-left: 20px;
+      transition: transform .3s; color: var(--muted);
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-answer {
+      display: none; padding: 0 28px 24px;
+      font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-answer { display: block; }
+
+    /* BOTTOM CTA */
+    .bottom-cta { background: var(--ink); padding: 120px 48px; text-align: center; }
+    .bottom-cta h2 { color: white; }
+    .bottom-cta h2 em { color: #a8c48a; }
+    .bottom-cta p { color: rgba(255,255,255,.45); margin: 20px auto 44px; max-width: 440px; font-size: 17px; font-weight: 300; line-height: 1.6; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 50px; background: var(--ink); color: var(--white); font-family: var(--sans); font-size: 14px; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: background .2s, transform .15s; }
+    .btn-primary:hover { background: var(--sage); transform: translateY(-1px); }
+    .bottom-cta .btn-primary { background: white; color: var(--ink); }
+    .bottom-cta .btn-primary:hover { background: var(--sage-lt); }
+
+    /* FOOTER */
+    footer { background: var(--ink); border-top: 1px solid rgba(255,255,255,.06); padding: 56px 48px 36px; }
+    .footer-inner { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: start; }
+    .footer-brand .nav-logo { color: white; font-size: 16px; }
+    .footer-brand .nav-logo span { color: #a8c48a; }
+    .footer-brand p { font-size: 13px; color: rgba(255,255,255,.3); margin-top: 10px; line-height: 1.5; max-width: 240px; }
+    .footer-cols { display: flex; gap: 56px; }
+    .footer-cols > div { display: flex; flex-direction: column; gap: 10px; }
+    .footer-cols h4 { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 4px; }
+    .footer-cols a { font-size: 13px; color: rgba(255,255,255,.4); text-decoration: none; transition: color .2s; }
+    .footer-cols a:hover { color: rgba(255,255,255,.7); }
+    .footer-bottom { max-width: 1060px; margin: 36px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); font-size: 12px; color: rgba(255,255,255,.2); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      section { padding: 72px 24px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .price-card.featured { transform: none; }
+      .compare-table th, .compare-table td { padding: 12px 14px; font-size: 12px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      .footer-cols { gap: 32px; flex-wrap: wrap; }
+      .bottom-cta { padding: 80px 24px; }
+      footer { padding: 48px 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <a href="landing.html" class="nav-logo">Finc<span>Win</span></a>
+    <div class="nav-links">
+      <a href="features.html">Features</a>
+      <a href="pricing.html" class="active">Pricing</a>
+      <a href="index.html">App</a>
+      <a href="signin.html" class="nav-cta">Sign in</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">Pricing</p>
+    <h1>Simple pricing.<br><em>No subscriptions.</em></h1>
+    <p class="hero-sub">Pay once, own it forever. No annual renewals, no quiet price hikes, no upsells six months in.</p>
+  </section>
+
+  <!-- PRICING CARDS -->
+  <section class="pricing-section">
+    <div class="section-inner">
+      <div class="pricing-grid reveal">
+
+        <!-- Starter -->
+        <div class="price-card">
+          <div class="price-plan">Starter</div>
+          <div class="price-amount"><sup>$</sup>49</div>
+          <div class="price-was">Was $69</div>
+          <div class="price-period">One-time &nbsp;·&nbsp; 1 device</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>Monthly expense tracking</li>
+            <li>Budget envelopes (all 14 categories)</li>
+            <li>Income & revenue tracker</li>
+            <li>Due date calendar</li>
+            <li>Spending heatmap</li>
+            <li>Local data storage</li>
+            <li class="dim">AI Coach</li>
+            <li class="dim">Google Drive sync</li>
+            <li class="dim">Multi-device (up to 3)</li>
+          </ul>
+          <a href="signin.html#register" class="price-cta price-cta-outline">Get Starter — $49</a>
+        </div>
+
+        <!-- Pro — featured -->
+        <div class="price-card featured">
+          <div class="price-badge">Most popular</div>
+          <div class="price-plan">Pro</div>
+          <div class="price-amount"><sup>$</sup>89</div>
+          <div class="price-was">Was $120</div>
+          <div class="price-period">One-time &nbsp;·&nbsp; 3 devices</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>Everything in Starter</li>
+            <li>AI Financial Coach</li>
+            <li>Google Drive encrypted backup</li>
+            <li>Loan paydown calculator</li>
+            <li>Savings goal tracker</li>
+            <li>Analytics & forecasting</li>
+            <li>CSV bank import</li>
+            <li>3-device activation</li>
+          </ul>
+          <a href="signin.html#register" class="price-cta price-cta-inv">Get Pro — $89</a>
+        </div>
+
+        <!-- Lifetime -->
+        <div class="price-card">
+          <div class="price-plan">Lifetime</div>
+          <div class="price-amount"><sup>$</sup>149</div>
+          <div class="price-was">Was $200</div>
+          <div class="price-period">One-time &nbsp;·&nbsp; 5 devices</div>
+          <div class="price-divider"></div>
+          <ul class="price-features">
+            <li>Everything in Pro</li>
+            <li>5-device activation</li>
+            <li>All future features included</li>
+            <li>Priority support</li>
+            <li>Custom categories (unlimited)</li>
+            <li>Early access to new features</li>
+            <li>Desktop app (Tauri) when released</li>
+            <li>Lifetime updates — no renewals ever</li>
+          </ul>
+          <a href="signin.html#register" class="price-cta price-cta-outline">Get Lifetime — $149</a>
+        </div>
+
+      </div>
+      <p class="pricing-note reveal">All plans include a 30-day refund — no questions asked &nbsp;·&nbsp; Secure payment via Lemon Squeezy</p>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="comparison-section">
+    <div class="section-inner">
+      <p class="section-label reveal">Compare plans</p>
+      <h2 class="reveal">Everything side<br><em>by side.</em></h2>
+      <table class="compare-table reveal">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Starter</th>
+            <th class="highlight">Pro</th>
+            <th>Lifetime</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">Devices</td>
+            <td>1</td>
+            <td class="highlight">3</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td class="row-label">Expense frequencies</td>
+            <td>Monthly only</td>
+            <td class="highlight">All 5 frequencies</td>
+            <td>All 5 frequencies</td>
+          </tr>
+          <tr>
+            <td class="row-label">Budget categories</td>
+            <td>14 built-in</td>
+            <td class="highlight">14 built-in</td>
+            <td>Unlimited (custom)</td>
+          </tr>
+          <tr>
+            <td class="row-label">AI Financial Coach</td>
+            <td class="cross">—</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td class="row-label">Loan payoff tracker</td>
+            <td class="cross">—</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td class="row-label">Spending heatmap</td>
+            <td><span class="check">✓</span></td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td class="row-label">Google Drive backup</td>
+            <td class="cross">—</td>
+            <td class="highlight"><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td class="row-label">Future updates</td>
+            <td>Minor only</td>
+            <td class="highlight">Major included</td>
+            <td>All, forever</td>
+          </tr>
+          <tr>
+            <td class="row-label">Priority support</td>
+            <td class="cross">—</td>
+            <td class="highlight"><span class="cross">—</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-inner">
+      <p class="section-label reveal">Questions</p>
+      <h2 class="reveal">We've heard these<br><em>before.</em></h2>
+      <div class="faq-list reveal">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What is a licence key?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">A licence key is a unique code that unlocks your paid features. After purchase via Lemon Squeezy, you'll receive a key by email in the format XXXX-XXXX-XXXX-XXXX. Enter it on the Sign In page or in Account settings to activate FincWin on your device. You'll only need to do this once per device.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Can I switch plans later?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">Yes. If you start on Starter and want to upgrade to Pro or Lifetime, contact support and we'll apply a credit for what you already paid. You'll only pay the difference. Downgrades aren't possible, but you'd keep your current plan until it expires (which for one-time purchases means forever).</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Is my financial data safe?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">Your financial data never leaves your device. Everything — budgets, expenses, loan details, savings goals — is stored in your browser's localStorage. We have no server that holds your financial records. The only thing we store on our side is your email address (if you create an account) and your licence key for validation purposes.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            What happens if I lose my licence key?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">Email us at support@fincwin.app with your purchase email and we'll retrieve your key immediately. If you have a FincWin account, you can also find your key under Account → Licence. Keys are permanent — we never expire them or charge renewal fees.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            Do you offer refunds?
+            <svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">Yes — 30 days, no questions asked. If FincWin isn't right for you within 30 days of purchase, email us and we'll process a full refund. After 30 days, refunds are at our discretion but we're reasonable people — if something isn't working, reach out and we'll find a solution.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="bottom-cta">
+    <div class="section-inner reveal">
+      <p class="section-label" style="color:rgba(255,255,255,.3);">Still deciding?</p>
+      <h2>Try the app free.<br><em>No account needed.</em></h2>
+      <p>The full budgeting core — envelopes, expense tracking, heatmap — is yours without buying anything. Upgrade when you're ready.</p>
+      <a href="index.html" class="btn-primary">Open FincWin free &nbsp;→</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="landing.html" class="nav-logo">Finc<span>Win</span></a>
+        <p>Personal finance clarity, offline and private.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Product</h4>
+          <a href="features.html">Features</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="index.html">Open App</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a href="signin.html">Sign In</a>
+          <a href="account.html">My Account</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 FincWin. All rights reserved.</div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 20); });
+
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

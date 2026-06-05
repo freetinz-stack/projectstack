@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features — FincWin</title>
+  <meta name="description" content="Every tool you need to understand your money. Budget envelopes, loan payoff tracking, spending heatmaps, multi-currency support, and more.">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sage:    #5a6e3f;
+      --sage-lt: #dce8d4;
+      --sage-dk: #3d4d2b;
+      --ink:     #111111;
+      --muted:   #6b7280;
+      --faint:   #f5f4f0;
+      --white:   #ffffff;
+      --border:  rgba(0,0,0,.08);
+      --r: 10px;
+      --sans: 'Hanken Grotesk', sans-serif;
+      --serif: 'Instrument Serif', serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      font-weight: 300;
+      color: var(--ink);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 48px;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s;
+    }
+    nav.scrolled { border-color: var(--border); }
+    .nav-logo {
+      font-size: 17px; font-weight: 500; letter-spacing: -.3px;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-logo span { color: var(--sage); }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a {
+      font-size: 13px; font-weight: 400; color: var(--muted);
+      text-decoration: none; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a.active { color: var(--ink); font-weight: 500; }
+    .nav-cta {
+      font-size: 13px; font-weight: 500; color: var(--white) !important;
+      background: var(--ink); padding: 9px 20px; border-radius: 50px;
+      transition: background .2s !important;
+    }
+    .nav-cta:hover { background: var(--sage) !important; color: var(--white) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 72vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 160px 24px 80px;
+      background: var(--white);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(90,110,63,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 32px;
+      opacity: 0; animation: fadeUp .6s .1s forwards;
+    }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 400; line-height: 1.05; letter-spacing: -.5px;
+      color: var(--ink); max-width: 820px;
+      opacity: 0; animation: fadeUp .7s .2s forwards;
+    }
+    .hero h1 em { font-style: italic; color: var(--sage); }
+    .hero-sub {
+      margin-top: 28px;
+      font-size: clamp(16px, 2vw, 19px); font-weight: 300;
+      color: var(--muted); max-width: 500px; line-height: 1.6;
+      opacity: 0; animation: fadeUp .7s .35s forwards;
+    }
+    .hero-actions {
+      margin-top: 44px;
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      opacity: 0; animation: fadeUp .7s .5s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 50px;
+      background: var(--ink); color: var(--white);
+      font-family: var(--sans); font-size: 14px; font-weight: 500;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--sage); transform: translateY(-1px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 50px;
+      background: transparent; color: var(--ink);
+      font-family: var(--sans); font-size: 14px; font-weight: 400;
+      text-decoration: none; border: 1px solid var(--border); cursor: pointer;
+      transition: border-color .2s, transform .15s;
+    }
+    .btn-ghost:hover { border-color: var(--ink); transform: translateY(-1px); }
+
+    /* ── SHARED SECTION ── */
+    section { padding: 100px 48px; }
+    .section-inner { max-width: 1060px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 20px;
+    }
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(32px, 4.5vw, 56px);
+      font-weight: 400; line-height: 1.1; letter-spacing: -.3px;
+      color: var(--ink);
+    }
+    h2 em { font-style: italic; color: var(--sage); }
+    .section-sub {
+      margin-top: 20px; font-size: 17px; font-weight: 300;
+      color: var(--muted); max-width: 520px; line-height: 1.6;
+    }
+
+    /* ── FEATURE GRID ── */
+    .feature-grid-section { background: var(--faint); }
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 2px; margin-top: 56px;
+      border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+    }
+    .feature-block {
+      background: var(--white);
+      padding: 40px 36px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .feature-block:hover { background: #fafaf8; }
+    .feature-block:nth-child(3n) { border-right: none; }
+    .feature-block:nth-child(4), .feature-block:nth-child(5), .feature-block:nth-child(6) { border-bottom: none; }
+    .feature-icon {
+      width: 44px; height: 44px; background: var(--sage-lt);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .feature-block h3 {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400; color: var(--ink);
+      margin-bottom: 10px; line-height: 1.2;
+    }
+    .feature-block p {
+      font-size: 14px; font-weight: 300; color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── DEEP DIVE ROWS ── */
+    .deep-dive { background: var(--white); }
+    .deep-dive.alt { background: var(--faint); }
+    .dive-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .dive-row.reverse { direction: rtl; }
+    .dive-row.reverse > * { direction: ltr; }
+    .dive-content .section-label { margin-bottom: 16px; }
+    .dive-content h2 { font-size: clamp(28px, 3.5vw, 44px); }
+    .dive-content p {
+      font-size: 15px; font-weight: 300; color: var(--muted);
+      line-height: 1.7; margin-top: 16px;
+    }
+    .dive-content .detail-list {
+      margin-top: 24px; list-style: none;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .dive-content .detail-list li {
+      font-size: 14px; font-weight: 300; color: var(--muted);
+      display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;
+    }
+    .dive-content .detail-list li::before {
+      content: '';
+      width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px;
+      background: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a6e3f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+    .dive-content .cta-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: var(--sage);
+      text-decoration: none; margin-top: 28px;
+      transition: color .2s;
+    }
+    .dive-content .cta-link:hover { color: var(--sage-dk); }
+
+    /* Mock UI panels */
+    .dive-visual {
+      background: white; border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 28px; min-height: 300px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.06);
+    }
+    .visual-title {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+    }
+
+    /* Envelope mock */
+    .env-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .env-card { background: var(--faint); border-radius: 8px; padding: 14px; }
+    .env-label { font-size: 10px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; color: var(--muted); }
+    .env-amount { font-size: 18px; font-weight: 200; color: var(--ink); margin: 4px 0; }
+    .env-bar { height: 3px; background: #e5e7eb; border-radius: 2px; margin-top: 8px; }
+    .env-bar-fill { height: 100%; border-radius: 2px; }
+    .env-note { font-size: 10px; color: var(--muted); margin-top: 5px; }
+
+    /* Loan mock */
+    .loan-mock { display: flex; flex-direction: column; gap: 14px; }
+    .loan-item { background: var(--faint); border-radius: 10px; padding: 18px; }
+    .loan-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .loan-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .loan-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin: 12px 0 8px; }
+    .loan-bar-fill { height: 100%; border-radius: 3px; background: var(--sage); }
+    .loan-stats { display: flex; gap: 20px; }
+    .loan-stat-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+    .loan-stat-val { font-size: 13px; font-weight: 500; color: var(--ink); }
+    .loan-stat-val.accent { color: var(--sage); }
+
+    /* Heatmap mock */
+    .heatmap-mock { }
+    .heatmap-days {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px;
+    }
+    .hday {
+      aspect-ratio: 1; border-radius: 3px;
+      font-size: 8px; display: flex; align-items: center; justify-content: center;
+      color: rgba(0,0,0,.3); font-weight: 500;
+    }
+    .hday.l0 { background: #eef2e8; }
+    .hday.l1 { background: #c5d9b0; color: rgba(0,0,0,.5); }
+    .hday.l2 { background: #8aaf6a; color: white; }
+    .hday.l3 { background: #5a6e3f; color: white; }
+    .hday.l4 { background: #3d4d2b; color: white; }
+    .hday.empty { background: transparent; }
+    .heatmap-legend { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 10px; color: var(--muted); }
+    .hlegend { width: 10px; height: 10px; border-radius: 2px; }
+
+    /* ── CTA STRIP ── */
+    .cta-strip {
+      background: var(--ink);
+      padding: 120px 48px;
+      text-align: center;
+    }
+    .cta-strip h2 { color: white; }
+    .cta-strip h2 em { color: #a8c48a; }
+    .cta-strip p { color: rgba(255,255,255,.45); margin: 20px auto 44px; max-width: 440px; font-size: 17px; font-weight: 300; line-height: 1.6; }
+    .cta-strip .btn-primary { background: white; color: var(--ink); }
+    .cta-strip .btn-primary:hover { background: var(--sage-lt); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 56px 48px 36px;
+    }
+    .footer-inner {
+      max-width: 1060px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 60px; align-items: start;
+    }
+    .footer-brand .nav-logo { color: white; font-size: 16px; }
+    .footer-brand .nav-logo span { color: #a8c48a; }
+    .footer-brand p { font-size: 13px; color: rgba(255,255,255,.3); margin-top: 10px; line-height: 1.5; max-width: 240px; }
+    .footer-cols { display: flex; gap: 56px; }
+    .footer-cols > div { display: flex; flex-direction: column; gap: 10px; }
+    .footer-cols h4 { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 4px; }
+    .footer-cols a { font-size: 13px; color: rgba(255,255,255,.4); text-decoration: none; transition: color .2s; }
+    .footer-cols a:hover { color: rgba(255,255,255,.7); }
+    .footer-bottom { max-width: 1060px; margin: 36px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); font-size: 12px; color: rgba(255,255,255,.2); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      section { padding: 72px 24px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature-block { border-right: none; border-bottom: 1px solid var(--border); }
+      .feature-block:nth-child(4), .feature-block:nth-child(5) { border-bottom: 1px solid var(--border); }
+      .feature-block:last-child { border-bottom: none; }
+      .dive-row, .dive-row.reverse { grid-template-columns: 1fr; direction: ltr; gap: 40px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      .footer-cols { gap: 32px; flex-wrap: wrap; }
+      .cta-strip { padding: 80px 24px; }
+      footer { padding: 48px 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <a href="landing.html" class="nav-logo">Finc<span>Win</span></a>
+    <div class="nav-links">
+      <a href="features.html" class="active">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="index.html">App</a>
+      <a href="signin.html" class="nav-cta">Sign in</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">What FincWin does</p>
+    <h1>Every number you need.<br><em>Nothing you don't.</em></h1>
+    <p class="hero-sub">No clutter, no bloat. Just the tools that actually tell you where your money is going — and where it could go.</p>
+    <div class="hero-actions">
+      <a href="index.html" class="btn-primary">Try it free &nbsp;→</a>
+      <a href="pricing.html" class="btn-ghost">View pricing</a>
+    </div>
+  </section>
+
+  <!-- FEATURE GRID -->
+  <section class="feature-grid-section">
+    <div class="section-inner">
+      <p class="section-label reveal">Six core tools</p>
+      <h2 class="reveal">Built for people who want<br><em>the whole picture.</em></h2>
+      <p class="section-sub reveal">Each feature was built around a real problem — not to pad a feature list.</p>
+      <div class="feature-grid reveal">
+
+        <!-- 1 Budget Envelopes -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="5" width="20" height="14" rx="2"/><polyline points="2,5 12,13 22,5"/>
+            </svg>
+          </div>
+          <h3>Budget Envelopes</h3>
+          <p>Allocate money to 14 life categories before you spend it. Watch each envelope fill in real time so you never overshoot a budget.</p>
+        </div>
+
+        <!-- 2 Expense Tracker -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <h3>Expense Tracker</h3>
+          <p>Log one-time or recurring costs at monthly, weekly, biweekly, quarterly, or yearly frequencies. One entry, complete picture.</p>
+        </div>
+
+        <!-- 3 Loan Payoff -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <h3>Loan Payoff</h3>
+          <p>Full amortisation schedule, exact payoff date, and interest saved when you make extra payments. Model avalanche or snowball strategies.</p>
+        </div>
+
+        <!-- 4 Spending Heatmap -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <h3>Spending Heatmap</h3>
+          <p>Calendar heat-map that shows daily spend intensity across the month. Spot the days you overspend — and the patterns that cause it.</p>
+        </div>
+
+        <!-- 5 Multi-Currency -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3>Multi-Currency</h3>
+          <p>Log expenses in any currency and see your totals converted to your home currency. Ideal for frequent travellers and remote workers.</p>
+        </div>
+
+        <!-- 6 PIN Lock -->
+        <div class="feature-block">
+          <div class="feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a6e3f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3>PIN Lock</h3>
+          <p>Offline security baked in. Set a PIN and your financial data never leaves your device — not to our servers, not to anyone.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE: ENVELOPES -->
+  <section class="deep-dive">
+    <div class="section-inner">
+      <div class="dive-row reveal">
+        <div class="dive-content">
+          <p class="section-label">Budget Envelopes</p>
+          <h2>Spend what you<br><em>planned to spend.</em></h2>
+          <p>The envelope method is the oldest budgeting system on earth — because it works. FincWin digitises it without the faff. Before the month starts, assign an amount to each of 14 categories. As you log expenses, the envelope fills. When it's full, you know.</p>
+          <ul class="detail-list">
+            <li>14 built-in categories: housing, food, auto, telecom, healthcare, entertainment, subscriptions, and more</li>
+            <li>Real-time spend percentage with colour-coded warnings</li>
+            <li>Surplus rollover — see what you underspent last month</li>
+            <li>Projected overspend alerts based on current pace</li>
+          </ul>
+          <a href="index.html" class="cta-link">Open the envelope view &nbsp;→</a>
+        </div>
+        <div class="dive-visual">
+          <div class="visual-title">Budget Envelopes — Jun 2026</div>
+          <div class="env-grid">
+            <div class="env-card">
+              <div class="env-label">Housing</div>
+              <div class="env-amount">$850 <span style="font-size:12px;color:#9ca3af;">/ $1,500</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:57%;background:#5a6e3f"></div></div>
+              <div class="env-note">57% · On pace</div>
+            </div>
+            <div class="env-card">
+              <div class="env-label">Telecom</div>
+              <div class="env-amount">$95 <span style="font-size:12px;color:#9ca3af;">/ $150</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:63%;background:#b7791f"></div></div>
+              <div class="env-note" style="color:#b7791f;">63% · Cap day 8</div>
+            </div>
+            <div class="env-card">
+              <div class="env-label">Food & Meals</div>
+              <div class="env-amount">$186 <span style="font-size:12px;color:#9ca3af;">/ $350</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:53%;background:#5a6e3f"></div></div>
+              <div class="env-note">53% · On pace</div>
+            </div>
+            <div class="env-card">
+              <div class="env-label">Entertainment</div>
+              <div class="env-amount">$14 <span style="font-size:12px;color:#9ca3af;">/ $80</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:18%;background:#5a6e3f"></div></div>
+              <div class="env-note">18% · Well under</div>
+            </div>
+            <div class="env-card">
+              <div class="env-label">Healthcare</div>
+              <div class="env-amount">$0 <span style="font-size:12px;color:#9ca3af;">/ $120</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:0%;background:#5a6e3f"></div></div>
+              <div class="env-note">0% · Not yet spent</div>
+            </div>
+            <div class="env-card">
+              <div class="env-label">Auto</div>
+              <div class="env-amount">$245 <span style="font-size:12px;color:#9ca3af;">/ $400</span></div>
+              <div class="env-bar"><div class="env-bar-fill" style="width:61%;background:#b7791f"></div></div>
+              <div class="env-note" style="color:#b7791f;">61% · Watch this</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE: LOAN TRACKER -->
+  <section class="deep-dive alt">
+    <div class="section-inner">
+      <div class="dive-row reverse reveal">
+        <div class="dive-content">
+          <p class="section-label">Loan Payoff Tracker</p>
+          <h2>Know the <em>exact date</em><br>you become debt-free.</h2>
+          <p>Most people pay their minimum and hope for the best. The loan tracker shows you what happens when you pay an extra $50, $100, or $200 per month — in months saved and dollars not wasted on interest.</p>
+          <ul class="detail-list">
+            <li>Full amortisation schedule: see every payment's principal vs. interest split</li>
+            <li>Extra payment modelling — drag and drop to see payoff date shift</li>
+            <li>Avalanche and snowball strategy comparison</li>
+            <li>DTI (debt-to-income) ratio indicator shown on dashboard</li>
+            <li>Payoff date countdown visible from the main dashboard</li>
+          </ul>
+          <a href="index.html" class="cta-link">See your payoff date &nbsp;→</a>
+        </div>
+        <div class="dive-visual">
+          <div class="visual-title">Active Loans</div>
+          <div class="loan-mock">
+            <div class="loan-item">
+              <div class="loan-name">Car Loan — Toyota</div>
+              <div class="loan-meta">6.4% APR &nbsp;·&nbsp; $380/mo minimum</div>
+              <div class="loan-bar"><div class="loan-bar-fill" style="width:52%"></div></div>
+              <div class="loan-stats">
+                <div><div class="loan-stat-label">Balance</div><div class="loan-stat-val">$11,200</div></div>
+                <div><div class="loan-stat-label">Payoff date</div><div class="loan-stat-val">Mar 2028</div></div>
+                <div><div class="loan-stat-label">With +$100</div><div class="loan-stat-val accent">Aug 2027</div></div>
+              </div>
+            </div>
+            <div class="loan-item">
+              <div class="loan-name">Student Loan — Federal</div>
+              <div class="loan-meta">4.5% APR &nbsp;·&nbsp; $220/mo minimum</div>
+              <div class="loan-bar"><div class="loan-bar-fill" style="width:71%"></div></div>
+              <div class="loan-stats">
+                <div><div class="loan-stat-label">Balance</div><div class="loan-stat-val">$8,400</div></div>
+                <div><div class="loan-stat-label">Payoff date</div><div class="loan-stat-val">Jan 2027</div></div>
+                <div><div class="loan-stat-label">Interest saved</div><div class="loan-stat-val accent">+$612</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE: HEATMAP -->
+  <section class="deep-dive">
+    <div class="section-inner">
+      <div class="dive-row reveal">
+        <div class="dive-content">
+          <p class="section-label">Spending Heatmap</p>
+          <h2>See the days that<br><em>cost you most.</em></h2>
+          <p>Numbers in a table don't show patterns. A heat-map does. The calendar view lights up the days you spent heavily — so you can spot whether it's every Friday, every payday, or every time a subscription renews.</p>
+          <ul class="detail-list">
+            <li>Daily spend intensity colour-coded across the full month</li>
+            <li>Hover any day to see a breakdown of what you spent</li>
+            <li>Navigate backward through months to compare patterns</li>
+            <li>Instant visual for high-spend vs. low-spend periods</li>
+          </ul>
+          <a href="index.html" class="cta-link">View your heatmap &nbsp;→</a>
+        </div>
+        <div class="dive-visual">
+          <div class="visual-title">June 2026 — Spending Intensity</div>
+          <div style="font-size:10px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div class="heatmap-days">
+            <div class="hday empty"></div>
+            <div class="hday l1">2</div>
+            <div class="hday l0">3</div>
+            <div class="hday l3">4</div>
+            <div class="hday l1">5</div>
+            <div class="hday l4">6</div>
+            <div class="hday l2">7</div>
+            <div class="hday l0">8</div>
+            <div class="hday l1">9</div>
+            <div class="hday l0">10</div>
+            <div class="hday l1">11</div>
+            <div class="hday l2">12</div>
+            <div class="hday l4">13</div>
+            <div class="hday l3">14</div>
+            <div class="hday l0">15</div>
+            <div class="hday l0">16</div>
+            <div class="hday l1">17</div>
+            <div class="hday l0">18</div>
+            <div class="hday l2">19</div>
+            <div class="hday l4">20</div>
+            <div class="hday l1">21</div>
+            <div class="hday l0">22</div>
+            <div class="hday l0">23</div>
+            <div class="hday l1">24</div>
+            <div class="hday l3">25</div>
+            <div class="hday l2">26</div>
+            <div class="hday l4">27</div>
+            <div class="hday l1">28</div>
+            <div class="hday l0">29</div>
+            <div class="hday l0">30</div>
+          </div>
+          <div class="heatmap-legend">
+            <span>Less</span>
+            <div class="hlegend" style="background:#eef2e8;"></div>
+            <div class="hlegend" style="background:#c5d9b0;"></div>
+            <div class="hlegend" style="background:#8aaf6a;"></div>
+            <div class="hlegend" style="background:#5a6e3f;"></div>
+            <div class="hlegend" style="background:#3d4d2b;"></div>
+            <span>More</span>
+          </div>
+          <div style="margin-top:16px;padding:12px;background:var(--faint);border-radius:8px;">
+            <div style="font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Jun 6 — Heavy spend day</div>
+            <div style="font-size:13px;color:var(--ink);">$284 &nbsp;·&nbsp; Groceries $86, Insurance $148, Gas $50</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA STRIP -->
+  <section class="cta-strip">
+    <div class="section-inner reveal">
+      <p class="section-label" style="color:rgba(255,255,255,.3);">Ready?</p>
+      <h2>Start free.<br><em>No account required.</em></h2>
+      <p>Open FincWin in your browser and start tracking today. Your data stays on your device from the very first entry.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+        <a href="index.html" class="btn-primary">Open the app &nbsp;→</a>
+        <a href="pricing.html" class="btn-ghost" style="border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.6);">View pricing</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="landing.html" class="nav-logo">Finc<span>Win</span></a>
+        <p>Personal finance clarity, offline and private.</p>
+      </div>
+      <div class="footer-cols">
+        <div>
+          <h4>Product</h4>
+          <a href="features.html">Features</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="index.html">Open App</a>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <a href="signin.html">Sign In</a>
+          <a href="account.html">My Account</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 FincWin. All rights reserved.</div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
