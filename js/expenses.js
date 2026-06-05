@@ -330,63 +330,8 @@ function renderExpenses(){
   document.getElementById('ef-pending').textContent=fmt(gpd);
   document.getElementById('ef-pnote').textContent=gpd>0?((gpd/gt*100).toFixed(0)+'% still due'):'✓ All paid';
   document.getElementById('overBudgetPill').style.display=gt>totalRev()?'inline-flex':'none';
-  renderExpSumChart();
 }
 
-// ── WEEKLY COMPARISON CHART (expSumChart canvas in Expenses tab) ──
-function renderExpSumChart() {
-  var canvas = document.getElementById('expSumChart');
-  if (!canvas || typeof Chart === 'undefined' || typeof CH === 'undefined') return;
-  var weeks = cw();
-  var labels = weeks.map(function(_, i) { return 'Wk ' + (i + 1); });
-  var paid = weeks.map(function(w) {
-    return w.items.filter(function(i) { return i.paid; }).reduce(function(s, i) { return s + _cvt(i.amount,i.currency); }, 0);
-  });
-  var pend = weeks.map(function(w) {
-    return w.items.filter(function(i) { return !i.paid; }).reduce(function(s, i) { return s + _cvt(i.amount,i.currency); }, 0);
-  });
-  if (CH['expSum']) {
-    CH['expSum'].data.labels = labels;
-    CH['expSum'].data.datasets[0].data = paid;
-    CH['expSum'].data.datasets[1].data = pend;
-    CH['expSum'].resize();
-    CH['expSum'].update('active');
-    return;
-  }
-  dc('expSum');
-  var _expSumData = { labels: labels, paid: paid, pend: pend };
-  requestAnimationFrame(function() {
-    // If the canvas is still in a hidden section, bail — the next renderExpenses()
-    // call (when the tab becomes visible) will create the chart with real dimensions.
-    if (!canvas.offsetParent || canvas.getBoundingClientRect().width === 0) return;
-    _createExpSumChart(canvas, _expSumData);
-  });
-}
-function _createExpSumChart(canvas, d) {
-  if (CH['expSum']) return;
-  CH['expSum'] = new Chart(canvas, {
-    type: 'bar',
-    data: {
-      labels: d.labels,
-      datasets: [
-        { label: 'Paid',    data: d.paid, backgroundColor: '#276749', borderRadius: 3, stack: 'w' },
-        { label: 'Pending', data: d.pend, backgroundColor: '#B7791F', borderRadius: 3, stack: 'w' }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + fmt(ctx.raw); } } }
-      },
-      scales: {
-        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 } } },
-        y: { stacked: true, ticks: { callback: function(v) { return fmtK(v); }, font: { size: 9 } }, grid: { color: 'rgba(0,0,0,.04)' } }
-      }
-    }
-  });
-}
 
 // Arg order matches delegation: data-arg=wi, data-arg2=ii, data-arg-self=el
 function editAmt(wi,ii,el){
