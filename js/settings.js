@@ -864,6 +864,33 @@ function renderSettings(){
   if (typeof window.renderFileSyncStatus === 'function') window.renderFileSyncStatus();
   // PWA install row state
   if (typeof window._updateInstallSettingsRow === 'function') window._updateInstallSettingsRow();
+  // Populate auto-lock selector
+  var alSel = document.getElementById('autoLockSelect');
+  if (alSel) {
+    var cur = (S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 240;
+    // Select closest option (or 240 if no match)
+    var found = false;
+    Array.from(alSel.options).forEach(function(o){
+      o.selected = (parseInt(o.value) === cur);
+      if (o.selected) found = true;
+    });
+    if (!found) alSel.value = '240';
+    // Only show the row if a PIN is set (makes no sense without one)
+    getPinHash().then(function(h){
+      var row = document.getElementById('autoLockRow');
+      if (row) row.style.display = h ? '' : 'none';
+    });
+  }
+}
+
+function saveAutoLockMins(val) {
+  var mins = parseInt(val);
+  if (isNaN(mins) || mins < 0) return;
+  S.autoLockMins = mins;
+  persist(false);
+  var label = mins === 0 ? 'never (tab close only)'
+    : mins < 60 ? mins + ' min' : (mins / 60) + ' hr';
+  showToast('Auto-lock set to ' + label);
 }
 
 function saveUserNamePage(){

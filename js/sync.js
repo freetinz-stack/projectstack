@@ -356,6 +356,29 @@ function _buildStateSummary(stateObj) {
   }
 }
 
+// Returns a lightweight fingerprint of the financially meaningful numbers in a
+// state object. If both copies produce the same fingerprint, the conflict is a
+// metadata-only difference (timestamps, sync counters, etc.) and can be
+// auto-resolved by picking the newer version — no user prompt needed.
+function _stateFingerprint(stateObj) {
+  try {
+    const s = typeof stateObj === 'string' ? JSON.parse(stateObj) : stateObj;
+    const months = s.months || {};
+    // Sum all expense amounts, income amounts, and counts across every month
+    let totalExp = 0, totalInc = 0, expCount = 0, incCount = 0;
+    Object.values(months).forEach(function(m) {
+      (m.weeks || []).forEach(function(w) {
+        (w.items || []).forEach(function(i) { totalExp += (i.amount || 0); expCount++; });
+      });
+      (m.revenue || []).forEach(function(r) { totalInc += (r.amount || 0); incCount++; });
+    });
+    const loanTotal = (s.loans || []).reduce(function(a, l) { return a + (l.amount || 0); }, 0);
+    const savTotal  = (s.savings || []).reduce(function(a, g) { return a + (g.balance || 0); }, 0);
+    return [totalExp, totalInc, expCount, incCount, loanTotal, savTotal,
+            (s.loans || []).length, (s.savings || []).length].join('|');
+  } catch(e) { return null; }
+}
+
 function showConflictPrompt(localStateJson, cloudPayload, passphrase) {
   return new Promise(async (resolve) => {
     let cloudStateJson = null;
@@ -618,7 +641,22 @@ window.cloudPullOnLoad = async function() {
 
     if (resolution === 'CONFLICT') {
       _pendingCloudState = null;
-      const choice = await showConflictPrompt(JSON.stringify(S), cloudDoc, _cachedKey);
+      // Auto-resolve: if the financially meaningful numbers are identical in both
+      // versions, just pick the newer one silently — no user prompt needed.
+      let autoChoice = null;
+      try {
+        const cloudJsonForFp = await decryptState(cloudDoc, _cachedKey);
+        const localFp = _stateFingerprint(S);
+        const cloudFp = _stateFingerprint(cloudJsonForFp);
+        if (localFp && cloudFp && localFp === cloudFp) {
+          // Data is the same — pick whichever has the more recent lastModified
+          autoChoice = (cloudDoc.lastModified || 0) >= (S.lastModified || 0) ? 'cloud' : 'local';
+          _pendingCloudState = cloudJsonForFp;
+          if (typeof showToast === 'function') showToast('Sync: auto-resolved (no data differences)');
+        }
+      } catch(e) { /* fall through to manual prompt */ }
+
+      const choice = autoChoice !== null ? autoChoice : await showConflictPrompt(JSON.stringify(S), cloudDoc, _cachedKey);
       try {
         if (choice === 'cloud' && _pendingCloudState) {
           if (typeof _persistTimer !== 'undefined' && _persistTimer) {

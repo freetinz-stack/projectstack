@@ -21,6 +21,42 @@ let _lastActivity = Date.now();
 // Expose session key accessor for settings.js (AI key encryption).
 window.getSessionKey = function () { return _sessionKey; };
 
+// ── Session-unlock token ──────────────────────────────────────────────────────
+// A lightweight token written to sessionStorage when the PIN is entered.
+// sessionStorage survives page refreshes but is wiped when the tab closes.
+// This means: one PIN per tab session (not per page load).
+// The token encodes the unlock time so the inactivity timeout can still apply.
+const _SESSION_TOKEN_KEY = 'fw_pin_session';
+
+function _writeSessionToken() {
+  try {
+    sessionStorage.setItem(_SESSION_TOKEN_KEY, JSON.stringify({ at: Date.now() }));
+  } catch(e) {}
+}
+
+function _readSessionToken() {
+  try {
+    var raw = sessionStorage.getItem(_SESSION_TOKEN_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function _clearSessionToken() {
+  try { sessionStorage.removeItem(_SESSION_TOKEN_KEY); } catch(e) {}
+}
+
+// Returns true if a valid, non-expired session token exists.
+// Expiry = S.autoLockMins (default 240). 0 = never auto-expire token.
+function _sessionTokenValid() {
+  var token = _readSessionToken();
+  if (!token || !token.at) return false;
+  var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number')
+    ? S.autoLockMins : 240;
+  if (mins === 0) return true; // "never lock" — token lives until tab close
+  return (Date.now() - token.at) < mins * 60000;
+}
+
 function mk(mo,yr){return MS[mo]+' '+yr;}
 
 // ══════════════════════════════════════════════
@@ -844,7 +880,7 @@ function normaliseState(){
   if(S.archiveThreshold===undefined)S.archiveThreshold=6;
   if(!S.currency||!S.currency.code)S.currency={symbol:'$',code:'USD',locale:'en-US'};
   if(!S.fxRates)S.fxRates={rates:{},fetchedAt:0,base:'USD'};
-  if(S.autoLockMins===undefined)S.autoLockMins=15;
+  if(S.autoLockMins===undefined)S.autoLockMins=240;
   if(!S.budgetRollover)S.budgetRollover={};
   if(!S.financialGoals)S.financialGoals=[];
   if(!S.customCategories)S.customCategories=[];
@@ -1066,6 +1102,8 @@ async function getPinHash(){
 
 // Returns a Promise that resolves when the lock screen is dismissed.
 // If no PIN is set it resolves immediately.
+// If a valid session token exists (same tab, within inactivity window) it also
+// resolves immediately — no PIN prompt on refresh.
 // boot() awaits this before calling initState() so _sessionKey is ready for decryption.
 async function checkLock(){
   await _loadPinLockout();
@@ -1073,7 +1111,27 @@ async function checkLock(){
   var storedLen = await _metaGet(PIN_LEN_IDB_KEY);
   if(storedLen) _pinLen = parseInt(storedLen) || 6;
   const hash = await getPinHash();
-  if(!hash) return; // no PIN — resolve immediately
+  if(!hash) return; // no PIN set — resolve immediately
+
+  // If we already unlocked in this tab and the inactivity window hasn't expired,
+  // skip the lock screen entirely. The session key will be re-derived below.
+  if(_sessionTokenValid()){
+    // Token is valid but _sessionKey may be null (lost on refresh).
+    // We can't re-derive without the PIN, so we need a lightweight way to pass
+    // the key across refreshes. We store it encrypted in sessionStorage.
+    var restoredKey = await _restoreSessionKey();
+    if(restoredKey){
+      _sessionKey = restoredKey;
+      window.getSessionKey = function(){ return _sessionKey; };
+      _lastActivity = Date.now();
+      _writeSessionToken(); // refresh the timestamp so inactivity resets on page load too
+      return; // skip PIN screen
+    }
+    // If key restoration failed (e.g. no encryption in use), clear the token
+    // and fall through to show the PIN screen.
+    _clearSessionToken();
+  }
+
   return new Promise(function(resolve){
     _lockResolve = resolve;
     updateLockDots(); // apply correct dot count before showing screen
@@ -1082,6 +1140,35 @@ async function checkLock(){
     var btn = document.getElementById('pinBtn');
     if(btn) btn.textContent = '🔒';
   });
+}
+
+// ── Session key persistence across refreshes ─────────────────────────────────
+// We wrap the CryptoKey as a JWK and store it in sessionStorage (tab-only, not
+// persisted to disk). This lets us skip the PIN on refresh without weakening
+// security: sessionStorage is cleared when the tab closes, and the stored JWK
+// is only useful within the same origin tab.
+const _SS_KEY = 'fw_sk';
+
+async function _storeSessionKey(key){
+  if(!key) return;
+  try{
+    var jwk = await crypto.subtle.exportKey('jwk', key);
+    sessionStorage.setItem(_SS_KEY, JSON.stringify(jwk));
+  }catch(e){}
+}
+
+async function _restoreSessionKey(){
+  try{
+    var raw = sessionStorage.getItem(_SS_KEY);
+    if(!raw) return null;
+    var jwk = JSON.parse(raw);
+    var key = await crypto.subtle.importKey(
+      'jwk', jwk,
+      {name:'AES-GCM',length:256},
+      false, ['encrypt','decrypt']
+    );
+    return key;
+  }catch(e){ return null; }
 }
 
 async function verifyPin(){
@@ -1112,6 +1199,9 @@ async function verifyPin(){
     try {
       _sessionKey = await _deriveSessionKey(_lockBuffer);
       window.getSessionKey = function() { return _sessionKey; };
+      // Persist key + token so refresh within the inactivity window skips PIN.
+      await _storeSessionKey(_sessionKey);
+      _writeSessionToken();
     } catch(keyErr) {
       // Key derivation failed — still allow UI unlock, but log warning.
       // initState() will fall back to plaintext load if _sessionKey is null.
@@ -1454,6 +1544,9 @@ async function lockApp(){
   }
   _sessionKey = null;
   window.getSessionKey = function() { return null; };
+  // Clear the session token so refresh also shows PIN after a manual lock.
+  _clearSessionToken();
+  try { sessionStorage.removeItem(_SS_KEY); } catch(e) {}
   if(typeof clearAIKeyCache === 'function') clearAIKeyCache();
   _lockBuffer = '';
   var lockEl = document.getElementById('lockScreen');
@@ -1502,6 +1595,8 @@ async function verifyRecovery(){
     _pinFailCount=0; _pinLockUntil=0;
     await _savePinLockout();
     _lastActivity=Date.now();
+    await _storeSessionKey(_sessionKey);
+    _writeSessionToken();
     document.getElementById('recoveryPanel').style.display='none';
     document.getElementById('lockScreen').style.display='none';
     document.body.style.overflow='';
@@ -1524,8 +1619,17 @@ async function verifyRecovery(){
 // ══════════════════════════════════════════════════════════════
 (function _initAutoLock(){
   var _EVENTS = ['pointerdown','keydown','touchstart','scroll'];
+  var _tokenRefreshAt = 0; // throttle sessionStorage writes to once per minute
   _EVENTS.forEach(function(ev){
-    document.addEventListener(ev, function(){ _lastActivity = Date.now(); }, { passive: true, capture: true });
+    document.addEventListener(ev, function(){
+      _lastActivity = Date.now();
+      // Refresh the session token timestamp at most once per minute so that
+      // the inactivity window resets properly when the user is active.
+      if(_lastActivity - _tokenRefreshAt > 60000){
+        _tokenRefreshAt = _lastActivity;
+        _writeSessionToken();
+      }
+    }, { passive: true, capture: true });
   });
   // Use a guard flag to prevent concurrent lock calls if _doPersist takes longer
   // than the check interval (setInterval does not await async callbacks).

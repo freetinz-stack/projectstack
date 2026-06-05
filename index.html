@@ -1489,6 +1489,22 @@
           <button class="tbtn" data-action="openPinSetup" style="font-size:12px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg> Set / Change PIN</button>
         </div>
       </div>
+      <div class="settings-row" id="autoLockRow">
+        <div>
+          <div class="settings-row-label">Auto-lock after</div>
+          <div class="settings-row-sub">PIN re-asked only after this much inactivity. Refresh within the window never prompts.</div>
+        </div>
+        <div class="settings-row-right">
+          <select id="autoLockSelect" class="tbtn" style="font-size:12px;padding:6px 10px;cursor:pointer;" onchange="saveAutoLockMins(this.value)">
+            <option value="30">30 minutes</option>
+            <option value="60">1 hour</option>
+            <option value="240">4 hours (default)</option>
+            <option value="480">8 hours</option>
+            <option value="1440">1 day</option>
+            <option value="0">Never (tab close only)</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <!-- ── BUDGETS ── -->
