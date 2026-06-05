@@ -756,11 +756,15 @@ function saveBulkBudgets(){
 // ══════════════════════════════════════════════
 function toggleExpHeatmap(){
   const wrap=document.getElementById('expHeatmapWrap');
-  const toggle=document.getElementById('expHeatmapToggle');
+  const hdr=wrap&&wrap.closest('.card')&&wrap.closest('.card').querySelector('[data-action="toggleExpHeatmap"]');
   if(!wrap)return;
-  const isHidden=wrap.style.display==='none'||wrap.style.display==='';
-  wrap.style.display=isHidden?'block':'none';
-  if(toggle){toggle.textContent=isHidden?'▾ Hide':'▸ Show';toggle.setAttribute('aria-expanded',isHidden?'true':'false');}
+  const isHidden=wrap.style.display==='none';
+  wrap.style.display=isHidden?'':'none';
+  const toggle=document.getElementById('expHeatmapToggle');
+  const chevronLeft='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="10 13 5 8 10 3"/></svg>';
+  const chevronRight='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 3 11 8 6 13"/></svg>';
+  if(toggle){toggle.innerHTML=isHidden?chevronLeft+' Hide':chevronRight+' Show';}
+  if(hdr)hdr.setAttribute('aria-expanded',isHidden?'true':'false');
   if(isHidden&&typeof renderSpendingHeatmap==='function')renderSpendingHeatmap();
 }
 

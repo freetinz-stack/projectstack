@@ -330,6 +330,7 @@ function renderExpenses(){
   document.getElementById('ef-pending').textContent=fmt(gpd);
   document.getElementById('ef-pnote').textContent=gpd>0?((gpd/gt*100).toFixed(0)+'% still due'):'✓ All paid';
   document.getElementById('overBudgetPill').style.display=gt>totalRev()?'inline-flex':'none';
+  if(typeof renderSpendingHeatmap==='function')renderSpendingHeatmap();
 }
 
 

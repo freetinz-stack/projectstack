@@ -896,11 +896,11 @@
 
   <!-- Spending Heatmap — collapsed by default -->
   <div class="card" style="margin-bottom:14px;">
-    <div class="card-header" style="cursor:pointer;" data-action="toggleExpHeatmap" role="button" tabindex="0" aria-expanded="false" aria-controls="expHeatmapWrap">
+    <div class="card-header" style="cursor:pointer;" data-action="toggleExpHeatmap" role="button" tabindex="0" aria-expanded="true" aria-controls="expHeatmapWrap">
       <div class="card-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3" width="12" height="12" rx="1"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><line x1="2" y1="7" x2="14" y2="7"/></svg> Due Date Calendar</div>
-      <span id="expHeatmapToggle" style="font-size:11px;color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 3 11 8 6 13"/></svg> Show</span>
+      <span id="expHeatmapToggle" style="font-size:11px;color:var(--text-muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="10 13 5 8 10 3"/></svg> Hide</span>
     </div>
-    <div id="expHeatmapWrap" style="display:none;padding:14px 14px 8px;">
+    <div id="expHeatmapWrap" style="padding:14px 14px 8px;">
       <div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Bill due dates — <span id="d-heatmap-month"></span></div>
       <div id="d-heatmap"></div>
     </div>
