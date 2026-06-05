@@ -464,6 +464,7 @@ async function enableCloudSync(passphrase) {
     if (uid) await provider.startLive(uid);
     if (typeof showToast === 'function') showToast('Cloud sync enabled');
     if (typeof renderSyncSectionStatus === 'function') renderSyncSectionStatus();
+    if (typeof checkAchievements === 'function') checkAchievements('sync_sentinel');
     return true;
   } catch (err) {
     console.error('[sync] enableCloudSync failed:', err);

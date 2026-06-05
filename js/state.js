@@ -1370,6 +1370,12 @@ async function _doFinalPinSetup(pin,passphrase){
   if(btn) btn.textContent='🔒';
   showToast(_sessionKey?'✓ PIN set — data encrypted':'✓ PIN set');
   _setupPinConfirmed='';
+  if(typeof S!=='undefined'&&S){
+    S.pinEnabled=true;
+    if(_sessionKey) S.passphraseEnabled=true;
+  }
+  if(typeof awardXP==='function') awardXP('pin_enabled');
+  if(typeof checkAchievements==='function') checkAchievements('vault_keeper');
 }
 
 async function removePin(){

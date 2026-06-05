@@ -341,10 +341,15 @@ function saveInvModal() {
     name, type, customLabel, currentValue, costBasis, annualReturn, notes, lastUpdated, currency
   };
 
+  const wasNewInv = _invEditIdx < 0;
   dispatch('INVESTMENTS_UPSERT', { idx: _invEditIdx, account });
   closeInvModal();
   renderInvestments();
   showToast(_invEditIdx >= 0 ? '✓ Account updated' : '✓ Account added');
+  if (wasNewInv) {
+    if (typeof awardXP === 'function') awardXP('investment_logged');
+    if (typeof checkAchievements === 'function') checkAchievements('portfolio_pro', 'consistent_investor', 'wealth_builder');
+  }
 }
 
 function deleteInvestment(i) {

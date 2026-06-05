@@ -4,17 +4,47 @@
 // CONSTANTS
 // ══════════════════════════════════════════════
 const ACHIEVEMENTS = {
-  first_paid:    { iconKey:'trophy',    label:'First Bill Paid',  desc:'Marked your first expense as paid' },
-  week_champ:    { iconKey:'star',      label:'Week Champion',     desc:'Paid off an entire week of expenses' },
-  debt_slayer:   { iconKey:'lightning', label:'Debt Slayer',       desc:'Paid off your first loan' },
-  debt_free:     { iconKey:'medal',     label:'Debt Free',         desc:'All loans cleared to zero' },
-  sav_starter:   { iconKey:'piggyBank', label:'Savings Starter',   desc:'Made your first savings deposit' },
-  goal_crusher:  { iconKey:'compass',   label:'Goal Crusher',      desc:'Reached 100% on a savings goal' },
-  budget_boss:   { iconKey:'chartBar',  label:'Budget Boss',       desc:'All categories under cap for a month' },
-  perfect_score: { iconKey:'sun',       label:'Perfect Score',     desc:'Health score hit 100' },
-  streak_3:      { iconKey:'trendUp',   label:'3-Month Streak',    desc:'3 consecutive months of positive cash flow' },
-  streak_6:      { iconKey:'trophy',    label:'6-Month Streak',    desc:'6 consecutive positive months' },
-  app_installed: { iconKey:'download',  label:'Installed!',         desc:'Added FincWin to your home screen' },
+  // ── Core ──
+  first_paid:          { iconKey:'trophy',     label:'First Bill Paid',      desc:'Marked your first expense as paid',                         xp:50,  rarity:'common'   },
+  week_champ:          { iconKey:'star',        label:'Week Champion',        desc:'Paid off an entire week of expenses',                       xp:75,  rarity:'common'   },
+  debt_slayer:         { iconKey:'lightning',   label:'Debt Slayer',          desc:'Paid off your first loan',                                  xp:150, rarity:'rare'     },
+  debt_free:           { iconKey:'medal',       label:'Debt Free',            desc:'All loans cleared to zero',                                 xp:300, rarity:'legendary'},
+  sav_starter:         { iconKey:'piggyBank',   label:'Savings Starter',      desc:'Made your first savings deposit',                           xp:50,  rarity:'common'   },
+  goal_crusher:        { iconKey:'compass',     label:'Goal Crusher',         desc:'Reached 100% on a savings goal',                            xp:200, rarity:'epic'     },
+  budget_boss:         { iconKey:'chartBar',    label:'Budget Boss',          desc:'All categories under cap for a month',                      xp:150, rarity:'rare'     },
+  perfect_score:       { iconKey:'sun',         label:'Perfect Score',        desc:'Health score hit 100',                                      xp:300, rarity:'legendary'},
+  streak_3:            { iconKey:'trendUp',     label:'3-Month Streak',       desc:'3 consecutive months of positive cash flow',                xp:150, rarity:'rare'     },
+  streak_6:            { iconKey:'trophy',      label:'6-Month Streak',       desc:'6 consecutive positive months',                             xp:250, rarity:'epic'     },
+  app_installed:       { iconKey:'download',    label:'Installed!',           desc:'Added FincWin to your home screen',                         xp:50,  rarity:'common'   },
+  // ── Budgeting ──
+  budget_keeper:       { iconKey:'check',       label:'Budget Keeper',        desc:'Stayed within total budget for any single month',           xp:100, rarity:'common'   },
+  streak_starter:      { iconKey:'fire',        label:'Streak Starter',       desc:'First month of positive cash flow',                         xp:75,  rarity:'common'   },
+  envelope_hero:       { iconKey:'mail',        label:'Envelope Hero',        desc:'All 14 categories have at least one expense logged',        xp:200, rarity:'rare'     },
+  // ── Category badges ──
+  cat_banking:         { iconKey:'bank',        label:'Money Sentinel',       desc:'Stayed within Banking cap 3 consecutive months',            xp:150, rarity:'rare'     },
+  cat_telecom:         { iconKey:'phone',       label:'Signal Master',        desc:'Stayed within Telecom cap 3 consecutive months',            xp:150, rarity:'rare'     },
+  cat_subs:            { iconKey:'repeat',      label:'Sub Slayer',           desc:'Stayed within Subscriptions cap 3 consecutive months',      xp:200, rarity:'rare'     },
+  cat_auto:            { iconKey:'car',         label:'Road Warrior',         desc:'Stayed within Auto cap 3 consecutive months',               xp:175, rarity:'rare'     },
+  cat_utility:         { iconKey:'bolt',        label:'Grid Guardian',        desc:'Stayed within Utilities cap 3 consecutive months',          xp:150, rarity:'rare'     },
+  cat_housing:         { iconKey:'house',       label:'Home Owner Mindset',   desc:'Stayed within Housing cap 3 consecutive months',            xp:200, rarity:'epic'     },
+  cat_food:            { iconKey:'fork',        label:'Pantry Pro',           desc:'Stayed within Food/Meals cap 3 consecutive months',         xp:175, rarity:'rare'     },
+  cat_entertain:       { iconKey:'film',        label:'Fun Budget Boss',      desc:'Stayed within Entertainment cap 3 consecutive months',      xp:150, rarity:'rare'     },
+  cat_fees:            { iconKey:'lightning',   label:'Fee Fighter',          desc:'Stayed within Fees cap 3 consecutive months',               xp:125, rarity:'uncommon' },
+  cat_health:          { iconKey:'hospital',    label:'Wellness Watcher',     desc:'Stayed within Health cap 3 consecutive months',             xp:150, rarity:'rare'     },
+  cat_loan:            { iconKey:'creditCard',  label:'Debt Manager',         desc:'Stayed within Loan Pmt cap 3 consecutive months',           xp:175, rarity:'rare'     },
+  cat_tuition:         { iconKey:'mortarboard', label:'Knowledge Investor',   desc:'Stayed within Tuition cap 3 consecutive months',            xp:175, rarity:'rare'     },
+  cat_savings:         { iconKey:'piggyBank',   label:'Savings Discipline',   desc:'Stayed within Savings cap 3 consecutive months',            xp:175, rarity:'rare'     },
+  cat_other:           { iconKey:'package',     label:'Catch-All Champion',   desc:'Stayed within Other cap 3 consecutive months',              xp:125, rarity:'uncommon' },
+  // ── Security & Sync ──
+  sync_sentinel:       { iconKey:'cloud',       label:'Sync Sentinel',        desc:'Enabled cloud sync to protect your data',                   xp:150, rarity:'uncommon' },
+  backup_hero:         { iconKey:'download',    label:'Backup Hero',          desc:'Downloaded a JSON backup of your data',                     xp:125, rarity:'uncommon' },
+  vault_keeper:        { iconKey:'lock',        label:'Vault Keeper',         desc:'Enabled PIN lock and passphrase encryption',                xp:200, rarity:'rare'     },
+  // ── Investments & Wealth ──
+  portfolio_pro:       { iconKey:'briefcase',   label:'Portfolio Pro',        desc:'Tracked all 6 investment types in a single month',          xp:200, rarity:'epic'     },
+  consistent_investor: { iconKey:'calendar',    label:'Consistent Investor',  desc:'Logged investments in 3 consecutive months',                xp:150, rarity:'rare'     },
+  wealth_builder:      { iconKey:'trendUp',     label:'Wealth Builder',       desc:'Achieved positive net worth for the first time',            xp:300, rarity:'legendary'},
+  // ── Income ──
+  income_logger:       { iconKey:'repeat',      label:'Consistency',          desc:'Logged income in 3 consecutive months',                     xp:150, rarity:'rare'     },
 };
 
 const HEALTH_TIERS = [
@@ -26,10 +56,37 @@ const HEALTH_TIERS = [
   { min:100, max:100, label:'Perfect',  color:'var(--purple)',  bg:'var(--purple-light)'  },
 ];
 
-const XP_PER_LEVEL = 200;
+// Named XP levels matching landing page promises
+const XP_LEVELS = [
+  { min:0,     label:'Beginner'       },
+  { min:500,   label:'Tracker'        },
+  { min:1500,  label:'Budgeter'       },
+  { min:3500,  label:'Strategist'     },
+  { min:7000,  label:'Expert'         },
+  { min:15000, label:'FincWin Master' },
+];
+
+function getXPLevel(xp) {
+  var lvl = XP_LEVELS[0];
+  for (var i = 0; i < XP_LEVELS.length; i++) {
+    if (xp >= XP_LEVELS[i].min) lvl = XP_LEVELS[i];
+  }
+  return lvl;
+}
+
+function getXPProgress(xp) {
+  var idx = 0;
+  for (var i = 0; i < XP_LEVELS.length; i++) { if (xp >= XP_LEVELS[i].min) idx = i; }
+  var cur = XP_LEVELS[idx].min;
+  var next = idx < XP_LEVELS.length - 1 ? XP_LEVELS[idx + 1].min : cur + 1000;
+  return { pct: Math.min(100, ((xp - cur) / (next - cur)) * 100), cur: xp - cur, needed: next - cur };
+}
+
+const XP_PER_LEVEL = 200; // kept for backward compat with old level calc
 const XP_REWARDS = {
   bill_paid:5, week_complete:20, sav_deposit:10,
-  loan_payment:15, positive_month:50, health_milestone:25, challenge_complete:30
+  loan_payment:15, positive_month:50, health_milestone:25, challenge_complete:30,
+  expense_logged:10, income_logged:15, investment_logged:20, pin_enabled:100,
 };
 
 // ══════════════════════════════════════════════
@@ -105,24 +162,22 @@ function renderXPBar() {
   var lbl = document.getElementById('d-xp-label');
   if (!bar) return;
   var xp = S.xp || 0;
-  var level = S.xpLevel || 0;
-  var xpInLevel = xp % XP_PER_LEVEL;
-  var pct = (xpInLevel / XP_PER_LEVEL * 100).toFixed(1);
-  bar.style.width = pct + '%';
-  bar.setAttribute('aria-valuenow', Math.round(pct));
-  if (lbl) lbl.textContent = 'Lvl ' + (level + 1) + '  ·  ' + xpInLevel + '/' + XP_PER_LEVEL + ' XP';
+  var prog = getXPProgress(xp);
+  var lvlName = getXPLevel(xp).label;
+  bar.style.width = prog.pct.toFixed(1) + '%';
+  bar.setAttribute('aria-valuenow', Math.round(prog.pct));
+  if (lbl) lbl.textContent = lvlName + '  ·  ' + prog.cur + '/' + prog.needed + ' XP';
 }
 
 function awardXP(reason) {
   var pts = XP_REWARDS[reason] || 0;
   if (!pts) return;
-  var prev = S.xp || 0;
-  S.xp = prev + pts;
-  var prevLevel = S.xpLevel || 0;
-  var newLevel = Math.floor(S.xp / XP_PER_LEVEL);
-  if (newLevel > prevLevel) {
-    S.xpLevel = newLevel;
-    showToast('⚡ Level ' + newLevel + '! Keep going!');
+  var xp = S.xp || 0;
+  var prevLabel = getXPLevel(xp).label;
+  S.xp = xp + pts;
+  var newLabel = getXPLevel(S.xp).label;
+  if (newLabel !== prevLabel) {
+    showToast('⚡ ' + newLabel + '! Keep going!');
     launchConfetti(50);
   }
   persist(false);
@@ -135,10 +190,12 @@ function awardXP(reason) {
 function unlockAchievement(id) {
   if (!ACHIEVEMENTS[id] || (S.achievements || []).includes(id)) return;
   S.achievements.push(id);
-  persist(false);
   var b = ACHIEVEMENTS[id];
-  showToast('Achievement unlocked: ' + b.label + '!');
-  launchConfetti(60);
+  if (b.xp) { S.xp = (S.xp||0) + b.xp; }
+  persist(false);
+  var xpNote = b.xp ? ' +' + b.xp + ' XP' : '';
+  showToast('🏅 ' + b.label + ' unlocked!' + xpNote);
+  launchConfetti(b.rarity === 'legendary' ? 120 : b.rarity === 'epic' ? 90 : 60);
   renderAchievementShelf();
   var tile = document.querySelector('[data-ach-id="' + id + '"]');
   if (tile) {
@@ -195,23 +252,115 @@ function checkAchievements() {
       ok = calcStreak() >= 3;
     } else if (id === 'streak_6') {
       ok = calcStreak() >= 6;
+
+    // ── Budgeting ──
+    } else if (id === 'budget_keeper') {
+      var bkCats = Object.keys(S.budgets || BDFT);
+      var bkTotals = {};
+      cw().forEach(function(w){ w.items.forEach(function(i){
+        var c = getCatLabel(getCat(i.name));
+        bkTotals[c] = (bkTotals[c]||0) + i.amount;
+      }); });
+      ok = bkCats.length > 0 && bkCats.every(function(cat){
+        return (bkTotals[cat]||0) <= ((S.budgets&&S.budgets[cat])||BDFT[cat]||500);
+      });
+    } else if (id === 'streak_starter') {
+      ok = calcStreak() >= 1;
+    } else if (id === 'envelope_hero') {
+      var allCls = CAT_ALL.map(function(c){ return c.cls; });
+      var usedCls = {};
+      cw().forEach(function(w){ w.items.forEach(function(i){ usedCls[getCat(i.name)] = true; }); });
+      ok = allCls.every(function(cls){ return usedCls[cls]; });
+
+    // ── Category badges — 3 consecutive months within cap ──
+    } else if (id.startsWith('cat_')) {
+      var targetCls = 'cat-' + id.slice(4); // cat_banking -> cat-banking
+      var catEntry = CAT_ALL.find(function(c){ return c.cls === targetCls; });
+      if (catEntry) {
+        var sortedKeys = Object.keys(S.months).filter(function(k){ return k !== CMK; })
+          .sort(function(a,b){ return keyToYM(a) - keyToYM(b); });
+        var last3 = sortedKeys.slice(-3);
+        ok = last3.length === 3 && last3.every(function(mk){
+          var mo = S.months[mk];
+          if (!mo) return false;
+          var spent = 0;
+          mo.weeks.forEach(function(w){ w.items.forEach(function(i){
+            if (getCat(i.name) === targetCls) spent += (i.amount||0);
+          }); });
+          var cap = (S.budgets&&S.budgets[catEntry.lbl])||BDFT[catEntry.lbl]||50000;
+          return spent <= cap;
+        });
+      }
+
+    // ── Security & Sync ──
+    } else if (id === 'sync_sentinel') {
+      ok = !!(S.syncProvider || (typeof getActiveProvider==='function' && getActiveProvider()));
+    } else if (id === 'backup_hero') {
+      ok = !!(S.lastBackup);
+    } else if (id === 'vault_keeper') {
+      ok = !!(S.pinEnabled && S.passphraseEnabled);
+
+    // ── Investments & Wealth ──
+    } else if (id === 'portfolio_pro') {
+      var invTypes = ['stock','bond','crypto','realestate','cash','other'];
+      var usedTypes = {};
+      (S.investments||[]).forEach(function(inv){ usedTypes[inv.type] = true; });
+      ok = invTypes.every(function(t){ return usedTypes[t]; });
+    } else if (id === 'consistent_investor') {
+      var invKeys = Object.keys(S.months).sort(function(a,b){ return keyToYM(a)-keyToYM(b); });
+      var last3inv = invKeys.slice(-3);
+      ok = last3inv.length === 3 && (S.investments||[]).some(function(inv){
+        // investment has a lastUpdated date — check it spans 3 months
+        if (!inv.lastUpdated) return false;
+        var d = new Date(inv.lastUpdated);
+        var ym = d.getFullYear()*12 + d.getMonth();
+        var oldest = keyToYM(last3inv[0]);
+        return ym >= oldest;
+      }) && (S.investments||[]).length >= 1;
+    } else if (id === 'wealth_builder') {
+      var totalAssets = (S.savings||[]).reduce(function(s,g){ return s+(g.balance||0); }, 0)
+        + (S.investments||[]).reduce(function(s,inv){ return s+(inv.currentValue||0); }, 0);
+      var totalLiabilities = (S.loans||[]).reduce(function(s,l){ return s+(l.amount||0); }, 0);
+      ok = totalAssets > 0 && totalAssets > totalLiabilities;
+
+    // ── Income ──
+    } else if (id === 'income_logger') {
+      var incKeys = Object.keys(S.months).sort(function(a,b){ return keyToYM(a)-keyToYM(b); });
+      var last3inc = incKeys.slice(-3);
+      ok = last3inc.length === 3 && last3inc.every(function(mk){
+        var mo = S.months[mk];
+        return mo && mo.revenue && mo.revenue.length > 0;
+      });
     }
     if (ok) unlockAchievement(id);
   });
 }
 
+var _RARITY_ORDER = ['legendary','epic','rare','uncommon','common'];
 function renderAchievementShelf() {
   var el = document.getElementById('d-achievement-shelf');
   if (!el) return;
   var earned = S.achievements || [];
   var countEl = document.getElementById('d-ach-count');
   if (countEl) countEl.textContent = earned.length + '/' + Object.keys(ACHIEVEMENTS).length;
-  el.innerHTML = Object.entries(ACHIEVEMENTS).map(function(pair){
+  // Sort by rarity (legendary first), then earned before locked
+  var sorted = Object.entries(ACHIEVEMENTS).sort(function(a, b) {
+    var ri = _RARITY_ORDER.indexOf(a[1].rarity||'common');
+    var rj = _RARITY_ORDER.indexOf(b[1].rarity||'common');
+    if (ri !== rj) return ri - rj;
+    var ei = earned.includes(a[0]) ? 0 : 1;
+    var ej = earned.includes(b[0]) ? 0 : 1;
+    return ei - ej;
+  });
+  el.innerHTML = sorted.map(function(pair){
     var id = pair[0], b = pair[1];
     var isEarned = earned.includes(id);
-    return '<div class="ach-tile ' + (isEarned ? 'ach-earned' : 'ach-locked') + '" data-ach-id="' + id + '" title="' + b.label + ': ' + b.desc + '">'
+    var rarity = b.rarity || 'common';
+    var xpLabel = b.xp ? '+' + b.xp + ' XP' : '';
+    return '<div class="ach-tile ' + (isEarned ? 'ach-earned' : 'ach-locked') + ' ach-rarity-' + rarity + '" data-ach-id="' + id + '" title="' + b.label + ': ' + b.desc + (xpLabel ? ' · ' + xpLabel : '') + '">'
       + '<span class="ach-icon">' + (typeof icon === 'function' && b.iconKey ? icon(b.iconKey, {label:b.label,size:20}) : '') + '</span>'
       + '<span class="ach-label">' + b.label + '</span>'
+      + (xpLabel ? '<span class="ach-xp">' + xpLabel + '</span>' : '')
       + '</div>';
   }).join('');
 }
@@ -493,5 +642,20 @@ function renderGamification() {
   renderAchievementShelf();
   renderXPBar();
   renderSpendingHeatmap();
-  checkAchievements('budget_boss', 'streak_3', 'streak_6');
+  checkAchievements(
+    // Core
+    'budget_boss', 'streak_3', 'streak_6',
+    // Budgeting
+    'budget_keeper', 'streak_starter', 'envelope_hero',
+    // Category (all 14)
+    'cat_banking','cat_telecom','cat_subs','cat_auto','cat_utility',
+    'cat_housing','cat_food','cat_entertain','cat_fees','cat_health',
+    'cat_loan','cat_tuition','cat_savings','cat_other',
+    // Security
+    'sync_sentinel', 'backup_hero', 'vault_keeper',
+    // Investments
+    'portfolio_pro', 'consistent_investor', 'wealth_builder',
+    // Income
+    'income_logger'
+  );
 }

@@ -876,12 +876,20 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 /* Achievement shelf — icon-only compact chips */
 .ach-shelf { display: flex; flex-wrap: nowrap; gap: 4px; overflow-x: auto; scrollbar-width: none; }
 .ach-shelf::-webkit-scrollbar { display: none; }
-.ach-tile { display: flex; align-items: center; justify-content: center; padding: 3px 5px; border-radius: 2px; border: 1px solid var(--hairline); transition: all .2s; cursor: default; }
+.ach-tile { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 5px; border-radius: 4px; border: 1px solid var(--hairline); transition: all .2s; cursor: default; gap: 2px; }
 .ach-tile .ach-label { display: none; }
+.ach-tile .ach-xp { display: none; font-size: 8px; font-weight: 600; color: var(--sage); line-height: 1; }
 .ach-tile .ach-icon { font-size: 15px; line-height: 1; }
 .ach-tile.ach-earned { background: var(--success-light); border-color: var(--success-mid); }
+.ach-tile.ach-earned .ach-xp { display: block; }
 .ach-tile.ach-locked { opacity: 0.35; filter: grayscale(1); }
 .ach-tile.ach-pop { animation: ach-burst .5s ease; }
+/* Rarity rings on earned tiles */
+.ach-tile.ach-earned.ach-rarity-uncommon { border-color: #16a34a; box-shadow: 0 0 0 1px #16a34a22; }
+.ach-tile.ach-earned.ach-rarity-rare     { border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb22; }
+.ach-tile.ach-earned.ach-rarity-epic     { border-color: #7c3aed; box-shadow: 0 0 0 2px #7c3aed22; background: linear-gradient(135deg, var(--success-light), #ede9fe); }
+.ach-tile.ach-earned.ach-rarity-legendary{ border-color: #d97706; box-shadow: 0 0 0 2px #d9770622; background: linear-gradient(135deg, #fef3c7, #fde68a); }
+.ach-tile:hover:not(.ach-locked) .ach-label { display: block; font-size: 8px; font-weight: 500; color: var(--ink); text-align: center; line-height: 1.2; max-width: 52px; }
 
 /* Spending heatmap */
 .hm-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }

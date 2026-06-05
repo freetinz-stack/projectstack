@@ -949,6 +949,9 @@ function downloadExport(json,filename){
   const a=document.createElement('a');a.href=url;a.download=filename;a.click();
   setTimeout(()=>URL.revokeObjectURL(url),100);
   showToast('✓ Backup downloaded');
+  S.lastBackup=Date.now();
+  persist(false);
+  if(typeof checkAchievements==='function') checkAchievements('backup_hero');
 }
 function exportCSV(){
   const rows=[['Month','Week','Name','Category','Amount','Status','Due Day','Note']];

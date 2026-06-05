@@ -384,7 +384,15 @@ function saveItemModal(){
   updateHealth();
   if(isPaid){launchConfetti(wasNew?30:18);}
   showToast(_iModalIi>=0?'✓ Item updated':'✓ Item added');
-  if(wasNew) _checkRecurringSuggest(name,amount,dueDay);
+  if(wasNew){
+    if(typeof awardXP==='function') awardXP('expense_logged');
+    if(typeof checkAchievements==='function'){
+      var _catCls=typeof getCat==='function'?getCat(name):'';
+      var _catId=_catCls?'cat_'+_catCls.replace('cat-',''):'';
+      checkAchievements('first_paid','envelope_hero','budget_keeper',_catId);
+    }
+    _checkRecurringSuggest(name,amount,dueDay);
+  }
 }
 
 // ── RECURRING SUGGEST (2B) ──
@@ -639,9 +647,14 @@ function saveRevModal() {
   } else if (recIdx >= 0) {
     dispatch('RECURRING_REMOVE',{idx:recIdx});
   }
+  const wasNewRev = _revEditIdx < 0;
   closeRevModal(); renderRevenue(); updateHealth();
   const recurMsg = isRecurring ? ' · will auto-add to new months' : '';
   showToast((_revEditIdx >= 0 ? '✓ Income updated' : '✓ Income added') + recurMsg);
+  if (wasNewRev) {
+    if (typeof awardXP === 'function') awardXP('income_logged');
+    if (typeof checkAchievements === 'function') checkAchievements('income_logger');
+  }
 }
 
 // ══════════════════════════════════════════════
