@@ -687,8 +687,8 @@ async function obLoadDemoAndClose() {
   localStorage.setItem('finflow_onboarded', '1');
   // Show banner so user knows this is demo data and can start fresh any time
   var banner = document.getElementById('demoBanner');
+  await loadDemoProfile('alex', true /* keepBanner */);
   if (banner) banner.style.display = 'flex';
-  await loadDemoProfile('alex');
 }
 
 // Explicit window exposure — ensures functions are reachable from the
@@ -711,7 +711,7 @@ window.obLoadDemoAndClose = obLoadDemoAndClose;
 
 // ── Core loader ───────────────────────────────────────────────────────────────
 
-async function loadDemoProfile(id) {
+async function loadDemoProfile(id, keepBanner) {
   var p = DEMO_PROFILES[id];
   if (!p) { showToast('Profile not found', 'warn-t'); return; }
 
@@ -807,7 +807,7 @@ async function loadDemoProfile(id) {
   // Close any open modals and dismiss demo banner
   document.querySelectorAll('.modal-overlay.open').forEach(function(m) { m.classList.remove('open'); });
   var banner = document.getElementById('demoBanner');
-  if (banner) banner.style.display = 'none';
+  if (banner && !keepBanner) banner.style.display = 'none';
 
   // Re-render
   if (typeof renderDash === 'function') renderDash();
