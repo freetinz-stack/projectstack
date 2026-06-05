@@ -645,15 +645,99 @@ function migrateAmountsToCents(){
   }
 }
 
-function showFileNewerPrompt(fileLastModified) {
+function _conflictDiffMetrics(stateA, stateB) {
+  // Extract comparable metrics from two state snapshots.
+  // Returns array of {label, a, b} where a=browser value, b=file value.
+  function totalExp(st) {
+    var t=0;
+    Object.values(st.months||{}).forEach(function(m){
+      (m.weeks||[]).forEach(function(w){(w.items||[]).forEach(function(i){t+=i.amount||0;});});
+    });
+    return t;
+  }
+  function totalRev(st) {
+    var t=0;
+    Object.values(st.months||{}).forEach(function(m){
+      (m.revenue||[]).forEach(function(r){t+=r.amount||0;});
+    });
+    return t;
+  }
+  function totalLoanBal(st) {
+    return (st.loans||[]).reduce(function(s,l){return s+(l.amount||0);},0);
+  }
+  function totalSavBal(st) {
+    return (st.savings||[]).reduce(function(s,g){return s+(g.balance||0);},0);
+  }
+  function expenseCount(st) {
+    var c=0;
+    Object.values(st.months||{}).forEach(function(m){
+      (m.weeks||[]).forEach(function(w){c+=(w.items||[]).length;});
+    });
+    return c;
+  }
+  var sym=(stateA.currency&&stateA.currency.symbol)||'$';
+  function money(v){return sym+(v/100).toFixed(0);}
+  function count(v){return String(v);}
+  return [
+    {label:'Total expenses',   a:money(totalExp(stateA)),   b:money(totalExp(stateB)),   aRaw:totalExp(stateA),   bRaw:totalExp(stateB),   lowerIsBetter:true},
+    {label:'Total income',     a:money(totalRev(stateA)),   b:money(totalRev(stateB)),   aRaw:totalRev(stateA),   bRaw:totalRev(stateB),   lowerIsBetter:false},
+    {label:'Loan balances',    a:money(totalLoanBal(stateA)),b:money(totalLoanBal(stateB)),aRaw:totalLoanBal(stateA),bRaw:totalLoanBal(stateB),lowerIsBetter:true},
+    {label:'Savings balance',  a:money(totalSavBal(stateA)), b:money(totalSavBal(stateB)), aRaw:totalSavBal(stateA), bRaw:totalSavBal(stateB), lowerIsBetter:false},
+    {label:'Expense items',    a:count(expenseCount(stateA)),b:count(expenseCount(stateB)),aRaw:expenseCount(stateA),bRaw:expenseCount(stateB),lowerIsBetter:false}
+  ];
+}
+
+function _renderConflictDiff(browserState, fileState) {
+  var wrap = document.getElementById('conflictDiff');
+  var table = document.getElementById('conflictDiffTable');
+  if (!wrap || !table) return;
+  var metrics = _conflictDiffMetrics(browserState, fileState);
+  // Only show rows where the values differ
+  var diffRows = metrics.filter(function(m){return m.aRaw !== m.bRaw;});
+  if (!diffRows.length) { wrap.style.display = 'none'; return; }
+  var rows = diffRows.map(function(m) {
+    var diff = m.bRaw - m.aRaw; // positive = file has more
+    // For "lowerIsBetter" metrics (expenses, loans): more in file = red; less = green
+    // For "higherIsBetter" metrics (income, savings, count): more in file = green; less = red
+    var fileIsGood = m.lowerIsBetter ? diff < 0 : diff > 0;
+    var arrow = diff > 0 ? '▲' : '▼';
+    var diffColor = fileIsGood ? 'var(--success, #276749)' : 'var(--danger, #c0392b)';
+    // Format delta
+    var absDiff = Math.abs(diff);
+    var diffStr = (typeof m.b === 'string' && m.b.startsWith(m.a[0]))
+      ? ((m.lowerIsBetter ? (diff>0?'+':'-') : (diff>0?'+':'-')) + (m.a[0]||'') + (absDiff/100).toFixed(0))
+      : (diff > 0 ? '+' : '') + absDiff;
+    // Use currency symbol if money metric
+    var isMoney = m.label !== 'Expense items';
+    var sym = (browserState.currency && browserState.currency.symbol) || '$';
+    diffStr = isMoney
+      ? (diff > 0 ? '+' : '−') + sym + (absDiff / 100).toFixed(0)
+      : (diff > 0 ? '+' : '−') + absDiff;
+
+    return '<tr style="border-bottom:1px solid var(--border-soft);">'
+      + '<td style="padding:4px 6px 4px 0;color:var(--text-muted);font-size:10px;white-space:nowrap;">' + m.label + '</td>'
+      + '<td style="padding:4px 6px;text-align:right;font-size:11px;">' + m.a + '</td>'
+      + '<td style="padding:4px 6px;text-align:right;font-size:11px;">' + m.b + '</td>'
+      + '<td style="padding:4px 0 4px 6px;text-align:right;font-size:10px;font-weight:700;white-space:nowrap;color:' + diffColor + ';">'
+      + arrow + ' ' + diffStr + '</td>'
+      + '</tr>';
+  });
+  table.innerHTML = '<thead><tr>'
+    + '<th style="font-size:9px;font-weight:600;color:var(--text-muted);text-align:left;padding-bottom:4px;border-bottom:1px solid var(--border);">Metric</th>'
+    + '<th style="font-size:9px;font-weight:600;color:var(--text-muted);text-align:right;padding-bottom:4px;border-bottom:1px solid var(--border);">Browser</th>'
+    + '<th style="font-size:9px;font-weight:600;color:var(--text-muted);text-align:right;padding-bottom:4px;border-bottom:1px solid var(--border);">File</th>'
+    + '<th style="font-size:9px;font-weight:600;color:var(--text-muted);text-align:right;padding-bottom:4px;border-bottom:1px solid var(--border);">Δ</th>'
+    + '</tr></thead><tbody>' + rows.join('') + '</tbody>';
+  wrap.style.display = 'block';
+}
+
+function showFileNewerPrompt(fileLastModified, fileContent) {
   return new Promise(function(resolve) {
     var conflictModal = document.getElementById('syncConflictModal');
     if (!conflictModal) {
-      // Fallback: modal not in DOM (should not happen in normal app flow)
       resolve(confirm('Your local file is newer. Load from file?'));
       return;
     }
-    // Inject file-conflict copy using textContent (XSS-safe — never use innerHTML here)
     var titleEl = document.getElementById('syncConflictTitle');
     var descEl = conflictModal.querySelector('.pmodal > p');
     var localTimeEl = document.getElementById('conflictLocalTime');
@@ -669,12 +753,21 @@ function showFileNewerPrompt(fileLastModified) {
     if (cloudTimeEl) cloudTimeEl.textContent = new Date(fileLastModified).toLocaleString();
     if (localSummaryEl) localSummaryEl.textContent = 'Browser (IndexedDB) data';
     if (cloudSummaryEl) cloudSummaryEl.textContent = 'File on disk';
-    // Locate the column header divs (first child div of each grid column)
     var gridCols = conflictModal.querySelectorAll('[style*="grid-template-columns"] > div');
     if (gridCols[0]) gridCols[0].querySelector('div') && (gridCols[0].querySelector('div').textContent = 'Browser data');
     if (gridCols[1]) gridCols[1].querySelector('div') && (gridCols[1].querySelector('div').textContent = 'Local file');
     if (keepLocalBtn) keepLocalBtn.textContent = 'Keep browser data';
     if (useCloudBtn) useCloudBtn.textContent = 'Load from file';
+
+    // Render key-differences table if we have the file content to compare
+    var diffWrap = document.getElementById('conflictDiff');
+    if (diffWrap) diffWrap.style.display = 'none';
+    if (fileContent && S) {
+      try {
+        var fileParsed = JSON.parse(fileContent);
+        if (fileParsed && typeof fileParsed === 'object') _renderConflictDiff(S, fileParsed);
+      } catch(e) { /* unparseable file — skip diff */ }
+    }
 
     conflictModal.dataset.resolveWith = '';
     conflictModal.classList.add('open');
@@ -819,7 +912,7 @@ async function initState(){
         try{
           const fileCheck=await window.checkFileNewerThanIDB();
           if(fileCheck&&fileCheck.newer&&fileCheck.fileContent){
-            const useFile=await showFileNewerPrompt(fileCheck.fileLastModified);
+            const useFile=await showFileNewerPrompt(fileCheck.fileLastModified,fileCheck.fileContent);
             if(useFile){
               var _fileParsed=JSON.parse(fileCheck.fileContent);
               if(!_validateStateShape(_fileParsed)){throw new Error('Invalid file state shape');}

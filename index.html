@@ -2513,10 +2513,10 @@
 
 <!-- ── SYNC CONFLICT MODAL ── -->
 <div class="modal-overlay" id="syncConflictModal" data-self-close="" role="dialog" aria-modal="true" aria-labelledby="syncConflictTitle">
-  <div class="pmodal" style="max-width:420px;">
+  <div class="pmodal" style="max-width:460px;">
     <h4 id="syncConflictTitle">Sync Conflict Detected</h4>
     <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;">Both your local data and cloud data have changed. Choose which version to keep.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;">
         <div style="font-weight:700;font-size:11px;margin-bottom:4px;">Local (this device)</div>
         <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;" id="conflictLocalTime"></div>
@@ -2527,6 +2527,10 @@
         <div style="font-size:10px;color:var(--text-secondary);margin-bottom:4px;" id="conflictCloudTime"></div>
         <div style="font-size:11px;" id="conflictCloudSummary"></div>
       </div>
+    </div>
+    <div id="conflictDiff" style="margin-bottom:14px;display:none;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:6px;">Key differences</div>
+      <table id="conflictDiffTable" style="width:100%;border-collapse:collapse;font-size:11px;"></table>
     </div>
     <div class="btn-row">
       <button class="btn-s" data-action="conflictPickLocal">Keep Local</button>
