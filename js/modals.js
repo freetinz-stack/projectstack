@@ -295,16 +295,22 @@ function saveItemModal(){
 
   if(!name){ showToast('Please enter an item name','warn-t'); document.getElementById('iName').focus(); return; }
 
+  // Read currency once — shared by all frequency paths
+  const _iCurrRow = document.getElementById('iCurrencyRow');
+  const _iCurrSel = document.getElementById('iCurrency');
+  const itemCurrency = (_iCurrRow && _iCurrRow.style.display !== 'none' && _iCurrSel && _iCurrSel.value)
+    ? _iCurrSel.value : getCurrency().code;
+
   // ── QUARTERLY / YEARLY → scheduled template ──
   if(freq==='quarterly'||freq==='yearly'){
     if(!S.scheduledExpenses)S.scheduledExpenses=[];
     const isEditingSched = _iModalIi>=0 && cw()[_iModalWi]&&cw()[_iModalWi].items[_iModalIi]&&cw()[_iModalWi].items[_iModalIi]._scheduledId;
     const existingId = isEditingSched ? cw()[_iModalWi].items[_iModalIi]._scheduledId : ('se'+Date.now());
-    const se={id:existingId,name,amount,frequency:freq,dueDay,note,week:_iModalWi,yearMonth:yearlyMonth};
+    const se={id:existingId,name,amount,frequency:freq,dueDay,note,week:_iModalWi,yearMonth:yearlyMonth,currency:itemCurrency};
     if(isEditingSched){
       const idx=S.scheduledExpenses.findIndex(s=>s.id===existingId);
       if(idx>=0)S.scheduledExpenses[idx]=se; else S.scheduledExpenses.push(se);
-      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:freq,_scheduledId:existingId,_scheduledYearMonth:yearlyMonth});
+      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:freq,currency:itemCurrency,_scheduledId:existingId,_scheduledYearMonth:yearlyMonth});
     } else {
       S.scheduledExpenses.push(se);
       expandScheduledExpenses(CMK); // inject into current month if it qualifies
@@ -320,10 +326,10 @@ function saveItemModal(){
   if(freq==='weekly'){
     if(_iModalIi>=0){
       // Edit: update just this occurrence
-      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'weekly',category:_iModalCat});
+      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'weekly',category:_iModalCat,currency:itemCurrency});
     } else {
       cw().forEach(w=>{
-        w.items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'weekly',category:_iModalCat,currency:getCurrency().code,_savingsItem:false});
+        w.items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'weekly',category:_iModalCat,currency:itemCurrency,_savingsItem:false});
       });
     }
     persist();
@@ -335,10 +341,10 @@ function saveItemModal(){
   // ── BI-WEEKLY → Week 1 (idx 0) and Week 3 (idx 2) ──
   if(freq==='biweekly'){
     if(_iModalIi>=0){
-      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'biweekly',category:_iModalCat});
+      cw()[_iModalWi].items[_iModalIi]=Object.assign({},cw()[_iModalWi].items[_iModalIi],{name,amount,dueDay,note,frequency:'biweekly',category:_iModalCat,currency:itemCurrency});
     } else {
       [0,2].forEach(wi=>{
-        if(cw()[wi])cw()[wi].items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'biweekly',category:_iModalCat,currency:getCurrency().code,_savingsItem:false});
+        if(cw()[wi])cw()[wi].items.push({name,amount,paid:false,dueDay,note,receipt:null,frequency:'biweekly',category:_iModalCat,currency:itemCurrency,_savingsItem:false});
       });
     }
     persist();
@@ -349,10 +355,6 @@ function saveItemModal(){
 
   // ── MONTHLY (default) — standard single item ──
   const taxCheck = document.getElementById('iTaxCheck');
-  const iCurrRow = document.getElementById('iCurrencyRow');
-  const iCurrSel = document.getElementById('iCurrency');
-  const itemCurrency = (iCurrRow && iCurrRow.style.display !== 'none' && iCurrSel && iCurrSel.value)
-    ? iCurrSel.value : getCurrency().code;
   const newItem = {
     name, amount,
     paid: _iModalStatus==='paid',
