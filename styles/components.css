@@ -1366,7 +1366,7 @@ tr.bulk-sel td { background: var(--sage-light) !important; }
 /* ── CATEGORY MANAGER MODAL ── */
 .catmgr-row {
   display: grid;
-  grid-template-columns: 130px 90px 1fr 20px;
+  grid-template-columns: 130px 90px 1fr auto;
   gap: 6px;
   align-items: flex-start;
   padding: 7px 0;
