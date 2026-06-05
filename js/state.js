@@ -848,6 +848,7 @@ function normaliseState(){
   if(!S.budgetRollover)S.budgetRollover={};
   if(!S.financialGoals)S.financialGoals=[];
   if(!S.customCategories)S.customCategories=[];
+  if(!S.categoryKeywords)S.categoryKeywords={};
   if(!S.scheduledExpenses)S.scheduledExpenses=[];
   if(!S.achievements)S.achievements=[];
   if(S.xp===undefined)S.xp=0;

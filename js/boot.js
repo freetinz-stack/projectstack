@@ -552,10 +552,11 @@ function openBulkBudgetModal(){
 
 function _catMgrBuild(){
   const budgets=S.budgets||{};
-  // Built-in categories
+  const savedKw=S.categoryKeywords||{};
+  // Built-in categories — use saved keyword overrides when present, else defaults
   const builtIn=Object.keys(BDFT).map(name=>({
     type:'builtin', name, cap:budgets[name]!=null?budgets[name]:BDFT[name],
-    keywords:[...(_CAT_DEFAULT_KW[name]||[])]
+    keywords:savedKw[name]?[...savedKw[name]]:[...(_CAT_DEFAULT_KW[name]||[])]
   }));
   // Custom categories
   const custom=(S.customCategories||[]).map(cc=>({
@@ -656,8 +657,9 @@ function _catMgrRowEl(row,idx){
   renderChips();
 
   // Delete (custom only)
+  let delBtn = null;
   if(row.type==='custom'){
-    const delBtn=document.createElement('button');
+    delBtn=document.createElement('button');
     delBtn.type='button';delBtn.className='catmgr-del-btn';delBtn.title='Delete category';
     delBtn.setAttribute('aria-label','Delete category '+row.name);
     delBtn.innerHTML='&#215;';
@@ -665,12 +667,13 @@ function _catMgrRowEl(row,idx){
       if(!confirm('Delete category "'+(_catMgrRows[idx].name||'this category')+'"? Existing expenses using it will move to Other.'))return;
       _catMgrRows.splice(idx,1);_catMgrRender();
     };
-    div.appendChild(delBtn);
   }
 
+  // Append in grid column order: name | cap | keywords | delete
   div.appendChild(nameInp);
   div.appendChild(capWrap);
   div.appendChild(kwWrap);
+  if(delBtn) div.appendChild(delBtn);
   return div;
 }
 
@@ -702,9 +705,13 @@ function saveBulkBudgets(){
     if(!r.name.trim()){showToast('⚠ Every category needs a name','warn-t');return;}
   }
 
-  // Built-in: just update caps (names are read-only)
+  // Built-in: update caps and persist any keyword edits
+  if(!S.categoryKeywords)S.categoryKeywords={};
   const builtIn=rows.filter(r=>r.type==='builtin');
-  builtIn.forEach(r=>{S.budgets[r.name]=r.cap;});
+  builtIn.forEach(r=>{
+    S.budgets[r.name]=r.cap;
+    S.categoryKeywords[r.name]=r.keywords;
+  });
 
   // Custom: rebuild S.customCategories, handle renames, update budgets
   const oldCustom=S.customCategories||[];

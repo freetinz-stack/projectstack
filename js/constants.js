@@ -75,10 +75,20 @@ function safeHTML(strings){
 
 function getCat(n){
   const l=n.toLowerCase();
-  // Check user-defined categories first
+  // Check user-defined custom categories first
   if(S&&S.customCategories){
     for(const cc of S.customCategories){
       if(cc.keywords.some(kw=>l.includes(kw.toLowerCase())))return 'cat-custom-'+cc.id;
+    }
+  }
+  // Check saved keyword overrides for built-in categories
+  if(S&&S.categoryKeywords){
+    const catCls={'Banking':'cat-bank','Telecom':'cat-telecom','Subscriptions':'cat-subs',
+      'Auto':'cat-auto','Utilities':'cat-utility','Housing':'cat-housing','Food/Meals':'cat-food',
+      'Entertainment':'cat-entertain','Fees':'cat-fees','Health':'cat-health',
+      'Loan Pmt':'cat-loan','Tuition':'cat-tuition','Savings':'cat-savings','Other':'cat-other'};
+    for(const[cat,kws]of Object.entries(S.categoryKeywords)){
+      if(Array.isArray(kws)&&kws.some(kw=>l.includes(kw.toLowerCase()))&&catCls[cat])return catCls[cat];
     }
   }
   for(const[k,v]of Object.entries(CAT_MAP)){if(l.includes(k))return v;}
