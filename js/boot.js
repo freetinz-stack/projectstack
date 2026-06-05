@@ -382,33 +382,230 @@ function applyBudgetRollovers(fromKey,toKey){
 }
 
 // ══════════════════════════════════════════════
-// BULK BUDGET EDITOR
 // ══════════════════════════════════════════════
+// CATEGORY MANAGER
+// ══════════════════════════════════════════════
+
+// Default keywords per built-in category (subset of CAT_MAP for display)
+const _CAT_DEFAULT_KW={
+  'Banking':['bank charges','bank fee','service charge','overdraft','annual fee'],
+  'Telecom':['phone plan','mobile plan','broadband','internet bill','verizon','at&t','t-mobile'],
+  'Subscriptions':['netflix','spotify','disney+','hulu','amazon prime','youtube premium','subscription','adobe'],
+  'Auto':['car insurance','auto insurance','car payment','fuel','gas station','parking','toll'],
+  'Utilities':['electricity','water bill','gas bill','council tax','natural gas'],
+  'Housing':['rent','mortgage','property tax','home insurance','hoa','maintenance'],
+  'Food/Meals':['grocery','groceries','restaurant','dining','takeout','doordash','ubereats','coffee'],
+  'Entertainment':['movie','cinema','concert','gaming','steam','playstation','xbox','bar'],
+  'Fees':['late fee','penalty','processing fee','atm fee','foreign transaction'],
+  'Health':['health insurance','dental','pharmacy','doctor','gym','fitness'],
+  'Loan Pmt':['student loan','personal loan','credit card payment','loan payment','minimum payment'],
+  'Tuition':['tuition','school fee','college','university','course','education'],
+  'Savings':['savings','emergency fund','vacation fund','retirement'],
+  'Other':[]
+};
+
+// Internal working state for the modal
+let _catMgrRows=[];
+
 function openBulkBudgetModal(){
-  const budgets=S.budgets||BDFT;
-  const rows=Object.keys(budgets).map(cat=>{
-    const cap=budgets[cat]||BDFT[cat]||0;
-    return`<tr><td style="font-size:12px;font-weight:500;padding:5px 8px;min-width:110px;">${cat}</td><td style="padding:3px;"><input class="fi" type="number" min="0" value="${amt(cap)}" style="width:100px;padding:5px 8px;font-size:12px;" id="bb-${CSS.escape(cat)}"></td></tr>`;
-  }).join('');
-  document.getElementById('bulkBudgetTable').innerHTML=rows;
+  _catMgrBuild();
   document.getElementById('bulkBudgetModal').classList.add('open');
   trapFocus(document.getElementById('bulkBudgetModal'));
   setTimeout(()=>{const f=document.querySelector('#bulkBudgetModal input');if(f)f.focus();},120);
 }
+
+function _catMgrBuild(){
+  const budgets=S.budgets||{};
+  // Built-in categories
+  const builtIn=Object.keys(BDFT).map(name=>({
+    type:'builtin', name, cap:budgets[name]!=null?budgets[name]:BDFT[name],
+    keywords:[...(_CAT_DEFAULT_KW[name]||[])]
+  }));
+  // Custom categories
+  const custom=(S.customCategories||[]).map(cc=>({
+    type:'custom', id:cc.id, name:cc.name,
+    cap:budgets[cc.name]!=null?budgets[cc.name]:0,
+    keywords:[...(cc.keywords||[])]
+  }));
+  _catMgrRows=[...builtIn,...custom];
+  _catMgrRender();
+}
+
+function _catMgrRender(){
+  const wrap=document.getElementById('catMgrRows');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  // Section: built-in
+  const builtIn=_catMgrRows.filter(r=>r.type==='builtin');
+  const custom=_catMgrRows.filter(r=>r.type==='custom');
+
+  function renderSection(rows,label){
+    if(!rows.length)return;
+    const hdr=document.createElement('div');
+    hdr.style.cssText='font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:4px;';
+    hdr.textContent=label;
+    wrap.appendChild(hdr);
+    rows.forEach(row=>{
+      const idx=_catMgrRows.indexOf(row);
+      wrap.appendChild(_catMgrRowEl(row,idx));
+    });
+  }
+  renderSection(builtIn,'Built-in categories');
+  renderSection(custom,'Custom categories');
+}
+
+function _catMgrRowEl(row,idx){
+  const div=document.createElement('div');
+  div.className='catmgr-row';
+  div.dataset.idx=idx;
+
+  // Name
+  const nameInp=document.createElement('input');
+  nameInp.className='catmgr-name-inp fi';
+  nameInp.type='text';
+  nameInp.value=row.name;
+  nameInp.placeholder='Category name';
+  nameInp.maxLength=40;
+  nameInp.setAttribute('aria-label','Category name');
+  if(row.type==='builtin'){nameInp.readOnly=true;nameInp.title='Built-in category name (read-only)';}
+  nameInp.addEventListener('change',function(){_catMgrRows[idx].name=this.value.trim();});
+
+  // Cap
+  const capWrap=document.createElement('div');
+  capWrap.className='catmgr-cap-wrap';
+  const sym=document.createElement('span');
+  sym.textContent=getCurrency().symbol;
+  sym.style.cssText='font-size:11px;color:var(--text-muted);';
+  const capInp=document.createElement('input');
+  capInp.className='catmgr-cap-inp fi';
+  capInp.type='number';capInp.min='0';capInp.step='1';
+  capInp.value=amt(row.cap);
+  capInp.setAttribute('aria-label','Monthly cap');
+  capInp.addEventListener('change',function(){_catMgrRows[idx].cap=storeCents(parseFloat(this.value)||0);});
+  capWrap.appendChild(sym);capWrap.appendChild(capInp);
+
+  // Keywords chip area
+  const kwWrap=document.createElement('div');
+  kwWrap.className='catmgr-kw-wrap';
+
+  function renderChips(){
+    kwWrap.innerHTML='';
+    row.keywords.forEach((kw,ki)=>{
+      const chip=document.createElement('span');
+      chip.className='catmgr-chip';
+      chip.textContent=kw;
+      const del=document.createElement('button');
+      del.type='button';del.className='catmgr-chip-del';del.textContent='×';
+      del.setAttribute('aria-label','Remove keyword '+kw);
+      del.onclick=function(){row.keywords.splice(ki,1);renderChips();};
+      chip.appendChild(del);
+      kwWrap.appendChild(chip);
+    });
+    // Add input
+    const addInp=document.createElement('input');
+    addInp.type='text';addInp.placeholder='+ keyword';addInp.className='catmgr-kw-inp';
+    addInp.setAttribute('aria-label','Add keyword');
+    function commitKw(){
+      const v=addInp.value.trim().toLowerCase();
+      if(v&&!row.keywords.includes(v)){row.keywords.push(v);renderChips();}
+      else addInp.value='';
+    }
+    addInp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===','){e.preventDefault();commitKw();}
+      if(e.key==='Backspace'&&!this.value&&row.keywords.length){row.keywords.pop();renderChips();}
+    });
+    addInp.addEventListener('blur',function(){if(this.value.trim())commitKw();});
+    kwWrap.appendChild(addInp);
+  }
+  renderChips();
+
+  // Delete (custom only)
+  if(row.type==='custom'){
+    const delBtn=document.createElement('button');
+    delBtn.type='button';delBtn.className='catmgr-del-btn';delBtn.title='Delete category';
+    delBtn.setAttribute('aria-label','Delete category '+row.name);
+    delBtn.innerHTML='&#128465;';
+    delBtn.onclick=function(){
+      if(!confirm('Delete category "'+(_catMgrRows[idx].name||'this category')+'"? Existing expenses using it will move to Other.'))return;
+      _catMgrRows.splice(idx,1);_catMgrRender();
+    };
+    div.appendChild(delBtn);
+  }
+
+  div.appendChild(nameInp);
+  div.appendChild(capWrap);
+  div.appendChild(kwWrap);
+  return div;
+}
+
+function catMgrAddRow(){
+  _catMgrRows.push({type:'custom',id:'cc'+Date.now(),name:'',cap:0,keywords:[]});
+  _catMgrRender();
+  // focus the new name input
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('.catmgr-name-inp');
+    if(inputs.length){inputs[inputs.length-1].focus();}
+    const scroll=document.getElementById('catMgrScroll');
+    if(scroll)scroll.scrollTop=scroll.scrollHeight;
+  },60);
+}
+
 function closeBulkBudgetModal(){
   releaseTrap(document.getElementById('bulkBudgetModal'));
   document.getElementById('bulkBudgetModal').classList.remove('open');
 }
+
 function saveBulkBudgets(){
   if(!S.budgets)S.budgets={};
-  const budgets=S.budgets||BDFT;
-  Object.keys(budgets).forEach(cat=>{
-    const inp=document.getElementById('bb-'+CSS.escape(cat));
-    if(inp){const v=parseFloat(inp.value);if(!isNaN(v)&&v>=0)S.budgets[cat]=storeCents(v);}
+
+  // Collect current name inputs (may have changed for custom)
+  const rows=_catMgrRows;
+
+  // Validate: no blank names
+  for(const r of rows){
+    if(!r.name.trim()){showToast('⚠ Every category needs a name','warn-t');return;}
+  }
+
+  // Built-in: just update caps (names are read-only)
+  const builtIn=rows.filter(r=>r.type==='builtin');
+  builtIn.forEach(r=>{S.budgets[r.name]=r.cap;});
+
+  // Custom: rebuild S.customCategories, handle renames, update budgets
+  const oldCustom=S.customCategories||[];
+  const newCustom=rows.filter(r=>r.type==='custom');
+
+  // Rename detection: match by id
+  newCustom.forEach(r=>{
+    const old=oldCustom.find(c=>c.id===r.id);
+    if(old&&old.name!==r.name){
+      // Rename: migrate budget key and expense category references
+      if(S.budgets[old.name]!=null){S.budgets[r.name]=S.budgets[old.name];delete S.budgets[old.name];}
+      Object.values(S.months).forEach(m=>{
+        m.weeks.forEach(w=>{
+          w.items.forEach(item=>{if(item.category==='cat-custom-'+r.id){}/* id-based, no action needed */});
+        });
+      });
+    }
+    S.budgets[r.name]=r.cap;
   });
-  persist();closeBulkBudgetModal();
+
+  // Remove budget keys for deleted custom categories
+  const newCustomIds=new Set(newCustom.map(r=>r.id));
+  oldCustom.forEach(c=>{if(!newCustomIds.has(c.id))delete S.budgets[c.name];});
+
+  // Save custom categories with updated keywords
+  S.customCategories=newCustom.map(r=>({
+    id:r.id,
+    name:r.name.trim(),
+    keywords:r.keywords,
+    bg: (oldCustom.find(c=>c.id===r.id)||{}).bg||'var(--sage-light)',
+    color:(oldCustom.find(c=>c.id===r.id)||{}).color||'var(--sage)'
+  }));
+
+  persist();
+  closeBulkBudgetModal();
   if(typeof renderEnvelopes==='function')renderEnvelopes();
-  showToast('✓ All budget caps updated');
+  showToast('✓ Categories saved');
 }
 
 // ══════════════════════════════════════════════

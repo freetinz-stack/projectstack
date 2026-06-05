@@ -2556,21 +2556,19 @@
   </div>
 </div>
 
-<!-- ── BULK BUDGET EDITOR ── -->
+<!-- ── CATEGORY MANAGER (was Bulk Budget Editor) ── -->
 <div class="modal-overlay" id="bulkBudgetModal" data-self-close="closeBulkBudgetModal" role="dialog" aria-modal="true" aria-labelledby="bulkBudgetTitle">
-  <div class="pmodal" style="max-width:380px;">
+  <div class="pmodal" style="max-width:520px;width:95vw;">
     <button class="close-btn" data-action="closeBulkBudgetModal" title="Close" aria-label="Close">&#215;</button>
-    <h4 id="bulkBudgetTitle">&#128179; Edit All Budget Caps</h4>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Set monthly spending caps for every category at once — no need to open each envelope individually.</p>
-    <div style="max-height:320px;overflow-y:auto;margin-bottom:12px;">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr><th style="font-size:11px;font-weight:600;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border);">Category</th><th style="font-size:11px;font-weight:600;text-align:right;padding:4px 8px;border-bottom:1px solid var(--border);">Monthly Cap ($)</th></tr></thead>
-        <tbody id="bulkBudgetTable"></tbody>
-      </table>
+    <h4 id="bulkBudgetTitle">&#127999; Category Manager</h4>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">Edit category names, monthly caps, and the keywords used to auto-classify your expenses. Built-in categories show their defaults; custom ones can be fully removed.</p>
+    <div style="max-height:55vh;overflow-y:auto;margin-bottom:12px;" id="catMgrScroll">
+      <div id="catMgrRows"></div>
     </div>
+    <button class="btn-s" data-action="catMgrAddRow" style="width:100%;margin-bottom:12px;border-style:dashed;">&#43; Add custom category</button>
     <div class="btn-row">
       <button class="btn-s" data-action="closeBulkBudgetModal">Cancel</button>
-      <button class="btn-p" data-action="saveBulkBudgets">Save All Caps</button>
+      <button class="btn-p" data-action="saveBulkBudgets">Save All</button>
     </div>
   </div>
 </div>
