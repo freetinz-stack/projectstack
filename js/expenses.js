@@ -218,7 +218,7 @@ function renderExpenses(){
   document.getElementById('expMonthHdr').textContent=CMK+' Expenses';
   // Guard: if CMK is somehow in archivedMonths, warn and bail
   if(S.archivedMonths && S.archivedMonths[CMK]){
-    document.getElementById('weeksGrid').innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px;">&#128274; ${CMK} is archived and read-only.<br><button class="btn-p" style="margin-top:12px;" data-action="openRestoreModal" data-arg="${CMK}">&#128260; Restore to edit</button></div>`;
+    document.getElementById('weeksGrid').innerHTML=`<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px;">${icon('lock',{label:'Archived'})} ${CMK} is archived and read-only.<br><button class="btn-p" style="margin-top:12px;" data-action="openRestoreModal" data-arg="${CMK}">${icon('upload')} Restore to edit</button></div>`;
     return;
   }
   // Pre-compute cat totals once — shared with renderEnvelopes
@@ -274,12 +274,12 @@ function renderExpenses(){
         // Meta row — only show non-empty items to reduce clutter
         const metaParts=[];
         metaParts.push(`<span class="cat-badge ${catCls}" style="${catStyle}">${catLbl}</span>`);
-        if(rec){const _freqLbl=item.frequency==='weekly'?'Weekly':item.frequency==='biweekly'?'Every 2 weeks':item.frequency==='quarterly'?'Quarterly':item.frequency==='yearly'?'Yearly':'Monthly';metaParts.push(`<span class="recur-badge" title="Recurring · ${_freqLbl}">&#8635; ${_freqLbl}</span>`);}
+        if(rec){const _freqLbl=item.frequency==='weekly'?'Weekly':item.frequency==='biweekly'?'Every 2 weeks':item.frequency==='quarterly'?'Quarterly':item.frequency==='yearly'?'Yearly':'Monthly';metaParts.push(`<span class="recur-badge" title="Recurring · ${_freqLbl}">${icon('repeat',{label:'Recurring'})} ${_freqLbl}</span>`);}
         if(dd)metaParts.push(`<span class="due-badge has-due${isOverdue?' overdue':''}" data-action="openDueDateModal" data-arg="${wi}" data-arg2="${ii}" title="Due day ${dd}">Due ${dd}</span>`);
         // 📋 only when has content; 📷 only when has receipt — shown as tiny icons
-        if(item.note)metaParts.push(`<button class="note-toggle has-note" data-action="openNoteModal" data-arg="${wi}" data-arg2="${ii}" title="${esc(item.note.substring(0,40))}">&#128203;</button>`);
-        if(item.receipt)metaParts.push(`<button class="receipt-btn has-receipt" data-action="openReceiptModal" data-arg="${wi}" data-arg2="${ii}" title="View receipt">&#128248;</button>`);
-        if(item._savingsItem)metaParts.push(`<span class="sav-link-badge" title="Auto-generated savings transfer — edit in Savings tab">&#128176; Savings</span>`);
+        if(item.note)metaParts.push(`<button class="note-toggle has-note" data-action="openNoteModal" data-arg="${wi}" data-arg2="${ii}" title="${esc(item.note.substring(0,40))}">${icon('note',{label:'Has note'})}</button>`);
+        if(item.receipt)metaParts.push(`<button class="receipt-btn has-receipt" data-action="openReceiptModal" data-arg="${wi}" data-arg2="${ii}" title="View receipt">${icon('camera',{label:'Has receipt'})}</button>`);
+        if(item._savingsItem)metaParts.push(`<span class="sav-link-badge" title="Auto-generated savings transfer — edit in Savings tab">${icon('piggyBank',{label:'Linked to savings'})} Savings</span>`);
         if(item.taxDeductible)metaParts.push(`<span class="badge-tax" aria-label="Tax deductible">TAX</span>`);
         const metaRow=metaParts.length?`<div class="item-meta">${metaParts.join('')}</div>`:'';
         const noteHtml=item.note?`<span class="item-note-inline">${esc(item.note.substring(0,60))}${item.note.length>60?'…':''}</span>`:'';
@@ -294,10 +294,10 @@ function renderExpenses(){
             ${noteHtml}
           </td>
           <td class="amt-col" style="cursor:pointer;"><span class="ea" data-action="editAmt" data-arg="${wi}" data-arg2="${ii}" data-arg-self title="Click to edit amount inline">${typeof fmtItemAmount==='function'?fmtItemAmount(amt(item.amount),item.currency):fmt(amt(item.amount))}</span></td>
-          ${!_bulkMode?`<td class="status-col"><button class="stog ${item.paid?'paid':'pending'}" data-action="toggleExp" data-arg="${wi}" data-arg2="${ii}" aria-label="${item.paid?'Paid — click to mark as pending':'Pending — click to mark as paid'}" title="${item.paid?'Paid — click to mark as pending':'Pending — click to mark as paid'}"><span aria-hidden="true">${item.paid?'✓':'○'}</span><span class="stog-lbl">${item.paid?'Paid':'Due'}</span></button></td>`:''}
+          ${!_bulkMode?`<td class="status-col"><button class="stog ${item.paid?'paid':'pending'}" data-action="toggleExp" data-arg="${wi}" data-arg2="${ii}" aria-label="${item.paid?'Paid — click to mark as pending':'Pending — click to mark as paid'}" title="${item.paid?'Paid — click to mark as pending':'Pending — click to mark as paid'}">${item.paid?icon('check',{label:'Paid'}):icon('circle',{label:'Unpaid'})}<span class="stog-lbl">${item.paid?'Paid':'Due'}</span></button></td>`:''}
           ${!_bulkMode?`<td class="action-col no-print">
-            <button class="del-btn" data-action="openItemModal" data-arg="${wi}" data-arg2="${ii}" data-stop-prop title="Edit item">&#9998;</button>
-            <button class="del-btn" data-action="delExpItem" data-arg="${wi}" data-arg2="${ii}" data-stop-prop aria-label="Delete item" title="Delete item">✕</button>
+            <button class="del-btn" data-action="openItemModal" data-arg="${wi}" data-arg2="${ii}" data-stop-prop title="Edit item">${icon('edit',{label:'Edit'})}</button>
+            <button class="del-btn" data-action="delExpItem" data-arg="${wi}" data-arg2="${ii}" data-stop-prop aria-label="Delete item" title="Delete item">${icon('close',{label:'Delete'})}</button>
           </td>`:''}
         </tr>`;
       }).join('');
@@ -307,11 +307,11 @@ function renderExpenses(){
           <span class="week-title">Week ${wi+1}</span>
           <div style="display:flex;align-items:center;gap:5px;">
             <button class="no-print week-collapse-btn" data-action="toggleWeekCollapse" data-arg="${wi}" data-stop-prop title="${isCollapsed?'Expand':'Collapse'} week" aria-label="${isCollapsed?'Expand':'Collapse'} week ${wi+1}">${isCollapsed?'▸':'▾'}</button>
-            ${!_bulkMode?`<button class="no-print" data-action="bulkMarkPaid" data-arg="${wi}" data-stop-prop title="Mark all paid" style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--sage);padding:1px 4px;border-radius:3px;border:1px solid var(--sage-mid);">✓ All</button>`:''}
+            ${!_bulkMode?`<button class="no-print" data-action="bulkMarkPaid" data-arg="${wi}" data-stop-prop title="Mark all paid" style="background:none;border:none;cursor:pointer;font-size:10px;color:var(--sage);padding:1px 4px;border-radius:3px;border:1px solid var(--sage-mid);">${icon('check')} All</button>`:''}
             <span class="week-grand">${fmt(wTotal)}</span>
           </div>
         </div>
-        <div class="week-sub-row"><span class="week-sub-stat ws-paid">✓ ${fmt(wPaid)}</span><span class="week-sub-stat ws-pend">⏳ ${fmt(wPend)}</span></div>
+        <div class="week-sub-row"><span class="week-sub-stat ws-paid">${icon('check')} ${fmt(wPaid)}</span><span class="week-sub-stat ws-pend">${icon('hourglass')} ${fmt(wPend)}</span></div>
       </div>
       ${allItemsPaid?'<div class="week-all-paid-banner"><span>🎉</span> All paid!</div>':''}
       <table class="week-table"><thead><tr><th>Item</th><th style="text-align:right;padding-right:6px;font-size:9px;color:var(--text-muted);">Amount</th><th style="width:30px;"></th><th style="width:40px;" class="no-print"></th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="text-align:center;color:var(--text-muted);font-size:11px;padding:12px;">No items in this category</td></tr>'}</tbody></table>
@@ -430,7 +430,7 @@ function updateExpRowSurgical(wi, ii){
   const stog = targetRow.querySelector('.stog');
   if(stog){
     stog.className = 'stog ' + (item.paid ? 'paid' : 'pending');
-    stog.textContent = item.paid ? '✓' : '○';
+    stog.innerHTML = item.paid ? icon('check',{label:'Paid'}) : icon('circle',{label:'Unpaid'});
     stog.setAttribute('aria-label', item.paid ? 'Mark as pending' : 'Mark as paid');
     stog.setAttribute('title',      item.paid ? 'Mark as pending' : 'Mark as paid');
   }
@@ -449,9 +449,9 @@ function updateExpRowSurgical(wi, ii){
     const grandEl = card.querySelector('.week-grand');
     if(grandEl) grandEl.textContent = fmt(wTotal);
     const paidEl  = card.querySelector('.ws-paid');
-    if(paidEl)  paidEl.textContent = '✓ ' + fmt(wPaid);
+    if(paidEl)  paidEl.innerHTML = icon('check') + ' ' + fmt(wPaid);
     const pendEl  = card.querySelector('.ws-pend');
-    if(pendEl)  pendEl.textContent = '⏳ ' + fmt(wPend);
+    if(pendEl)  pendEl.innerHTML = icon('hourglass') + ' ' + fmt(wPend);
     // All-paid banner
     let banner = card.querySelector('.week-all-paid-banner');
     if(allItemsPaid && !banner){
@@ -538,7 +538,7 @@ let _bulkSelected=new Set(); // stores "wi-ii" strings
 function enterBulkMode(){
   _bulkMode=true; _bulkSelected.clear();
   const btn=document.getElementById('bulkSelectBtn');
-  if(btn){btn.textContent='✕ Cancel';btn.dataset.action='exitBulkMode';btn.style.color='var(--danger)';btn.style.borderColor='var(--danger-mid)';}
+  if(btn){btn.innerHTML=icon('close')+' Cancel';btn.dataset.action='exitBulkMode';btn.style.color='var(--danger)';btn.style.borderColor='var(--danger-mid)';}
   renderExpenses(); _updateBulkBar();
 }
 function exitBulkMode(){
@@ -645,7 +645,7 @@ function renderQaCatRow(selected){
     S.customCategories.forEach(cc=>cats.push({cls:'cat-custom-'+cc.id,lbl:cc.name,icon:'🏷',bg:cc.bg,color:cc.color}));
   row.innerHTML=cats.map(c=>{
     const style=c.bg?`background:${c.bg};color:${c.color};`:'';
-    return`<button class="cat-pill-opt ${c.cls}${c.cls===selected?' selected':''}" style="${style}" data-action="selectQaCat" data-arg="${c.cls}">${c.icon} ${c.lbl}</button>`;
+    return`<button class="cat-pill-opt ${c.cls}${c.cls===selected?' selected':''}" style="${style}" data-action="selectQaCat" data-arg="${c.cls}">${c.iconKey?icon(c.iconKey):''} ${c.lbl}</button>`;
   }).join('');
 }
 function selectQaCat(cls){renderQaCatRow(cls);}

@@ -332,8 +332,8 @@ function _routeToMonth(dateStr) {
 // ── Review rendering ──────────────────────────────────────────────────────────
 function _catOptions() {
   const base = typeof CAT_ALL !== 'undefined'
-    ? CAT_ALL.map(c => `<option value="${c.cls}">${c.icon} ${c.lbl}</option>`).join('')
-    : '<option value="cat-other">📦 Other</option>';
+    ? CAT_ALL.map(c => `<option value="${c.cls}">${c.lbl}</option>`).join('')
+    : '<option value="cat-other">Other</option>';
   const custom = (typeof S !== 'undefined' && S && S.customCategories)
     ? S.customCategories.map(c => `<option value="cat-custom-${c.id}">${c.name}</option>`).join('')
     : '';

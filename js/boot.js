@@ -156,7 +156,7 @@ function switchToMonth(k){
 function renderMonthTags(){
   const keys=Object.keys(S.months);
   const canDelete=keys.length>1;
-  document.getElementById('monthTags').innerHTML=keys.map(k=>{const ek=esc(k);return`<span class="month-tag${k===CMK?' active-month':''}" data-action="switchToMonth" data-arg="${ek}">${ek}<span class="no-print month-tag-actions"><span class="mta-btn" title="Archive ${ek}" data-action="confirmArchiveMonth" data-arg="${ek}" data-stop-prop>&#128230;</span>${canDelete?`<span class="mta-btn" title="Delete ${ek}" data-action="confirmDeleteMonth" data-arg="${ek}" data-stop-prop style="color:var(--danger);">&#128465;</span>`:''}</span></span>`;}).join('');
+  document.getElementById('monthTags').innerHTML=keys.map(k=>{const ek=esc(k);return`<span class="month-tag${k===CMK?' active-month':''}" data-action="switchToMonth" data-arg="${ek}">${ek}<span class="no-print month-tag-actions"><span class="mta-btn" title="Archive ${ek}" data-action="confirmArchiveMonth" data-arg="${ek}" data-stop-prop>${icon('archive',{label:'Archive '+ek})}</span>${canDelete?`<span class="mta-btn" title="Delete ${ek}" data-action="confirmDeleteMonth" data-arg="${ek}" data-stop-prop style="color:var(--danger);">${icon('trash',{label:'Delete '+ek})}</span>`:''}</span></span>`;}).join('');
 }
 let _deleteMonthTarget='';
 function confirmDeleteMonth(k){
@@ -313,8 +313,8 @@ function renderEnvelopes(){
     const col=over?'var(--danger)':warn?'var(--amber)':'var(--sage)';
     const vel=_calcBudgetVelocity(spent,cap);
     const velHtml=vel===null?'':vel.ok
-      ?`<div class="be-velocity vel-ok">✓ On pace · ${fmt(vel.remaining)} left</div>`
-      :`<div class="be-velocity vel-warn">⚡ Hits cap around day ${vel.hitDay}</div>`;
+      ?`<div class="be-velocity vel-ok">${icon('check')} On pace · ${fmt(vel.remaining)} left</div>`
+      :`<div class="be-velocity vel-warn">${icon('lightning')} Hits cap around day ${vel.hitDay}</div>`;
     const rollover=S.budgetRolloverAmounts&&S.budgetRolloverAmounts[CMK]&&S.budgetRolloverAmounts[CMK][cat];
     const rolloverHtml=rollover?`<div style="font-size:9px;color:var(--blue);margin-top:2px;">↩ +${fmt(rollover.amount)} rolled from ${rollover.from}</div>`:'';
     return`<div class="be${over?' over':warn?' warn':''}" data-action="drillDownCategory" data-arg="${esc(cat)}" title="View ${esc(cat)} expenses" role="button" tabindex="0">
@@ -662,7 +662,7 @@ function _catMgrRowEl(row,idx){
     delBtn=document.createElement('button');
     delBtn.type='button';delBtn.className='catmgr-del-btn';delBtn.title='Delete category';
     delBtn.setAttribute('aria-label','Delete category '+row.name);
-    delBtn.innerHTML='&#215;';
+    delBtn.innerHTML=icon('close',{label:'Delete category'});
     delBtn.onclick=function(){
       if(!confirm('Delete category "'+(_catMgrRows[idx].name||'this category')+'"? Existing expenses using it will move to Other.'))return;
       _catMgrRows.splice(idx,1);_catMgrRender();
@@ -898,10 +898,10 @@ document.addEventListener('keydown',function(e){
     banner.className = 'pwa-install-banner no-print';
     banner.setAttribute('role', 'region');
     banner.setAttribute('aria-label', 'Install FincWin');
-    banner.innerHTML = '<span class="pwa-banner-icon" aria-hidden="true">&#8681;</span>'
+    banner.innerHTML = '<span class="pwa-banner-icon">'+icon('download',{label:'Install'})+' </span>'
       + '<span class="pwa-banner-text"><strong>Install FincWin</strong> — works offline, opens like an app</span>'
       + '<button class="pwa-banner-install" aria-label="Install FincWin">Install</button>'
-      + '<button class="pwa-banner-dismiss" aria-label="Dismiss install prompt">&#10005;</button>';
+      + '<button class="pwa-banner-dismiss" aria-label="Dismiss install prompt">'+icon('close',{label:'Dismiss'})+'</button>';
     banner.querySelector('.pwa-banner-install').addEventListener('click', function(){
       _triggerInstall(); banner.remove();
     });

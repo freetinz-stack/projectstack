@@ -16,7 +16,7 @@ function toggleLoanHistory(li) {
 
 function _buildChipHTML(p, pi, oi) {
   const isNew = _newChipMonths && _newChipMonths.has(p.month);
-  return `<div class="pchip ${p.paid?'paid':'pending'}${isNew?' chip-new':''}" data-action="toggleLP" data-arg="${oi}" data-arg2="${pi}" title="${p.paid?'Click to mark unpaid — restores estimated balance':'Click to mark paid — reduces balance by principal portion'}">${p.paid?'✓':'○'} ${esc(p.month)}${isNew?' ★':''}</div>`;
+  return `<div class="pchip ${p.paid?'paid':'pending'}${isNew?' chip-new':''}" data-action="toggleLP" data-arg="${oi}" data-arg2="${pi}" title="${p.paid?'Click to mark unpaid — restores estimated balance':'Click to mark paid — reduces balance by principal portion'}">${p.paid?icon('check'):icon('circle')} ${esc(p.month)}${isNew?' '+icon('star',{label:'New'}):''}</div>`;
 }
 
 function _buildChipsSection(loan, oi) {
@@ -33,7 +33,7 @@ function _buildChipsSection(loan, oi) {
     const hiddenInArray   = paidIdxs.length - visiblePaidIdxs.length;
     const totalHidden     = archived + hiddenInArray;
     const summaryChip     = totalHidden > 0
-      ? `<div class="pchip paid pchip-archive" title="${totalHidden} older paid payment${totalHidden>1?'s':''} — click History to expand">✓ ${totalHidden} earlier payment${totalHidden>1?'s':''}</div>`
+      ? `<div class="pchip paid pchip-archive" title="${totalHidden} older paid payment${totalHidden>1?'s':''} — click History to expand">${icon('check')} ${totalHidden} earlier payment${totalHidden>1?'s':''}</div>`
       : '';
     chipsHTML = summaryChip
       + visiblePaidIdxs.map(pi => _buildChipHTML(loan.payments[pi], pi, oi)).join('')
@@ -54,8 +54,8 @@ function renderLoans(){
   if(S.strategy==='avalanche')sorted.sort((a,b)=>b.loan.rate-a.loan.rate);else sorted.sort((a,b)=>a.loan.amount-b.loan.amount);
   // Strategy tip
   document.getElementById('strategyTip').innerHTML=S.strategy==='avalanche'
-    ?'<span>⚡</span><div><strong>Avalanche strategy active</strong> — Sorted highest interest first. Pay minimums on all, throw every extra dollar at #1. Saves the most interest overall.</div>'
-    :'<span>⛄</span><div><strong>Snowball strategy active</strong> — Sorted smallest balance first. Pay off #1 completely, then roll that freed payment into #2. Builds momentum.</div>';
+    ?`<span>${icon('lightning',{label:'Avalanche strategy'})}</span><div><strong>Avalanche strategy active</strong> — Sorted highest interest first. Pay minimums on all, throw every extra dollar at #1. Saves the most interest overall.</div>`
+    :`<span>${icon('snowball',{label:'Snowball strategy'})}</span><div><strong>Snowball strategy active</strong> — Sorted smallest balance first. Pay off #1 completely, then roll that freed payment into #2. Builds momentum.</div>`;
   const list=document.getElementById('loanList');list.innerHTML='';
   if(!sorted.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;border:2px dashed var(--border);border-radius:var(--radius);">No loans added yet.<br><button class="nm-btn" style="margin-top:10px" data-action="openLoanModal" data-arg="-1">+ Add your first loan</button></div>';document.getElementById('loan-total').textContent='$0';document.getElementById('loan-pmts').textContent='$0';document.getElementById('loan-int').textContent='$0';document.getElementById('loan-free').textContent='—';return;}
   // Debt-free banner when all loans have zero balance
@@ -78,7 +78,7 @@ function renderLoans(){
     let payoffText;
     if(ml>=999){
       const minNeeded=calcMinNeededPayment(amt(loan.amount),loan.rate);
-      payoffText=`<span style="color:var(--danger);">⚠ Needs ${fmt(minNeeded)}/mo to pay off</span>`;
+      payoffText=`<span style="color:var(--danger);">${icon('warning',{label:'Warning'})} Needs ${fmt(minNeeded)}/mo to pay off</span>`;
     } else {
       payoffText=`<span style="color:var(--sage);">Payoff: ${getPayoffDate(ml)}</span>`;
     }
@@ -87,9 +87,9 @@ function renderLoans(){
     let pmtStatusBadge='';
     if(!isPaidOff){
       if(thisMonthPmt&&thisMonthPmt.paid){
-        pmtStatusBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--success-light);color:var(--success);">✓ Paid this month</span>`;
+        pmtStatusBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--success-light);color:var(--success);">${icon('check')} Paid this month</span>`;
       } else if(thisMonthPmt){
-        pmtStatusBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--amber-light);color:var(--amber);">⏳ Due this month</span>`;
+        pmtStatusBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--amber-light);color:var(--amber);">${icon('hourglass')} Due this month</span>`;
       }
     }
     // Linked payoff goal
@@ -100,7 +100,7 @@ function renderLoans(){
       const dlDate=new Date(dlYr,dlMo-1,1);
       const projDate=ml<999?new Date(...(()=>{const p=CMK.split(' ');let mo=MS.indexOf(p[0]),yr=parseInt(p[1]);mo+=ml;yr+=Math.floor(mo/12);mo=mo%12;return[yr,mo,1];})()) :null;
       const onTrack=projDate&&projDate<=dlDate;
-      goalBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:${onTrack?'var(--success-light)':'var(--danger-light)'};color:${onTrack?'var(--success)':'var(--danger)'};">Goal: ${onTrack?'✓ On track':'⚠ Behind'} target ${linkedGoal.targetDate}</span>`;
+      goalBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:${onTrack?'var(--success-light)':'var(--danger-light)'};color:${onTrack?'var(--success)':'var(--danger)'};">Goal: ${onTrack?icon('check')+' On track':icon('warning',{label:'Behind'})+' Behind'} target ${linkedGoal.targetDate}</span>`;
     } else if(linkedGoal&&!isPaidOff){
       goalBadge=`<span style="font-size:10px;color:var(--text-muted);background:var(--slate-mid);padding:1px 6px;border-radius:8px;">🎯 ${esc(linkedGoal.name)}</span>`;
     }
@@ -110,8 +110,8 @@ function renderLoans(){
       <div class="debt-item-hdr">
         <div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
           <span class="debt-name" style="${isPaidOff?'text-decoration:line-through;color:var(--success);opacity:.8;':''}">${esc(loan.name)}</span>
-          ${isPaidOff?'<span class="loan-paid-badge">🏆 Paid Off!</span>':''}
-          ${isTop?`<span class="focus-lbl ${S.strategy==='avalanche'?'focus-av':'focus-sn'}">${S.strategy==='avalanche'?'⚡ Highest rate':'⛄ Smallest bal'}</span>`:''}
+          ${isPaidOff?`<span class="loan-paid-badge">${icon('trophy',{label:'Paid Off'})} Paid Off!</span>`:''}
+          ${isTop?`<span class="focus-lbl ${S.strategy==='avalanche'?'focus-av':'focus-sn'}">${S.strategy==='avalanche'?icon('lightning')+' Highest rate':icon('snowball')+' Smallest bal'}</span>`:''}
           ${pmtStatusBadge}
           ${goalBadge}
           <span style="font-size:10px;color:var(--text-muted);">#${si+1}</span>
@@ -121,7 +121,7 @@ function renderLoans(){
         <div style="text-align:right;">
           <div class="bal-edit-wrap" style="justify-content:flex-end;margin-bottom:2px;">
             <div class="debt-bal" id="bal-disp-${oi}">${typeof fmtItemAmount==='function'?fmtItemAmount(amt(loan.amount),loan.currency):fmt(amt(loan.amount))}</div>
-            <button class="bal-edit-btn" data-action="startEditBal" data-arg="${oi}" title="Edit balance">&#9998;</button>
+            <button class="bal-edit-btn" data-action="startEditBal" data-arg="${oi}" title="Edit balance" aria-label="Edit balance">${icon('edit',{label:'Edit balance'})}</button>
           </div>
           <div style="font-size:11px;font-weight:600;">${payoffText}</div>
         </div>
@@ -136,10 +136,10 @@ function renderLoans(){
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:4px;">${chipsHTML}</div>
       <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" class="no-print">
-        <button class="nm-btn" style="font-size:11px;padding:4px 10px;" data-action="openLoanModal" data-arg="${oi}">&#9998; Edit Loan</button>
+        <button class="nm-btn" style="font-size:11px;padding:4px 10px;" data-action="openLoanModal" data-arg="${oi}">${icon('edit')} Edit Loan</button>
         <button class="tbtn" style="font-size:11px;padding:4px 9px;" data-action="addLP" data-arg="${oi}" title="Manually add a payment chip for the current month">+ Log Month</button>
         <button class="tbtn" style="font-size:11px;padding:4px 9px;color:var(--sage);border-color:var(--sage);" data-action="useInCalc" data-arg="${oi}" title="Load this loan into the Paydown Calculator">⊕ Calculator</button>
-        <button class="tbtn" style="font-size:11px;padding:4px 9px;color:var(--blue);border-color:var(--blue-mid);" data-action="generatePaySchedule" data-arg="${oi}" title="Pre-fill 12 monthly payment chips from today — mark each paid as you go">&#128197; Generate Schedule</button>
+        <button class="tbtn" style="font-size:11px;padding:4px 9px;color:var(--blue);border-color:var(--blue-mid);" data-action="generatePaySchedule" data-arg="${oi}" title="Pre-fill 12 monthly payment chips from today — mark each paid as you go">${icon('calendar')} Generate Schedule</button>
       </div>`;
     list.appendChild(div);
   });
@@ -372,7 +372,7 @@ function updateBonus(val){
 function celebrateLoanPaidOff(loanName){
   setTimeout(()=>{
     launchConfetti(200);
-    showToast('🏆 Loan paid off: '+esc(loanName)+'!');
+    showToast('Loan paid off: '+esc(loanName)+'!');
   },150);
 }
 

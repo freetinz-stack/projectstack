@@ -15,7 +15,7 @@ function showOnboarding(){
   sel.innerHTML=Object.keys(CURRENCY_MAP).map(code=>`<option value="${code}"${code==='USD'?' selected':''}>${code} — ${CURRENCY_MAP[code].symbol}</option>`).join('');
   _obIncome=[]; _obExpenses=[]; _obLoans=[]; _obSavings=[]; _obReceiptData=null;
   obRenderIncome(); obRenderExpenses(); obRenderLoans(); obRenderSavings();
-  document.getElementById('obExpReceiptLabel').textContent='📷 Tap to attach image';
+  document.getElementById('obExpReceiptLabel').innerHTML=icon('camera')+' Tap to attach image';
   document.getElementById('obExpReceipt').value='';
   document.getElementById('obExpNote').value='';
   document.getElementById('obExpDue').value='';
@@ -46,7 +46,7 @@ function obGoTo(step){
   if(step===2||step===3||step===4||step===5) obSyncPrefixes();
   if(step===3){
     _obReceiptData=null;
-    document.getElementById('obExpReceiptLabel').textContent='📷 Tap to attach image';
+    document.getElementById('obExpReceiptLabel').innerHTML=icon('camera')+' Tap to attach image';
     document.getElementById('obExpReceipt').value='';
   }
   if(step===6){
@@ -198,7 +198,7 @@ function obAddExpense(){
   if(freqEl){freqEl.value='monthly';obFreqChange();}
   const hint=document.getElementById('obWeekHint');
   if(hint)hint.textContent='';
-  document.getElementById('obExpReceiptLabel').textContent='📷 Tap to attach image';
+  document.getElementById('obExpReceiptLabel').innerHTML=icon('camera')+' Tap to attach image';
   document.getElementById('obExpReceipt').value=''; _obReceiptData=null;
   obRenderExpenses();
   nameEl.focus();
@@ -219,15 +219,15 @@ function obRenderExpenses(){
     return;
   }
   list.classList.remove('ob-list-empty');
-  const freqBadge={monthly:'',weekly:'🔁 Weekly',biweekly:'🔁 Bi-wk',quarterly:'📅 Qtly',yearly:'📅 Yearly'};
+  const freqBadge={monthly:'',weekly:icon('repeat')+' Weekly',biweekly:icon('repeat')+' Bi-wk',quarterly:icon('calendar')+' Qtly',yearly:icon('calendar')+' Yearly'};
   list.innerHTML=_obExpenses.map((e,i)=>{
     const freq=e.frequency||'monthly';
     const fb=freqBadge[freq]?` <span style="font-size:9px;background:var(--sage-light);color:var(--sage);padding:1px 4px;border-radius:3px;">${freqBadge[freq]}</span>`:'';
     const wkLabel=(freq==='monthly')?` <span style="font-size:10px;color:var(--text-muted);margin-right:4px;">Wk${e.week+1}</span>`:'';
     return`<div class="ob-item-row">
-      <span class="ob-item-name">${e.name.replace(/</g,'&lt;')}${fb}${e.dueDay?` <span style="font-size:9px;color:var(--text-muted);">due ${e.dueDay}</span>`:''}${e.note?` <span style="font-size:9px;color:var(--text-muted);">&#128203;</span>`:''}</span>
+      <span class="ob-item-name">${e.name.replace(/</g,'&lt;')}${fb}${e.dueDay?` <span style="font-size:9px;color:var(--text-muted);">due ${e.dueDay}</span>`:''}${e.note?` <span style="font-size:9px;color:var(--text-muted);">${icon('note',{label:'Has note'})}</span>`:''}</span>
       ${wkLabel}
-      <span class="ob-item-amt">${sym}${e.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}${e.receipt?` <span style="font-size:9px;">&#128248;</span>`:''}</span>
+      <span class="ob-item-amt">${sym}${e.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}${e.receipt?` <span style="font-size:9px;">${icon('camera',{label:'Has receipt'})}</span>`:''}</span>
       <button class="ob-item-del" data-action="obRemoveExpense" data-arg="${i}" title="Remove" aria-label="Remove ${e.name.replace(/"/g,'')}">&times;</button>
     </div>`;
   }).join('');
@@ -460,7 +460,7 @@ function obFinish(){
   document.getElementById('loanBadge').textContent=S.loans.length;
 
   // Update PIN lock button
-  getPinHash().then(h=>{const btn=document.getElementById('pinBtn');if(btn) btn.textContent=h?'🔓':'🔒';});
+  getPinHash().then(h=>{const btn=document.getElementById('pinBtn');if(btn) btn.innerHTML=h?icon('unlock',{label:'Lock app'}):icon('lock',{label:'Unlock app'});});
 
   var _obOv=document.getElementById('onboardOverlay');
   if(typeof releaseTrap==='function')releaseTrap(_obOv);

@@ -71,7 +71,7 @@ function openBulkAdd() {
   var catSel = document.getElementById('baExpCat');
   if (catSel && typeof CAT_ALL !== 'undefined') {
     catSel.innerHTML = CAT_ALL.map(function(c) {
-      return '<option value="' + c.cls + '">' + c.icon + ' ' + c.lbl + '</option>';
+      return '<option value="' + c.cls + '">' + c.lbl + '</option>';
     }).join('');
     // Auto-select category for today's date if getCat recognises it (rare, but consistent)
   }
@@ -225,7 +225,7 @@ function bulkAddRenderExpenses() {
       var catIcon = '';
       if (typeof CAT_ALL !== 'undefined') {
         var found = CAT_ALL.filter(function(c) { return c.cls === e.category; })[0];
-        if (found) catIcon = found.icon + ' ';
+        if (found) catIcon = (found.iconKey ? icon(found.iconKey) + ' ' : '');
       }
       return '<div class="ob-item-row">' +
         '<span class="ob-item-name">' + catIcon + e.name.replace(/</g, '&lt;') + '</span>' +
@@ -293,7 +293,7 @@ function bulkAddRenderSavings() {
     list.innerHTML = _baSavings.map(function(g, i) {
       var pct = Math.min(100, g.target > 0 ? Math.round((g.balance / g.target) * 100) : 0);
       return '<div class="ob-item-row">' +
-        '<span class="ob-item-name">&#127777; ' + g.name.replace(/</g, '&lt;') + '</span>' +
+        '<span class="ob-item-name">' + (typeof icon==='function'?icon('trendUp'):'') + ' ' + g.name.replace(/</g, '&lt;') + '</span>' +
         '<span class="ob-item-amt">$' + g.balance.toFixed(2) + ' / $' + g.target.toFixed(2) + ' (' + pct + '%)</span>' +
         '<button class="ob-item-del" data-action="bulkAddRemoveSaving" data-arg="' + i + '" aria-label="Remove">&times;</button>' +
         '</div>';
@@ -341,7 +341,7 @@ function bulkAddRenderLoans() {
   } else {
     list.innerHTML = _baLoans.map(function(l, i) {
       return '<div class="ob-item-row">' +
-        '<span class="ob-item-name">&#128179; ' + l.name.replace(/</g, '&lt;') + '</span>' +
+        '<span class="ob-item-name">' + (typeof icon==='function'?icon('creditCard'):'') + ' ' + l.name.replace(/</g, '&lt;') + '</span>' +
         '<span class="ob-item-amt">$' + l.balance.toFixed(2) + (l.rate ? ' &bull; ' + l.rate + '%' : '') + (l.min ? ' &bull; $' + l.min.toFixed(2) + '/mo' : '') + '</span>' +
         '<button class="ob-item-del" data-action="bulkAddRemoveLoan" data-arg="' + i + '" aria-label="Remove">&times;</button>' +
         '</div>';

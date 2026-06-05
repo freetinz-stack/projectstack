@@ -171,7 +171,7 @@ function _buildOverlay(step, targetEl) {
     '<div class="tour-actions">' +
       '<button class="tour-skip-btn" id="tourSkipBtn">Skip tour</button>' +
       '<button class="tour-next-btn" id="tourNextBtn">' +
-        (step.isLast ? '&#10003; Done' : 'Next &rarr;') +
+        (step.isLast ? icon('check') + ' Done' : 'Next &rarr;') +
       '</button>' +
     '</div>';
 

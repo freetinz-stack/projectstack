@@ -31,17 +31,17 @@ function renderSavings(){
       const projMo=projParts[0]?MS.indexOf(projParts[0]):-1;const projYr=projParts[1]?parseInt(projParts[1]):-1;
       const projD=projMo>=0&&projYr>0?new Date(projYr,projMo,1):null;
       const onTrack=!projD||(projD<=dlDate);
-      deadlineBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;margin-left:4px;background:${onTrack?'var(--success-light)':'var(--danger-light)'};color:${onTrack?'var(--success)':'var(--danger)'};">${onTrack?'✓ On track':'⚠ Behind'} · Deadline ${g.deadline}</span>`;
+      deadlineBadge=`<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;margin-left:4px;background:${onTrack?'var(--success-light)':'var(--danger-light)'};color:${onTrack?'var(--success)':'var(--danger)'};">${onTrack?icon('check')+' On track':icon('warning',{label:'Behind schedule'})+' Behind'} · Deadline ${g.deadline}</span>`;
     }
-    const transferBadge=g.transferDay?`<span style="font-size:10px;color:var(--blue);background:var(--blue-light);padding:1px 6px;border-radius:8px;">📅 Auto-transfers day ${g.transferDay}</span>`:'';
+    const transferBadge=g.transferDay?`<span style="font-size:10px;color:var(--blue);background:var(--blue-light);padding:1px 6px;border-radius:8px;">${icon('calendar')} Auto-transfers day ${g.transferDay}</span>`:'';
     return`<div class="sav-card${isComplete?' sav-complete':''}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
         <div>
           <div style="font-weight:700;font-size:13px;">${esc(g.name)}</div>
-          <div class="sav-interest">★ ${g.rate}% p.a. interest</div>
+          <div class="sav-interest">${icon('star',{label:'Interest rate'})} ${g.rate}% p.a. interest</div>
           ${deadlineBadge||transferBadge?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${deadlineBadge}${transferBadge}</div>`:''}
         </div>
-        <button class="del-btn" style="opacity:1;" data-action="openDelSav" data-arg="${i}" title="Delete savings goal" aria-label="Delete savings goal">✕</button>
+        <button class="del-btn" style="opacity:1;" data-action="openDelSav" data-arg="${i}" title="Delete savings goal" aria-label="Delete savings goal">${icon('close',{label:'Delete'})}</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px;">
         <span style="font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;color:${barColor};">${typeof fmtItemAmount==='function'?fmtItemAmount(amt(g.balance),g.currency):fmt(amt(g.balance))}</span>
@@ -49,7 +49,7 @@ function renderSavings(){
       </div>
       <div class="sav-goal-bar"><div class="sav-goal-fill" style="width:${pct.toFixed(1)}%;background:${barColor};"></div></div>
       <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">of ${fmt(amt(g.target))} goal${isComplete?'':moLeft>0?' · '+projDate+' est.':''}</div>
-      ${isComplete?'<div style="text-align:center;margin-bottom:8px;"><span class="sav-complete-badge">🏆 Goal Reached!</span></div>':''}
+      ${isComplete?`<div style="text-align:center;margin-bottom:8px;"><span class="sav-complete-badge">${icon('trophy',{label:'Goal achieved'})} Goal Reached!</span></div>`:''}
       <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;text-align:center;">
         ${fmt(amt(g.contribution))}/mo · Interest: ${fmt(amt(g.balance)*(g.rate/100/12))}/mo
       </div>
@@ -58,7 +58,7 @@ function renderSavings(){
         <button class="tbtn" style="font-size:11px;padding:4px 9px;color:var(--amber);border-color:var(--amber-mid);" data-action="openTxnWithdraw" data-arg="${i}">− Withdraw</button>
         <button class="tbtn" style="font-size:11px;padding:4px 9px;" data-action="openSavModal" data-arg="${i}">Edit</button>
       </div>
-      ${(g.transactions&&g.transactions.length)?`<details style="margin-top:8px;font-size:11px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:10px;user-select:none;">History (${g.transactions.length})</summary><div style="margin-top:6px;max-height:140px;overflow-y:auto;">${g.transactions.slice(0,20).map((t,ti)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-top:1px solid var(--border);gap:4px;"><span style="color:var(--text-muted);flex:0 0 auto;">${esc(t.date)}</span><span style="color:${t.type==='deposit'?'var(--success)':'var(--amber)'};flex:1;">${t.type==='deposit'?'+':'-'}${fmt(t.amount)}${t.note?` <span style="font-size:10px;color:var(--text-muted);">${esc(t.note)}</span>`:''}</span><button class="del-btn" data-action="deleteSavTxn" data-arg="${i}" data-arg2="${ti}" title="Delete this transaction" style="opacity:.5;font-size:10px;flex:0 0 auto;">✕</button></div>`).join('')}</div></details>`:''}
+      ${(g.transactions&&g.transactions.length)?`<details style="margin-top:8px;font-size:11px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:10px;user-select:none;">History (${g.transactions.length})</summary><div style="margin-top:6px;max-height:140px;overflow-y:auto;">${g.transactions.slice(0,20).map((t,ti)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-top:1px solid var(--border);gap:4px;"><span style="color:var(--text-muted);flex:0 0 auto;">${esc(t.date)}</span><span style="color:${t.type==='deposit'?'var(--success)':'var(--amber)'};flex:1;">${t.type==='deposit'?'+':'-'}${fmt(t.amount)}${t.note?` <span style="font-size:10px;color:var(--text-muted);">${esc(t.note)}</span>`:''}</span><button class="del-btn" data-action="deleteSavTxn" data-arg="${i}" data-arg2="${ti}" title="Delete this transaction" aria-label="Delete this transaction" style="opacity:.5;font-size:10px;flex:0 0 auto;">${icon('close',{label:'Delete'})}</button></div>`).join('')}</div></details>`:''}
     </div>`;
   }).join('');
 
@@ -70,7 +70,7 @@ function renderSavings(){
       sacBanner=document.createElement('div');
       sacBanner.id='savAllCompleteBanner';
       sacBanner.className='savings-all-complete';
-      sacBanner.innerHTML='<span class="sac-icon">🏆</span><div class="sac-text"><strong>All Savings Goals Reached!</strong><span>Every goal is funded. Consider setting a new challenge or investing the surplus.</span></div>';
+      sacBanner.innerHTML='<span class="sac-icon">'+icon('trophy',{label:'All goals reached'})+'</span><div class="sac-text"><strong>All Savings Goals Reached!</strong><span>Every goal is funded. Consider setting a new challenge or investing the surplus.</span></div>';
       const grid=document.getElementById('savingsGrid');
       if(grid&&grid.parentNode)grid.parentNode.insertBefore(sacBanner,grid);
     }
@@ -91,7 +91,7 @@ function renderDashSavings(goals){
     const moLeft=!noTarget&&g.contribution>0&&amt(g.balance)<amt(g.target)?Math.ceil((amt(g.target)-amt(g.balance))/amt(g.contribution)):0;
     return`<div class="prog-item-dash">
       <div class="prog-header">
-        <span class="pn" style="${isComplete?'color:var(--success);':''}">${esc(g.name)}${isComplete?' 🏆':''}</span>
+        <span class="pn" style="${isComplete?'color:var(--success);':''}">${esc(g.name)}${isComplete?' '+icon('trophy',{label:'Goal achieved'}):''}</span>
         <span class="pa">${noTarget?fmt(amt(g.balance)):fmt(amt(g.balance))+' / '+fmt(amt(g.target))}</span>
       </div>
       <div class="prog-track"><div class="prog-fill-dash" style="width:${pct.toFixed(1)}%;background:${isComplete?'var(--success)':'var(--blue)'};"></div></div>
@@ -145,7 +145,7 @@ function saveSavGoal(){
   syncSavingsExpenses();
   closeSavModal();renderSavings();updateHealth();
   if(alreadyMet&&!wasEdit){
-    setTimeout(()=>{launchConfetti(140);showToast('🏆 Savings goal already reached: '+g.name);},200);
+    setTimeout(()=>{launchConfetti(140);showToast('Goal already reached: '+g.name);},200);
   }
 }
 
@@ -242,7 +242,7 @@ function confirmTxn(){
     if(typeof checkAchievements==='function') checkAchievements('sav_starter','goal_crusher');
   }
   if(_txnMode==='deposit'&&prevPct<1&&newPct>=1){
-    setTimeout(()=>{launchConfetti(160);showToast('🏆 Savings goal reached: '+g.name);},200);
+    setTimeout(()=>{launchConfetti(160);showToast('Savings goal reached: '+g.name);},200);
   } else {
     showToast('✓ '+ (_txnMode==='deposit'?'Deposited':'Withdrew')+' '+fmt(a));
   }
@@ -290,7 +290,7 @@ function saveGoal(){
   closeGoalModal();renderGoals();
   const linkedLoan=g.linkedLoan!==undefined?S.loans[g.linkedLoan]:null;
   const cur=linkedLoan?linkedLoan.amount:g.target;
-  if(cur<=0)setTimeout(()=>{launchConfetti(130);showToast('🏆 Debt paid off!');},300);
+  if(cur<=0)setTimeout(()=>{launchConfetti(130);showToast('Debt paid off!');},300);
 }
 
 function renderGoals(){
@@ -318,7 +318,7 @@ function renderGoals(){
       const dlDate=new Date(dlYr,dlMo-1,1);
       const projMTP=loan?calcMTP(cur,loan.rate,amt(loan.minPayment)):999;
       const projDate=projMTP<999?new Date(...(()=>{const p=CMK.split(' ');let mo=MS.indexOf(p[0]),yr=parseInt(p[1]);mo+=projMTP;yr+=Math.floor(mo/12);mo=mo%12;return[yr,mo,1];})())  :null;
-      if(projDate)trackBadge=`<span style="font-size:10px;font-weight:600;padding:1px 5px;border-radius:8px;background:${projDate<=dlDate?'var(--success-light)':'var(--danger-light)'};color:${projDate<=dlDate?'var(--success)':'var(--danger)'};">${projDate<=dlDate?'✓ On track':'⚠ Behind'} · by ${g.targetDate}</span>`;
+      if(projDate)trackBadge=`<span style="font-size:10px;font-weight:600;padding:1px 5px;border-radius:8px;background:${projDate<=dlDate?'var(--success-light)':'var(--danger-light)'};color:${projDate<=dlDate?'var(--success)':'var(--danger)'};">${projDate<=dlDate?icon('check')+' On track':icon('warning',{label:'Behind schedule'})+' Behind'} · by ${g.targetDate}</span>`;
     }
     return`<div class="goal-card type-payoff${met?' type-met goal-celebrating':''}">
       <div class="g-type">Debt Payoff Goal</div>
@@ -328,7 +328,7 @@ function renderGoals(){
       <div class="g-bar"><div class="g-fill" style="width:${noLoan?0:progress}%;background:var(--danger);"></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
         <span style="font-size:11px;color:var(--text-secondary);">${detail}</span>
-        <span class="${met?'sav-complete-badge':'goal-status-badge goal-unmet'}">${met?'🏆 Paid Off!':noLoan?'⚠ No loan linked':'⏳ In progress'}</span>
+        <span class="${met?'sav-complete-badge':'goal-status-badge goal-unmet'}">${met?icon('trophy',{label:'Goal achieved'})+' Paid Off!':noLoan?icon('warning',{label:'No loan linked'})+' No loan linked':icon('hourglass',{label:'In progress'})+' In progress'}</span>
       </div>
       <div style="margin-top:8px;display:flex;gap:5px;" class="no-print goal-actions">
         <button class="tbtn" style="font-size:10px;padding:3px 7px;" data-action="openGoalModal" data-arg="${realIdx}">Edit</button>
