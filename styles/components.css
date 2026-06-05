@@ -1366,7 +1366,7 @@ tr.bulk-sel td { background: var(--sage-light) !important; }
 /* ── CATEGORY MANAGER MODAL ── */
 .catmgr-row {
   display: grid;
-  grid-template-columns: 130px 90px 1fr auto;
+  grid-template-columns: 130px 90px 1fr 20px;
   gap: 6px;
   align-items: flex-start;
   padding: 7px 0;
@@ -1461,14 +1461,19 @@ tr.bulk-sel td { background: var(--sage-light) !important; }
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 11px;
   color: var(--danger);
-  opacity: 0.5;
-  padding: 4px;
-  border-radius: 4px;
+  opacity: 0.4;
+  padding: 2px 3px;
+  border-radius: 3px;
   line-height: 1;
-  margin-top: 2px;
-  align-self: flex-start;
+  align-self: center;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .catmgr-del-btn:hover { opacity: 1; background: var(--danger-light); }
 

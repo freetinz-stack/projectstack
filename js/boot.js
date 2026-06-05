@@ -524,7 +524,7 @@ function _catMgrRowEl(row,idx){
     const delBtn=document.createElement('button');
     delBtn.type='button';delBtn.className='catmgr-del-btn';delBtn.title='Delete category';
     delBtn.setAttribute('aria-label','Delete category '+row.name);
-    delBtn.innerHTML='&#128465;';
+    delBtn.innerHTML='&#215;';
     delBtn.onclick=function(){
       if(!confirm('Delete category "'+(_catMgrRows[idx].name||'this category')+'"? Existing expenses using it will move to Other.'))return;
       _catMgrRows.splice(idx,1);_catMgrRender();
