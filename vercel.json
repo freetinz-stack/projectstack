@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    { "source": "/app",      "destination": "/index.html" },
+    { "source": "/signin",   "destination": "/signin.html" },
+    { "source": "/account",  "destination": "/account.html" },
+    { "source": "/pricing",  "destination": "/pricing.html" },
+    { "source": "/features", "destination": "/features-v2.html" },
+    { "source": "/help",     "destination": "/help.html" },
+    { "source": "/privacy",  "destination": "/privacy.html" },
+    { "source": "/terms",    "destination": "/terms.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options",   "value": "nosniff" },
+        { "key": "X-Frame-Options",          "value": "DENY" },
+        { "key": "Referrer-Policy",          "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy",       "value": "camera=(), microphone=(), geolocation=(), payment=()" },
+        { "key": "Cross-Origin-Opener-Policy","value": "same-origin" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
+    }
+  ]
+}
