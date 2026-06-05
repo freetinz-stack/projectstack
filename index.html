@@ -952,7 +952,8 @@
       <div class="net-flow-card" style="margin-bottom:14px;">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-secondary);">Net Cash Position</div>
         <div class="net-amount pos" id="netCash">$0</div>
-        <div style="font-size:12px;color:var(--text-secondary);">Income minus expenses</div>
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:2px;display:none;" id="netCashPending"></div>
+        <div style="font-size:12px;color:var(--text-secondary);">Income minus paid expenses</div>
         <div>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-secondary);margin-bottom:3px;"><span>Expense ratio</span><span id="expRatioPct">0%</span></div>
           <div class="pbar" style="height:6px;"><div class="pfill pf-sage" id="expRatioBar" style="width:0%;"></div></div>
@@ -1870,7 +1871,7 @@
     <button class="close-btn" data-action="closeEnvModal" title="Close budget envelope" aria-label="Close budget envelope">&#215;</button>
     <h4 id="envModalLabel">Edit Budget Cap</h4>
     <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;" id="envCatName"></p>
-    <div class="fg" style="margin-bottom:9px;"><label for="envCapInput" class="fl">Monthly Cap ($)</label><input id="envCapInput" type="number" min="0"></div>
+    <div class="fg" style="margin-bottom:9px;"><label for="envCapInput" class="fl">Monthly Cap ($)</label><input id="envCapInput" type="number" min="0" data-enter="saveEnvCap"></div>
     <div class="btn-row">
       <button class="btn-s" data-action="closeEnvModal">Cancel</button>
       <button class="btn-p" data-action="saveEnvCap">Save Cap</button>

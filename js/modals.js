@@ -888,9 +888,19 @@ function delCustomCat(i){
   renderCatManagerList();showToast('Category removed');
 }
 
-function openEnvModal(cat){_envCat=cat;document.getElementById('envCatName').textContent='Category: '+cat;document.getElementById('envCapInput').value=S.budgets[cat]||BDFT[cat]||500;document.getElementById('envModal').classList.add('open');
+function openEnvModal(cat){
+  _envCat=cat;
+  document.getElementById('envCatName').textContent='Category: '+cat;
+  const inp=document.getElementById('envCapInput');
+  inp.value=S.budgets[cat]||BDFT[cat]||500;
+  // Escape cancels without saving
+  inp._envKeyHandler=function(e){if(e.key==='Escape')closeEnvModal();};
+  inp.removeEventListener('keydown',inp._envKeyHandler);
+  inp.addEventListener('keydown',inp._envKeyHandler);
+  document.getElementById('envModal').classList.add('open');
   trapFocus(document.getElementById('envModal'));
-  setTimeout(()=>{const _f=document.querySelector('#envModal input');if(_f)_f.focus();},120);}
+  setTimeout(()=>{inp.focus();inp.select();},120);
+}
 function closeEnvModal(){releaseTrap(document.getElementById('envModal'));
   document.getElementById('envModal').classList.remove('open');}
 function saveEnvCap(){dispatch('BUDGET_SET',{cat:_envCat,val:storeCents(parseFloat(document.getElementById('envCapInput').value)||0)});renderEnvelopes();closeEnvModal();}

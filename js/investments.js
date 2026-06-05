@@ -158,6 +158,25 @@ function renderInvAllocChart(accounts) {
   const labels = accounts.map(a => esc(a.name) + ' (' + getInvShortLabel(a) + ')');
   const data = accounts.map(a => Math.round(_cvt(a.currentValue, a.currency) * 100) / 100);
 
+  // All accounts have $0 value — show empty-state message instead of blank chart
+  if (data.every(v => v === 0)) {
+    dc('invAllocChart');
+    canvas.style.display = 'none';
+    let emptyEl = canvas.parentElement.querySelector('.inv-alloc-empty');
+    if (!emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'inv-alloc-empty';
+      emptyEl.style.cssText = 'text-align:center;padding:24px 0;font-size:12px;color:var(--text-muted);';
+      emptyEl.textContent = 'Add market values to your accounts to see allocation.';
+      canvas.parentElement.appendChild(emptyEl);
+    }
+    return;
+  }
+  // Remove empty state if data is now present
+  canvas.style.display = '';
+  const existingEmpty = canvas.parentElement.querySelector('.inv-alloc-empty');
+  if (existingEmpty) existingEmpty.remove();
+
   // Generate colors: cycle through group palettes
   const usedGroupCount = {};
   const colors = accounts.map(a => {

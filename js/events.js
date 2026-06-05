@@ -121,7 +121,7 @@ var _ACTION_ALLOWLIST = new Set([
   'toggleLP','startEditBal','addLP','useInCalc','generatePaySchedule','setStrategy','toggleLoanHistory',
   // Savings
   'openTxnDeposit','openTxnWithdraw','confirmTxn','closeTxnModal',
-  'openSavModal','closeSavModal','saveSavGoal','openDelSav','closeDelSav','confirmDelSav',
+  'openSavModal','closeSavModal','saveSavGoal','openDelSav','closeDelSav','confirmDelSav','deleteSavTxn',
   'openGoalModal','closeGoalModal','saveGoal','deleteGoal','deleteScheduledRule','toggleScheduledPanel',
   // Investments
   'openInvModal','closeInvModal','saveInvModal','deleteInvestment','invTypeChange',

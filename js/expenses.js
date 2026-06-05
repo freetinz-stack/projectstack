@@ -274,7 +274,7 @@ function renderExpenses(){
         // Meta row — only show non-empty items to reduce clutter
         const metaParts=[];
         metaParts.push(`<span class="cat-badge ${catCls}" style="${catStyle}">${catLbl}</span>`);
-        if(rec)metaParts.push(`<span class="recur-badge" title="Recurring">&#8635;</span>`);
+        if(rec){const _freqLbl=item.frequency==='weekly'?'Weekly':item.frequency==='biweekly'?'Every 2 weeks':item.frequency==='quarterly'?'Quarterly':item.frequency==='yearly'?'Yearly':'Monthly';metaParts.push(`<span class="recur-badge" title="Recurring · ${_freqLbl}">&#8635; ${_freqLbl}</span>`);}
         if(dd)metaParts.push(`<span class="due-badge has-due${isOverdue?' overdue':''}" data-action="openDueDateModal" data-arg="${wi}" data-arg2="${ii}" title="Due day ${dd}">Due ${dd}</span>`);
         // 📋 only when has content; 📷 only when has receipt — shown as tiny icons
         if(item.note)metaParts.push(`<button class="note-toggle has-note" data-action="openNoteModal" data-arg="${wi}" data-arg2="${ii}" title="${esc(item.note.substring(0,40))}">&#128203;</button>`);

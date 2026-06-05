@@ -58,7 +58,7 @@ function renderSavings(){
         <button class="tbtn" style="font-size:11px;padding:4px 9px;color:var(--amber);border-color:var(--amber-mid);" data-action="openTxnWithdraw" data-arg="${i}">− Withdraw</button>
         <button class="tbtn" style="font-size:11px;padding:4px 9px;" data-action="openSavModal" data-arg="${i}">Edit</button>
       </div>
-      ${(g.transactions&&g.transactions.length)?`<details style="margin-top:8px;font-size:11px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:10px;user-select:none;">History (${g.transactions.length})</summary><div style="margin-top:6px;max-height:140px;overflow-y:auto;">${g.transactions.slice(0,20).map(t=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-top:1px solid var(--border);"><span style="color:var(--text-muted);">${esc(t.date)}</span><span style="color:${t.type==='deposit'?'var(--success)':'var(--amber)'};">${t.type==='deposit'?'+':'-'}${fmt(t.amount)}</span></div>${t.note?`<div style="font-size:10px;color:var(--text-muted);padding-bottom:2px;">${esc(t.note)}</div>`:''}`).join('')}</div></details>`:''}
+      ${(g.transactions&&g.transactions.length)?`<details style="margin-top:8px;font-size:11px;"><summary style="cursor:pointer;color:var(--text-muted);font-size:10px;user-select:none;">History (${g.transactions.length})</summary><div style="margin-top:6px;max-height:140px;overflow-y:auto;">${g.transactions.slice(0,20).map((t,ti)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-top:1px solid var(--border);gap:4px;"><span style="color:var(--text-muted);flex:0 0 auto;">${esc(t.date)}</span><span style="color:${t.type==='deposit'?'var(--success)':'var(--amber)'};flex:1;">${t.type==='deposit'?'+':'-'}${fmt(t.amount)}${t.note?` <span style="font-size:10px;color:var(--text-muted);">${esc(t.note)}</span>`:''}</span><button class="del-btn" data-action="deleteSavTxn" data-arg="${i}" data-arg2="${ti}" title="Delete this transaction" style="opacity:.5;font-size:10px;flex:0 0 auto;">✕</button></div>`).join('')}</div></details>`:''}
     </div>`;
   }).join('');
 
@@ -172,6 +172,18 @@ function checkSavingsAutopilot(){
     showToast('📅 Autopilot: '+g.name+' deposit added for today');
   });
 }
+function deleteSavTxn(goalIdx, txnIdx){
+  const g = S.savings[goalIdx];
+  if(!g||!g.transactions||!g.transactions[txnIdx]) return;
+  const txn = g.transactions[txnIdx];
+  // Reverse the balance effect of this transaction
+  if(txn.type==='deposit') g.balance=Math.max(0,Math.round((amt(g.balance)-txn.amount)*100)/100);
+  else g.balance=Math.round((amt(g.balance)+txn.amount)*100)/100;
+  g.transactions.splice(txnIdx,1);
+  persist();renderSavings();updateHealth();
+  showToast('✓ Transaction removed');
+}
+
 function openDelSav(i){_pendingDelSavIdx=i;document.getElementById('delSavName').textContent='Delete "'+S.savings[i].name+'"? This cannot be undone.';document.getElementById('delSavModal').classList.add('open');
   trapFocus(document.getElementById('delSavModal'));
   setTimeout(()=>{const _f=document.querySelector('#delSavModal button');if(_f)_f.focus();},120);}

@@ -30,8 +30,14 @@ function renderRevenue(){
   const keys=Object.keys(S.months),idx=keys.indexOf(CMK);
   const del=document.getElementById('rev-delta');del.textContent='';del.className='md';
   if(idx>0){const prev=totalRev(keys[idx-1]),diff=tot-prev;if(diff!==0){del.textContent=(diff>0?'▲ ':'▼ ')+fmtK(Math.abs(diff));del.className='md '+(diff>0?'dp':'dn');}}
-  const exp=totalExp(),net=tot-exp;
+  const exp=totalExp(),paidEx=paidExp(),pendEx=pendExp(),net=tot-paidEx;
   const netEl=document.getElementById('netCash');netEl.textContent=(net<0?'-':'')+fmt(Math.abs(net));netEl.className='net-amount '+(net>=0?'pos':'neg');
+  // Show pending deductions below the net figure
+  const netPendEl=document.getElementById('netCashPending');
+  if(netPendEl){
+    if(pendEx>0){netPendEl.textContent='−'+fmt(pendEx)+' pending';netPendEl.style.display='';}
+    else{netPendEl.style.display='none';}
+  }
   const ratio=tot>0?Math.min(exp/tot*100,120):0;
   document.getElementById('expRatioPct').textContent=(tot>0?(exp/tot*100).toFixed(1):0)+'%';
   const bar=document.getElementById('expRatioBar');bar.style.width=Math.min(ratio,100)+'%';
