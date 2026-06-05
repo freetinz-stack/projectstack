@@ -766,6 +766,9 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 .ob-empty-hint { text-align: center; padding: 10px; font-size: 12px; color: var(--muted); font-style: italic; }
 .ob-loan-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 
+/* Bulk-add modal — keep field labels on one line */
+.ba-panel .fl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+
 /* Bulk-add modal tab buttons */
 .ba-tab-btn { flex: 1; padding: 7px 6px; font-size: 12px; font-weight: 600; font-family: var(--font-sans); border: 1px solid var(--border); border-radius: var(--radius-xs); background: var(--surface); color: var(--text-muted); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 .ba-tab-btn:hover { background: var(--accent-light, var(--sage-light)); color: var(--accent); }
