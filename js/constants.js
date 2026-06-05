@@ -122,20 +122,20 @@ const DSV=[{name:'Demo Emergency Fund',target:8000,balance:3200,contribution:250
 
 
 const CAT_ALL=[
-  {cls:'cat-bank',    lbl:'Banking',       icon:'🏦'},
-  {cls:'cat-telecom', lbl:'Telecom',       icon:'📱'},
-  {cls:'cat-subs',    lbl:'Subscriptions', icon:'🔄'},
-  {cls:'cat-auto',    lbl:'Auto',          icon:'🚗'},
-  {cls:'cat-utility', lbl:'Utilities',     icon:'💡'},
-  {cls:'cat-housing', lbl:'Housing',       icon:'🏠'},
-  {cls:'cat-food',    lbl:'Food/Meals',    icon:'🍽'},
-  {cls:'cat-entertain',lbl:'Entertainment',icon:'🎬'},
-  {cls:'cat-fees',    lbl:'Fees',          icon:'⚡'},
-  {cls:'cat-health',  lbl:'Health',        icon:'🏥'},
-  {cls:'cat-loan',    lbl:'Loan Pmt',      icon:'💳'},
-  {cls:'cat-tuition', lbl:'Tuition',       icon:'🎓'},
-  {cls:'cat-savings', lbl:'Savings',       icon:'🏦'},
-  {cls:'cat-other',   lbl:'Other',         icon:'📦'},
+  {cls:'cat-bank',     lbl:'Banking',       iconKey:'bank'},
+  {cls:'cat-telecom',  lbl:'Telecom',       iconKey:'phone'},
+  {cls:'cat-subs',     lbl:'Subscriptions', iconKey:'repeat'},
+  {cls:'cat-auto',     lbl:'Auto',          iconKey:'car'},
+  {cls:'cat-utility',  lbl:'Utilities',     iconKey:'bolt'},
+  {cls:'cat-housing',  lbl:'Housing',       iconKey:'house'},
+  {cls:'cat-food',     lbl:'Food/Meals',    iconKey:'fork'},
+  {cls:'cat-entertain',lbl:'Entertainment', iconKey:'film'},
+  {cls:'cat-fees',     lbl:'Fees',          iconKey:'lightning'},
+  {cls:'cat-health',   lbl:'Health',        iconKey:'hospital'},
+  {cls:'cat-loan',     lbl:'Loan Pmt',      iconKey:'creditCard'},
+  {cls:'cat-tuition',  lbl:'Tuition',       iconKey:'mortarboard'},
+  {cls:'cat-savings',  lbl:'Savings',       iconKey:'piggyBank'},
+  {cls:'cat-other',    lbl:'Other',         iconKey:'package'},
 ];
 
 // ══════════════════════════════════════════════

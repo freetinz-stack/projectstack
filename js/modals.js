@@ -167,7 +167,7 @@ function renderCatPills(selectedCls, showAll){
   function pillHTML(cat){
     const isSel = cat.cls===selectedCls;
     const style = cat.custom ? 'background:'+cat.bg+';color:'+cat.color+';' : '';
-    return`<button class="cat-pill-opt ${cat.cls}${isSel?' selected':''}" style="${style}" data-action="selectCat" data-arg="${cat.cls}">${cat.icon} ${cat.lbl}</button>`;
+    return`<button class="cat-pill-opt ${cat.cls}${isSel?' selected':''}" style="${style}" data-action="selectCat" data-arg="${cat.cls}">${cat.iconKey?icon(cat.iconKey):''} ${cat.lbl}</button>`;
   }
 
   const primaryHTML = primary.map(pillHTML).join('');
@@ -257,7 +257,7 @@ function renderItemReceiptPreview(){
     const wrap=document.createElement('div');wrap.style.cssText='position:relative;display:inline-block;margin-bottom:6px;';
     const img=document.createElement('img');img.src=_iModalReceipt;img.className='receipt-modal-preview';
     img.addEventListener('click',function(){this.style.maxHeight=this.style.maxHeight==='none'?'150px':'none';});
-    const rmBtn=document.createElement('button');rmBtn.textContent='✕';rmBtn.title='Remove receipt';rmBtn.setAttribute('aria-label','Remove receipt');
+    const rmBtn=document.createElement('button');rmBtn.innerHTML=icon('close',{label:'Remove receipt'});rmBtn.title='Remove receipt';rmBtn.setAttribute('aria-label','Remove receipt');
     rmBtn.style.cssText='position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;';
     rmBtn.addEventListener('click',removeItemReceipt);
     wrap.appendChild(img);wrap.appendChild(rmBtn);

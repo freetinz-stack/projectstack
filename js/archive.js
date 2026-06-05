@@ -194,12 +194,12 @@
           return '<div class="archive-month-group">' +
             '<div class="archive-month-group-hdr" data-action="toggleArchiveGroup" data-arg="' + groupId + '" data-arg-self id="hdr-' + groupId + '">' +
             '<div class="amg-title">' +
-            '<span>&#128197;</span> ' + k +
+            icon('calendar',{label:'Month'}) + ' ' + k +
             '<span style="font-size:11px;font-weight:400;color:var(--text-muted);">Exp: ' + fmt(totalExp) + ' &nbsp;\xb7&nbsp; Rev: ' + fmt(totalRev) + ' &nbsp;\xb7&nbsp; Net: <span style="color:' + (net>=0?'var(--success)':'var(--danger)') + ';">' + (net<0?'-':'') + fmt(Math.abs(net)) + '</span></span>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<button class="restore-btn" data-action="openRestoreModal" data-arg="' + k + '" data-stop-prop>&#128260; Restore</button>' +
-            '<span class="amg-chevron">&#9654;</span>' +
+            '<button class="restore-btn" data-action="openRestoreModal" data-arg="' + k + '" data-stop-prop>'+icon('upload',{label:'Restore'})+' Restore</button>' +
+            '<span class="amg-chevron">'+icon('expand')+'</span>' +
             '</div></div>' +
             '<div class="archive-month-body" id="body-' + groupId + '">' +
             '<div class="archive-section-block">' +

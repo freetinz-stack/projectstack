@@ -4,17 +4,17 @@
 // CONSTANTS
 // ══════════════════════════════════════════════
 const ACHIEVEMENTS = {
-  first_paid:    { icon:'🏆', label:'First Bill Paid',  desc:'Marked your first expense as paid' },
-  week_champ:    { icon:'⭐', label:'Week Champion',     desc:'Paid off an entire week of expenses' },
-  debt_slayer:   { icon:'⚔️', label:'Debt Slayer',       desc:'Paid off your first loan' },
-  debt_free:     { icon:'🏅', label:'Debt Free',         desc:'All loans cleared to zero' },
-  sav_starter:   { icon:'🌱', label:'Savings Starter',   desc:'Made your first savings deposit' },
-  goal_crusher:  { icon:'🎯', label:'Goal Crusher',      desc:'Reached 100% on a savings goal' },
-  budget_boss:   { icon:'📊', label:'Budget Boss',       desc:'All categories under cap for a month' },
-  perfect_score: { icon:'🌟', label:'Perfect Score',     desc:'Health score hit 100' },
-  streak_3:      { icon:'🔥', label:'3-Month Streak',    desc:'3 consecutive months of positive cash flow' },
-  streak_6:      { icon:'💎', label:'6-Month Streak',    desc:'6 consecutive positive months' },
-  app_installed: { icon:'📲', label:'Installed!',         desc:'Added FincWin to your home screen' },
+  first_paid:    { iconKey:'trophy',    label:'First Bill Paid',  desc:'Marked your first expense as paid' },
+  week_champ:    { iconKey:'star',      label:'Week Champion',     desc:'Paid off an entire week of expenses' },
+  debt_slayer:   { iconKey:'lightning', label:'Debt Slayer',       desc:'Paid off your first loan' },
+  debt_free:     { iconKey:'medal',     label:'Debt Free',         desc:'All loans cleared to zero' },
+  sav_starter:   { iconKey:'piggyBank', label:'Savings Starter',   desc:'Made your first savings deposit' },
+  goal_crusher:  { iconKey:'compass',   label:'Goal Crusher',      desc:'Reached 100% on a savings goal' },
+  budget_boss:   { iconKey:'chartBar',  label:'Budget Boss',       desc:'All categories under cap for a month' },
+  perfect_score: { iconKey:'sun',       label:'Perfect Score',     desc:'Health score hit 100' },
+  streak_3:      { iconKey:'trendUp',   label:'3-Month Streak',    desc:'3 consecutive months of positive cash flow' },
+  streak_6:      { iconKey:'trophy',    label:'6-Month Streak',    desc:'6 consecutive positive months' },
+  app_installed: { iconKey:'download',  label:'Installed!',         desc:'Added FincWin to your home screen' },
 };
 
 const HEALTH_TIERS = [
@@ -137,7 +137,7 @@ function unlockAchievement(id) {
   S.achievements.push(id);
   persist(false);
   var b = ACHIEVEMENTS[id];
-  showToast(b.icon + ' Achievement unlocked: ' + b.label + '!');
+  showToast('Achievement unlocked: ' + b.label + '!');
   launchConfetti(60);
   renderAchievementShelf();
   var tile = document.querySelector('[data-ach-id="' + id + '"]');
@@ -210,7 +210,7 @@ function renderAchievementShelf() {
     var id = pair[0], b = pair[1];
     var isEarned = earned.includes(id);
     return '<div class="ach-tile ' + (isEarned ? 'ach-earned' : 'ach-locked') + '" data-ach-id="' + id + '" title="' + b.label + ': ' + b.desc + '">'
-      + '<span class="ach-icon">' + b.icon + '</span>'
+      + '<span class="ach-icon">' + (typeof icon === 'function' && b.iconKey ? icon(b.iconKey, {label:b.label,size:20}) : '') + '</span>'
       + '<span class="ach-label">' + b.label + '</span>'
       + '</div>';
   }).join('');
@@ -456,7 +456,7 @@ function openScorecardModal(closingKey) {
 
   var streak = calcStreak();
   var recentBadges = (S.achievements || []).slice(-5).map(function(id){
-    return ACHIEVEMENTS[id] ? ACHIEVEMENTS[id].icon : '';
+    return ACHIEVEMENTS[id] ? (typeof icon === 'function' && ACHIEVEMENTS[id].iconKey ? icon(ACHIEVEMENTS[id].iconKey, {label:ACHIEVEMENTS[id].label,size:16}) : '') : '';
   }).join(' ');
 
   var gradeEl = document.getElementById('sc-grade');

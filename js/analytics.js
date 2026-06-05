@@ -28,7 +28,7 @@ function renderAnalytics(){
     :'<p style="color:var(--text-muted);font-size:12px;">Add months across multiple years to see year-over-year data.</p>';
   // Insights
   const ins=genInsights(keys,revs,exps,nets,catTotals);
-  document.getElementById('insightsList').innerHTML=ins.map(i=>`<div class="insight-item"><span style="font-size:18px;">${i.icon}</span><div><div style="font-weight:600;font-size:13px;margin-bottom:2px;">${esc(i.title)}</div><div style="font-size:12px;color:var(--text-secondary);">${esc(i.body)}</div></div></div>`).join('');
+  document.getElementById('insightsList').innerHTML=ins.map(i=>`<div class="insight-item"><span class="insight-icon">${i.icon}</span><div><div style="font-weight:600;font-size:13px;margin-bottom:2px;">${esc(i.title)}</div><div style="font-size:12px;color:var(--text-secondary);">${esc(i.body)}</div></div></div>`).join('');
   renderCatTrend(keys);renderNetChart(keys,nets);
   renderVarianceTable(keys);
   renderShortfallBanner();
@@ -98,19 +98,19 @@ function renderVarianceTable(keys){
 function genInsights(keys,revs,exps,nets,catTotals){
   const ins=[];
   const dti=totalRev()>0?minPmts()/totalRev()*100:0;
-  if(dti>43)ins.push({icon:'⚠️',title:'High DTI ratio',body:`Loan payments consume ${dti.toFixed(0)}% of income. Lenders consider above 43% high risk.`});
-  else if(dti>=36)ins.push({icon:'⚠️',title:'DTI in caution zone',body:`Your DTI of ${dti.toFixed(0)}% — lenders typically prefer under 36%.`});
-  else if(dti>0)ins.push({icon:'✅',title:'Healthy DTI ratio',body:`Your DTI of ${dti.toFixed(0)}% is within the healthy range (under 36%).`});
-  if(keys.length>=2){const t=revs[revs.length-1]-revs[revs.length-2];if(t>0)ins.push({icon:'📈',title:'Income trending up',body:`Income up ${fmt(t)} vs last month.`});else if(t<0)ins.push({icon:'📉',title:'Income dip',body:`Income down ${fmt(Math.abs(t))} vs last month.`});}
+  if(dti>43)ins.push({icon:icon('warning',{label:'Alert'}),title:'High DTI ratio',body:`Loan payments consume ${dti.toFixed(0)}% of income. Lenders consider above 43% high risk.`});
+  else if(dti>=36)ins.push({icon:icon('warning',{label:'Alert'}),title:'DTI in caution zone',body:`Your DTI of ${dti.toFixed(0)}% — lenders typically prefer under 36%.`});
+  else if(dti>0)ins.push({icon:icon('check',{label:'Good'}),title:'Healthy DTI ratio',body:`Your DTI of ${dti.toFixed(0)}% is within the healthy range (under 36%).`});
+  if(keys.length>=2){const t=revs[revs.length-1]-revs[revs.length-2];if(t>0)ins.push({icon:icon('trendUp',{label:'Up'}),title:'Income trending up',body:`Income up ${fmt(t)} vs last month.`});else if(t<0)ins.push({icon:icon('chart',{label:'Down'}),title:'Income dip',body:`Income down ${fmt(Math.abs(t))} vs last month.`});}
   const top=Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
-  if(top)ins.push({icon:'💡',title:`Top spend: ${top[0]}`,body:`${fmt(top[1])} total across all months.`});
+  if(top)ins.push({icon:icon('lightbulb',{label:'Insight'}),title:`Top spend: ${top[0]}`,body:`${fmt(top[1])} total across all months.`});
   const sv=totalSav(),dt=totalDebt();
-  if(sv>0&&dt>0)ins.push({icon:'⚖️',title:'Savings vs Debt',body:`${fmt(sv)} in savings vs ${fmt(dt)} in debt. High-interest debt may cost more than savings earn.`});
+  if(sv>0&&dt>0)ins.push({icon:icon('chart',{label:'Insight'}),title:'Savings vs Debt',body:`${fmt(sv)} in savings vs ${fmt(dt)} in debt. High-interest debt may cost more than savings earn.`});
   const hi=S.loans.filter(l=>l.rate>20);
-  if(hi.length)ins.push({icon:'🔥',title:`${hi.length} high-interest loan${hi.length>1?'s':''}`,body:`${hi.map(l=>esc(l.name)).join(', ')} above 20%. Prioritise these.`});
+  if(hi.length)ins.push({icon:icon('lightning',{label:'Alert'}),title:`${hi.length} high-interest loan${hi.length>1?'s':''}`,body:`${hi.map(l=>esc(l.name)).join(', ')} above 20%. Prioritise these.`});
   const pp=totalRev()>0?pendExp()/totalRev()*100:0;
-  if(pp>50)ins.push({icon:'⏳',title:'High pending ratio',body:`${pp.toFixed(0)}% of income tied in unpaid bills.`});
-  return ins.length?ins:[{icon:'🎯',title:'Add more data',body:'More months = more personalised insights here.'}];
+  if(pp>50)ins.push({icon:icon('hourglass',{label:'Pending'}),title:'High pending ratio',body:`${pp.toFixed(0)}% of income tied in unpaid bills.`});
+  return ins.length?ins:[{icon:icon('compass',{label:'Goal'}),title:'Add more data',body:'More months = more personalised insights here.'}];
 }
 
 // _buildFinancialContext and _getModeLabel are defined in settings.js (single source)
@@ -440,7 +440,7 @@ function renderDash(){
           <span class="pa">${isPaidOff?'Paid off!':fmt(amt(l.amount))}</span>
         </div>
         <div class="prog-track"><div class="prog-fill-dash" style="width:${pct.toFixed(1)}%;background:${col};"></div></div>
-        <div class="prog-foot">${l.rate}% APR &nbsp;·&nbsp; ${pct.toFixed(0)}% paid off ${isPaidOff?'🏆':''}</div>
+        <div class="prog-foot">${l.rate}% APR &nbsp;·&nbsp; ${pct.toFixed(0)}% paid off ${isPaidOff?icon('trophy',{label:'Paid off'}):''}</div>
       </div>`;
     }).join(''):'<div style="font-size:12px;color:var(--text-muted);padding:8px 0;">No loans added yet.</div>';
   }
@@ -562,7 +562,7 @@ function generateDashAlerts(){
       },0)/prevKeys.length;
       if(prevAvg>50&&currSpent>prevAvg*1.5){
         const _anomalyMsg=catLbl+' spending is '+(currSpent/prevAvg).toFixed(1)+'x my recent average of '+fmt(prevAvg)+'/mo. This month I\'ve spent '+fmt(currSpent)+'. Why might this be high and what should I do?';
-        alerts.push({icon:'⚠️',text:'<b>'+esc(catLbl)+'</b> is '+(currSpent/prevAvg).toFixed(1)+'× your recent average ('+fmt(prevAvg)+'/mo)',action:'coachRunAnomaly',actionArg:_anomalyMsg,actionLabel:'Ask Coach'});
+        alerts.push({icon:icon('warning',{label:'Alert'}),text:'<b>'+esc(catLbl)+'</b> is '+(currSpent/prevAvg).toFixed(1)+'× your recent average ('+fmt(prevAvg)+'/mo)',action:'coachRunAnomaly',actionArg:_anomalyMsg,actionLabel:'Ask Coach'});
       }
     });
   }
@@ -609,7 +609,7 @@ function renderDashAlerts(){
       <div class="da-text">${a.text}</div>
       ${a.action?`<button class="da-btn" data-action="${a.action}"${a.actionArg?' data-arg="'+a.actionArg.replace(/"/g,'&quot;')+'"':''}>${a.actionLabel}</button>`:''}
     </div>`
-  ).join('')+'<button class="da-dismiss" data-action="dismissDashAlerts" title="Dismiss alerts" aria-label="Dismiss">&#215;</button>';
+  ).join('')+'<button class="da-dismiss" data-action="dismissDashAlerts" title="Dismiss alerts" aria-label="Dismiss">'+icon('close',{label:'Dismiss'})+'</button>';
 }
 
 function dismissDashAlerts(){

@@ -25,7 +25,7 @@ function activateTheme(designIdOrEl, isDarkStr) {
   localStorage.setItem('finflow_dark_cache', isDark ? 'true' : 'false');
   // Keep the old dark toggle button in sync (if present)
   var dkBtn = document.getElementById('darkToggleBtn');
-  if (dkBtn) dkBtn.innerHTML = isDark ? '&#9728;' : '&#9790;';
+  if (dkBtn) dkBtn.innerHTML = isDark ? icon('sun',{label:'Light mode'}) : icon('moon',{label:'Dark mode'});
   // Refresh theme gallery active states
   updateThemeGalleryUI();
   showToast('Theme applied');
@@ -211,9 +211,9 @@ function updateAIBtn(){
   var coachBtn=document.getElementById('coachAiBtn');
   var coachMgr=document.getElementById('coachManageBtn');
   if(coachBtn){
-    if(p==='claude'){coachBtn.innerHTML='&#129302; Claude AI';coachBtn.style.color='var(--sage)';coachBtn.style.borderColor='var(--sage-mid)';}
-    else if(p==='openai'){coachBtn.innerHTML='&#9889; GPT-4o';coachBtn.style.color='var(--blue)';coachBtn.style.borderColor='var(--blue-mid)';}
-    else{coachBtn.innerHTML='&#128279; Connect AI';coachBtn.style.color='';coachBtn.style.borderColor='';}
+    if(p==='claude'){coachBtn.innerHTML=icon('robot',{label:'Claude AI'})+' Claude AI';coachBtn.style.color='var(--sage)';coachBtn.style.borderColor='var(--sage-mid)';}
+    else if(p==='openai'){coachBtn.innerHTML=icon('lightning',{label:'GPT-4o'})+' GPT-4o';coachBtn.style.color='var(--blue)';coachBtn.style.borderColor='var(--blue-mid)';}
+    else{coachBtn.innerHTML=icon('link',{label:'Connect AI'})+' Connect AI';coachBtn.style.color='';coachBtn.style.borderColor='';}
   }
   if(coachMgr)coachMgr.style.display=p?'':'none';
   updateAIActionGrid();
@@ -297,7 +297,7 @@ function openClaudeManage(){
   var cs=document.getElementById('mgr-claude-status');
   if(hc){
     cs.textContent='● Connected';cs.className='ai-provider-status connected';
-    ca.innerHTML='<button class="tbtn" style="font-size:11px;" data-action="claudeUpdateKey">&#9998; Update</button><button class="tbtn" style="font-size:11px;color:var(--danger);border-color:var(--danger-mid);" data-action="aiRemoveKeyClaude">&#128465;</button>';
+    ca.innerHTML='<button class="tbtn" style="font-size:11px;" data-action="claudeUpdateKey">'+icon('edit')+' Update</button><button class="tbtn" style="font-size:11px;color:var(--danger);border-color:var(--danger-mid);" data-action="aiRemoveKeyClaude">'+icon('trash',{label:'Delete'})+'</button>';
   }else{
     cs.textContent='Not connected';cs.className='ai-provider-status disconnected';
     ca.innerHTML='<button class="tbtn" style="font-size:11px;color:var(--sage);border-color:var(--sage-mid);" data-action="openAISetupClaude">Connect</button>';
@@ -307,7 +307,7 @@ function openClaudeManage(){
   var os=document.getElementById('mgr-openai-status');
   if(ho){
     os.textContent='● Connected';os.className='ai-provider-status connected';
-    oa.innerHTML='<button class="tbtn" style="font-size:11px;" data-action="openaiUpdateKey">&#9998; Update</button><button class="tbtn" style="font-size:11px;color:var(--danger);border-color:var(--danger-mid);" data-action="aiRemoveKeyOpenai">&#128465;</button>';
+    oa.innerHTML='<button class="tbtn" style="font-size:11px;" data-action="openaiUpdateKey">'+icon('edit')+' Update</button><button class="tbtn" style="font-size:11px;color:var(--danger);border-color:var(--danger-mid);" data-action="aiRemoveKeyOpenai">'+icon('trash',{label:'Delete'})+'</button>';
   }else{
     os.textContent='Not connected';os.className='ai-provider-status disconnected';
     oa.innerHTML='<button class="tbtn" style="font-size:11px;color:var(--blue);border-color:var(--blue-mid);" data-action="openAISetupOpenai">Connect</button>';
@@ -379,16 +379,16 @@ function renderShortfallBanner(){
   var unpaid=cm().weeks.reduce(function(s,w){return s+w.items.filter(function(i){return!i.paid;}).reduce(function(a,i){return a+amt(i.amount);},0);},0);
   var parts=[];
   if(net<0){
-    parts.push('<div class="ai-shortfall-warn">&#9888;&#65039; <strong>Spending shortfall this month:</strong> Expenses ('+fmt(expenses)+') exceed income ('+fmt(income)+') by <strong>'+fmt(Math.abs(net))+'</strong>. You need '+fmt(Math.abs(net))+' more to balance this month.</div>');
+    parts.push('<div class="ai-shortfall-warn">'+icon('warning',{label:'Warning'})+' <strong>Spending shortfall this month:</strong> Expenses ('+fmt(expenses)+') exceed income ('+fmt(income)+') by <strong>'+fmt(Math.abs(net))+'</strong>. You need '+fmt(Math.abs(net))+' more to balance this month.</div>');
   }else if(income>0&&net/income<0.10){
-    parts.push('<div class="ai-shortfall-tight">&#128155; <strong>Tight month:</strong> Only '+fmt(net)+' ('+Math.round(net/income*100)+'%) buffer left after expenses of '+fmt(expenses)+'.</div>');
+    parts.push('<div class="ai-shortfall-tight">'+icon('warning',{label:'Alert'})+' <strong>Tight month:</strong> Only '+fmt(net)+' ('+Math.round(net/income*100)+'%) buffer left after expenses of '+fmt(expenses)+'.</div>');
   }
   if(unpaid>0&&net>=0){
     var afterUnpaid=net-unpaid;
     if(afterUnpaid<0){
-      parts.push('<div class="ai-shortfall-warn"'+(parts.length?' style="margin-top:6px;"':'')+'>&#9200; <strong>Unpaid bills alert:</strong> '+fmt(unpaid)+' pending would leave a <strong>'+fmt(Math.abs(afterUnpaid))+'</strong> shortfall — need '+fmt(Math.abs(afterUnpaid))+' more to clear all bills.</div>');
+      parts.push('<div class="ai-shortfall-warn"'+(parts.length?' style="margin-top:6px;"':'')+'>'+icon('warning',{label:'Alert'})+' <strong>Unpaid bills alert:</strong> '+fmt(unpaid)+' pending would leave a <strong>'+fmt(Math.abs(afterUnpaid))+'</strong> shortfall — need '+fmt(Math.abs(afterUnpaid))+' more to clear all bills.</div>');
     }else if(parts.length===0){
-      parts.push('<div class="ai-shortfall-tight">&#9200; <strong>'+fmt(unpaid)+'</strong> in unpaid bills this month — buffer after clearing all: '+fmt(afterUnpaid)+'.</div>');
+      parts.push('<div class="ai-shortfall-tight">'+icon('info',{label:'Info'})+' <strong>'+fmt(unpaid)+'</strong> in unpaid bills this month — buffer after clearing all: '+fmt(afterUnpaid)+'.</div>');
     }
   }
   el.innerHTML=parts.join('');
@@ -425,7 +425,7 @@ async function callAI(prompt,label,targetId){
   var key=isClaude?getClaudeKey():getOpenAIKey();
   if(!key){openAISetup(provider);return null;}
   var providerLabel=isClaude?'Claude AI':'GPT-4o';
-  var providerIcon=isClaude?'&#129302;':'&#9889;';
+  var providerIcon=isClaude?icon('robot',{label:'Claude AI'}):icon('lightning',{label:'GPT-4o'});
 
   // ── Streaming path (Coach tab) ────────────────────────────────────────
   if(targetId){
@@ -525,12 +525,12 @@ function renderCoach(){
   var grid=document.getElementById('coachActionGrid');
   var empty=document.getElementById('coachEmptyState');
   if(p){
-    if(btn){btn.innerHTML=(p==='claude'?'&#129302; Claude AI':'&#9889; GPT-4o');btn.style.color=(p==='claude'?'var(--sage)':'var(--blue)');btn.style.borderColor=(p==='claude'?'var(--sage-mid)':'var(--blue-mid)');}
+    if(btn){btn.innerHTML=(p==='claude'?icon('robot',{label:'Claude AI'})+' Claude AI':icon('lightning',{label:'GPT-4o'})+' GPT-4o');btn.style.color=(p==='claude'?'var(--sage)':'var(--blue)');btn.style.borderColor=(p==='claude'?'var(--sage-mid)':'var(--blue-mid)');}
     if(mgr)mgr.style.display='';
     if(grid)grid.style.display='';
     if(empty)empty.style.display='none';
   }else{
-    if(btn){btn.innerHTML='&#128279; Connect AI';btn.style.color='';btn.style.borderColor='';}
+    if(btn){btn.innerHTML=icon('link',{label:'Connect AI'})+' Connect AI';btn.style.color='';btn.style.borderColor='';}
     if(mgr)mgr.style.display='none';
     if(grid)grid.style.display='none';
     if(empty)empty.style.display='';
@@ -641,7 +641,7 @@ const RESET_CONFIG = {
     title: (m) => `Reset All Savings for ${m}?`,
     desc: 'This will permanently delete ALL savings goals — including balances, contribution settings, and interest rates. This cannot be undone.',
     word: 'DELETE ALL',
-    icon: '⚠️',
+    icon: 'warning',
     execute: () => {
       dispatch('SAVINGS_RESET_ALL',{},false);
       renderSavings(); updateHealth();
