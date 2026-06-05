@@ -15,9 +15,12 @@ let _undoSnapshot = null; // { json, timer }
 // _sessionKey : AES-GCM CryptoKey derived from PIN via PBKDF2 — null when locked.
 // _lockResolve: resolves the Promise returned by checkLock() when PIN is entered.
 // _lastActivity: updated by pointer/keyboard events for auto-lock.
+// _pinActive   : true once checkLock confirms a PIN is set, regardless of encryption.
+//               Used by auto-lock guards so non-encrypted PIN users are still locked.
 let _sessionKey   = null;
 let _lockResolve  = null;
 let _lastActivity = Date.now();
+let _pinActive    = false;
 // Expose session key accessor for settings.js (AI key encryption).
 window.getSessionKey = function () { return _sessionKey; };
 
@@ -1113,22 +1116,33 @@ async function checkLock(){
   const hash = await getPinHash();
   if(!hash) return; // no PIN set — resolve immediately
 
+  // A PIN is confirmed set — enable auto-lock guards.
+  _pinActive = true;
+
   // If we already unlocked in this tab and the inactivity window hasn't expired,
-  // skip the lock screen entirely. The session key will be re-derived below.
+  // skip the lock screen entirely.
   if(_sessionTokenValid()){
-    // Token is valid but _sessionKey may be null (lost on refresh).
-    // We can't re-derive without the PIN, so we need a lightweight way to pass
-    // the key across refreshes. We store it encrypted in sessionStorage.
     var restoredKey = await _restoreSessionKey();
     if(restoredKey){
+      // Encrypted session: key restored from sessionStorage JWK.
       _sessionKey = restoredKey;
       window.getSessionKey = function(){ return _sessionKey; };
       _lastActivity = Date.now();
-      _writeSessionToken(); // refresh the timestamp so inactivity resets on page load too
+      _writeSessionToken();
       return; // skip PIN screen
     }
-    // If key restoration failed (e.g. no encryption in use), clear the token
-    // and fall through to show the PIN screen.
+    // No JWK found. Check if encryption is actually in use.
+    // If data is stored unencrypted (no ENC_VERSION_KEY), the session token alone
+    // is sufficient — we don't need to re-derive a crypto key.
+    var encV = await _metaGet(ENC_VERSION_KEY);
+    if(!encV){
+      // No encryption active — session token proves the PIN was entered this session.
+      _lastActivity = Date.now();
+      _writeSessionToken();
+      return; // skip PIN screen
+    }
+    // Encrypted data but JWK is missing (tab re-opened? sessionStorage cleared?).
+    // Must re-enter PIN to decrypt.
     _clearSessionToken();
   }
 
@@ -1635,7 +1649,8 @@ async function verifyRecovery(){
   // than the check interval (setInterval does not await async callbacks).
   var _autoLockBusy = false;
   setInterval(function(){
-    if(_autoLockBusy || !_sessionKey) return;
+    // Guard: skip if already in the lock process, or if no PIN is set, or already locked.
+    if(_autoLockBusy || !_pinActive || document.getElementById('lockScreen').style.display === 'flex') return;
     var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 240;
     if(mins === 0) return;
     if(Date.now() - _lastActivity > mins * 60000){
@@ -1647,11 +1662,11 @@ async function verifyRecovery(){
       });
     }
   }, 60000);
-  // Lock on visibility restore if idle longer than the configured timeout.
-  // Non-aggressive: checked when user *returns* to the tab, not on hide.
+  // Lock when tab becomes visible again after being hidden (handles system sleep/resume
+  // and tab switching). Only fires if the idle time exceeded the configured threshold.
   document.addEventListener('visibilitychange', function(){
     if(document.visibilityState !== 'visible') return;
-    if(!_sessionKey) return;
+    if(!_pinActive || document.getElementById('lockScreen').style.display === 'flex') return;
     var mins = (typeof S !== 'undefined' && S && typeof S.autoLockMins === 'number') ? S.autoLockMins : 240;
     if(mins === 0) return;
     if(Date.now() - _lastActivity > mins * 60000){
