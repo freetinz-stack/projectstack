@@ -870,6 +870,7 @@ input[type=range]::-moz-range-track {
   .dash-2col > * { padding: 20px; }
   .hero-net { font-size: 52px !important; letter-spacing: -1px; }
 }
+/* ── TABLET (1024px and below) ── */
 @media (max-width: 1024px) {
   .two-col { grid-template-columns: 1fr; gap: 0; }
   .two-col > *:first-child { border-right: none; padding-right: 0; border-bottom: 1px solid var(--hairline-soft); padding-bottom: 24px; }
@@ -878,9 +879,36 @@ input[type=range]::-moz-range-track {
   .two-eq > *:first-child { border-right: none; border-bottom: 1px solid var(--hairline-soft); }
   .rev-grid { grid-template-columns: 1fr; }
   .loan-grid { grid-template-columns: 1fr; }
+
+  /* Expenses: 2-column week grid on tablet */
   .weeks-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .week-card:nth-child(even) { border-right: none; }
   .week-card { border-bottom: 1px solid var(--hairline-soft); }
+
+  /* Month manager wraps neatly */
+  .month-manager { flex-wrap: wrap; gap: 10px; }
+
+  /* Section header controls wrap rather than overflow */
+  .section-hdr { padding: 24px 0 18px; margin-bottom: 20px; }
+  .section-title { font-size: 26px; }
+
+  /* Tag filter pills wrap */
+  .tag-filter-bar { gap: 5px; }
+
+  /* Expense footer stays 3-col but smaller text */
+  .efv { font-size: 20px !important; }
+
+  /* Budget envelopes: 3 columns on tablet */
+  .envelopes-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Week header: tighten padding */
+  .week-header { padding: 10px 12px; }
+  .week-grand { font-size: 16px; }
+
+  /* Week table: tighter columns */
+  .week-table td { padding: 8px 10px; font-size: 12px; }
+  .week-table .amt-col { width: 76px; font-size: 13px; }
+  .week-table .item-name { font-size: 12px; }
 }
 @media (min-width: 601px) { .show-desktop { display: inline !important; } .show-mobile { display: none !important; } }
 @media (max-width: 600px) {
@@ -919,6 +947,62 @@ input[type=range]::-moz-range-track {
   .main { padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
   .toast { bottom: 80px !important; }
   #recurSuggestBanner { bottom: 136px !important; }
+
+  /* ── EXPENSE PAGE MOBILE ── */
+  /* Section header: stack title and controls vertically */
+  #section-expenses .section-hdr { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px 0 14px; }
+  #section-expenses .section-hdr > div:last-child { width: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
+  #section-expenses .section-title { font-size: 22px; }
+
+  /* Month manager: full-width, stacked */
+  .month-manager { flex-direction: column; align-items: stretch; gap: 8px; }
+  .month-manager > * { width: 100%; }
+
+  /* Tag filter bar: horizontal scroll, no wrapping */
+  .tag-filter-bar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: none; }
+  .tag-filter-bar::-webkit-scrollbar { display: none; }
+
+  /* Bulk action bar: full width, stack buttons */
+  .bulk-bar { flex-wrap: wrap; gap: 6px; padding: 10px 12px; }
+  .bulk-bar button { flex: 1; min-width: 80px; font-size: 11px; padding: 8px 10px; }
+
+  /* Week header: single line, bigger tap target */
+  .week-header { padding: 12px 14px; min-height: 48px; }
+  .week-grand { font-size: 15px; }
+
+  /* Week table: hide the note/tag column and action column on mobile */
+  .week-table .tag-col { display: none; }
+  .week-table .no-print { display: none; }
+
+  /* Week table cells: tighter, readable */
+  .week-table td { padding: 10px 8px; font-size: 12px; line-height: 1.3; }
+  .week-table .item-col { padding-right: 6px; }
+  .week-table .item-name { font-size: 12px; }
+  .week-table .amt-col { width: 72px; font-size: 13px; text-align: right; white-space: nowrap; }
+  .week-table .status-col { width: 38px; }
+  .week-table .status-col button { min-width: 32px; min-height: 32px; font-size: 13px; }
+
+  /* Status toggle: larger tap area */
+  .stog { min-width: 36px; min-height: 36px; font-size: 14px; border-radius: 50%; }
+
+  /* Envelope grid: 2 cols on mobile, 1 col on very small */
+  .envelopes-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .be { padding: 14px 12px; }
+  .be-name { font-size: 11px; }
+  .efv { font-size: 18px !important; }
+
+  /* Expense footer: 2-up grid */
+  .exp-footer-stats { grid-template-columns: repeat(2, 1fr); }
+  .efv { font-size: 18px !important; }
+
+  /* Recurrence badge: wrap gracefully */
+  .recur-badge { font-size: 9px; padding: 2px 5px; }
+}
+@media (max-width: 400px) {
+  /* Expense: single column envelopes on very small phones */
+  .envelopes-grid { grid-template-columns: 1fr; }
+  .week-table .amt-col { width: 60px; font-size: 12px; }
+  .week-grand { font-size: 13px; }
 }
 @media (max-width: 400px) { .mbn-item { font-size: 9px; } .mbn-icon { font-size: 18px; } }
 body.dark .mobile-bottom-nav { background: var(--bg); border-top-color: var(--hairline); }
