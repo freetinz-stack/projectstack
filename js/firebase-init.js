@@ -22,7 +22,7 @@ async function _init() {
   const [
     { initializeApp },
     { getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-      createUserWithEmailAndPassword, sendPasswordResetEmail,
+      createUserWithEmailAndPassword, sendPasswordResetEmail, sendEmailVerification,
       updateEmail, updatePassword, deleteUser, signOut },
     { getFirestore, doc, getDoc, setDoc, deleteDoc }
   ] = await Promise.all([
@@ -44,6 +44,7 @@ async function _init() {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     sendPasswordResetEmail,
+    sendEmailVerification,
     updateEmail,
     updatePassword,
     deleteUser,

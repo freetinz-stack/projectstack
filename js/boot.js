@@ -1152,7 +1152,31 @@ async function resetAllData(){
         const unsub = helpers.onAuthStateChanged(auth, user => {
           unsub();
           if (!user) { window.location.replace('/signin'); resolve(false); }
-          else { resolve(true); }
+          else {
+            // Show a non-blocking banner if email is unverified (Phase 7).
+            // We don't hard-block access — users who purchased before verifying
+            // should still reach their data. The banner nudges them to verify.
+            if (!user.emailVerified) {
+              const banner = document.createElement('div');
+              banner.id = 'fw-verify-banner';
+              banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#b7791f;color:#fff;font-size:13px;font-weight:500;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;';
+              banner.innerHTML = '<span>Please verify your email address to secure your account. Check your inbox for a confirmation link.</span>'
+                + '<div style="display:flex;gap:10px;flex-shrink:0;">'
+                + '<button id="fw-resend-btn" style="background:rgba(255,255,255,.2);border:none;color:#fff;font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer;">Resend email</button>'
+                + '<button onclick="document.getElementById(\'fw-verify-banner\').remove()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:18px;line-height:1;cursor:pointer;" aria-label="Dismiss">×</button>'
+                + '</div>';
+              document.body.prepend(banner);
+              document.getElementById('fw-resend-btn').addEventListener('click', async () => {
+                try {
+                  const { getFirebase: gfb } = await import('./js/firebase-init.js');
+                  const { auth: a, helpers: h } = await gfb();
+                  await h.sendEmailVerification(a.currentUser);
+                  document.getElementById('fw-resend-btn').textContent = 'Sent!';
+                } catch { document.getElementById('fw-resend-btn').textContent = 'Try again later'; }
+              });
+            }
+            resolve(true);
+          }
         });
       } catch {
         resolve(true); // Firebase unavailable — allow boot (fail open for resilience)

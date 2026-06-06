@@ -544,9 +544,14 @@
           }
         }
 
+        // Send verification email before redirecting (Phase 7)
+        try { await helpers.sendEmailVerification(cred.user); } catch { /* non-fatal */ }
+
         await issueSessionCookie(cred.user);
-        document.getElementById('reg-success').style.display = 'block';
-        setTimeout(() => window.location.replace('/app'), 1500);
+        const successEl = document.getElementById('reg-success');
+        successEl.textContent = `Account created! We've sent a verification email to ${email}. Verify your email, then sign in.`;
+        successEl.style.display = 'block';
+        setTimeout(() => window.location.replace('/app'), 2500);
       } catch (err) {
         showError('reg-error', friendlyError(err.code));
         setLoading(btn, false);

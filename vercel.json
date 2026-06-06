@@ -1,4 +1,6 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
     { "source": "/app",      "destination": "/index.html" },
     { "source": "/signin",   "destination": "/signin.html" },
@@ -8,6 +10,9 @@
     { "source": "/help",     "destination": "/help.html" },
     { "source": "/privacy",  "destination": "/privacy.html" },
     { "source": "/terms",    "destination": "/terms.html" }
+  ],
+  "errors": [
+    { "statusCode": 404, "destination": "/404.html" }
   ],
   "headers": [
     {

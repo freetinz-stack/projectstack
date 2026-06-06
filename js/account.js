@@ -31,6 +31,25 @@ function setGreeting(displayName) {
   setText('page-greeting', `${greet}, ${displayName || 'there'}`);
 }
 
+// ── Email verification banner (Phase 7) ──────────────────────────────────────
+(function initVerificationBanner() {
+  if (user.emailVerified) return;
+  const banner = document.getElementById('verify-banner');
+  if (banner) banner.style.display = 'flex';
+})();
+
+window.resendVerification = async function() {
+  const btn = document.getElementById('verify-resend-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  try {
+    await helpers.sendEmailVerification(auth.currentUser);
+    if (btn) btn.textContent = 'Sent! Check your inbox.';
+  } catch {
+    if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
+    showToast('Could not send verification email. Try again in a moment.', true);
+  }
+};
+
 // ── Section nav ───────────────────────────────────────────────────────────────
 window.showSection = function(name, btn) {
   document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
