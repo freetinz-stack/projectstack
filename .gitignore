@@ -3,4 +3,7 @@ node_modules/
 package-lock.json
 .env
 .env.local
+.env.*.local
 .vercel
+.firebase/
+js/config.local.js
