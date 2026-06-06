@@ -12,5 +12,6 @@ window.__FINCWIN_CONFIG__ = {
   storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "YOUR_APP_ID",
-  googleClientId: "YOUR_GOOGLE_OAUTH_CLIENT_ID"  // Google Cloud Console -> APIs & Services -> Credentials -> OAuth 2.0 Client ID (Web application type)
+  googleClientId: "YOUR_GOOGLE_OAUTH_CLIENT_ID",       // Google Cloud Console -> APIs & Services -> Credentials -> OAuth 2.0 Client ID (Web application type)
+  recaptchaSiteKey: "YOUR_RECAPTCHA_V3_SITE_KEY"       // Google Cloud Console -> APIs & Services -> Credentials -> reCAPTCHA keys (Phase 5 App Check)
 };

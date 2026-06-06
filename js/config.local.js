@@ -16,5 +16,6 @@ window.__FINCWIN_CONFIG__ = {
   storageBucket: "REPLACE_WITH_PROJECT_ID.firebasestorage.app",
   messagingSenderId: "REPLACE_WITH_SENDER_ID",
   appId: "REPLACE_WITH_APP_ID",
-  googleClientId: "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
+  googleClientId: "REPLACE_WITH_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
+  recaptchaSiteKey: "REPLACE_WITH_RECAPTCHA_V3_SITE_KEY"
 };

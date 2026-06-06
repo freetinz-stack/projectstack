@@ -9,6 +9,7 @@
 
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth }                       from 'firebase-admin/auth';
+import { checkRateLimit, getClientIp }   from './_ratelimit.js';
 
 // ── Firebase Admin singleton ──────────────────────────────────────────────────
 function getAdminAuth() {
@@ -54,6 +55,14 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limit: 10 session creations per hour per IP (covers rapid sign-in attempts)
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit('rl:session', 10, '1 h', ip);
+  if (rl.limited) {
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({ error: 'Too many sign-in attempts. Try again later.' });
   }
 
   const { idToken } = req.body || {};

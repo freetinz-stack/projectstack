@@ -3,6 +3,8 @@
 // Reads config from window.__FINCWIN_CONFIG__ (set by js/config.local.js).
 // Import this module on any page that needs Firebase Auth or Firestore.
 
+import { initAppCheck } from './app-check-init.js';
+
 let _app = null;
 let _auth = null;
 let _db = null;
@@ -30,6 +32,11 @@ async function _init() {
   ]);
 
   _app  = initializeApp(cfg);
+
+  // App Check must be initialized immediately after initializeApp and before
+  // any Firestore or Auth calls — tokens are attached automatically thereafter
+  await initAppCheck(_app);
+
   _auth = getAuth(_app);
   _db   = getFirestore(_app);
   _authHelpers = {

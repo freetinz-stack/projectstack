@@ -1,6 +1,16 @@
+import { checkRateLimit, getClientIp } from './_ratelimit.js';
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Rate limit: 30 validations per hour per IP (caching in boot.js handles most calls)
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit('rl:validate', 30, '1 h', ip);
+  if (rl.limited) {
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({ valid: false, reason: 'rate_limited' });
+  }
 
   const { license_key, instance_id } = req.body || {};
   if (!license_key || !instance_id) {

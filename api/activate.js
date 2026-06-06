@@ -1,6 +1,7 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth }                       from 'firebase-admin/auth';
 import { getFirestore }                  from 'firebase-admin/firestore';
+import { checkRateLimit, getClientIp }   from './_ratelimit.js';
 
 function getAdmin() {
   if (!getApps().length) {
@@ -43,6 +44,17 @@ async function linkLicenceToAccount(licenseKey, idToken, planName) {
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Rate limit: 5 activation attempts per hour per IP
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit('rl:activate', 5, '1 h', ip);
+  if (rl.limited) {
+    res.setHeader('Retry-After', String(rl.retryAfter));
+    return res.status(429).json({
+      activated: false,
+      error: `Too many activation attempts. Try again in ${Math.ceil(rl.retryAfter / 60)} minute(s).`,
+    });
+  }
 
   const { license_key, instance_name, idToken } = req.body || {};
   if (!license_key || !instance_name) {
