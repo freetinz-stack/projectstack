@@ -94,7 +94,10 @@
     return encrypt(dekB64, kek); // { ciphertext, iv, v: 1 }
   }
 
-  // Unwrap a DEK: decrypt wrapped payload with KEK, re-import as non-extractable key
+  // Unwrap a DEK: decrypt wrapped payload with KEK, re-import as extractable key.
+  // Must be extractable so _storeSessionKey() can export it as JWK to sessionStorage,
+  // allowing refresh within the inactivity window to skip the PIN prompt.
+  // The key never leaves the browser — sessionStorage is tab-only and origin-scoped.
   async function unwrapDEK(kek, wrappedPayload) {
     var dekB64 = await decrypt(wrappedPayload, kek);
     var dekBytes = _fromBase64(dekB64);
@@ -102,7 +105,7 @@
       'raw',
       dekBytes,
       { name: 'AES-GCM', length: 256 },
-      false, // non-extractable once imported for use
+      true, // extractable so verifyPin() can save it to sessionStorage via exportKey('jwk')
       ['encrypt', 'decrypt']
     );
   }
