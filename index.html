@@ -1162,6 +1162,13 @@
         <div style="font-weight:600;font-size:12px;margin-bottom:10px;">Monthly Net Flow Over Time</div>
         <div style="position:relative;height:165px;"><canvas id="netChart" role="img" aria-label="Monthly net cash flow over time (income minus expenses)">Monthly net cash flow over time.</canvas></div>
       </div>
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <div class="card-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 2a4 4 0 014 4c0 2-1.2 3.2-2 4H6c-.8-.8-2-2-2-4a4 4 0 014-4z"/><line x1="6" y1="14" x2="10" y2="14"/><line x1="6.5" y1="12" x2="9.5" y2="12"/></svg> Smart Insights</div>
+        </div>
+        <div id="aiShortfallBanner" style="display:none;"></div>
+        <div style="padding:14px;" id="insightsList"></div>
+      </div>
     </div>
     <div>
       <div class="chart-card" style="margin-bottom:14px;">
@@ -1176,18 +1183,6 @@
         <div style="font-weight:600;font-size:12px;margin-bottom:6px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5"/><polyline points="8 3 9.5 6.5 13 7 10.5 9.5 11 13 8 11.5 5 13 5.5 9.5 3 7 6.5 6.5"/></svg> Month Scorecards</div>
         <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">Review any closed month — missed the pop-up? Open it here.</div>
         <div id="an-scorecard-row" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-      </div>
-      <div class="card" style="margin-bottom:0;">
-        <div class="card-header">
-          <div class="card-title"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 2a4 4 0 014 4c0 2-1.2 3.2-2 4H6c-.8-.8-2-2-2-4a4 4 0 014-4z"/><line x1="6" y1="14" x2="10" y2="14"/><line x1="6.5" y1="12" x2="9.5" y2="12"/></svg> Smart Insights</div>
-        </div>
-
-        <!-- Shortfall warning — computed, always shown when relevant -->
-        <div id="aiShortfallBanner" style="display:none;"></div>
-
-        <!-- Static insights list from analytics.js -->
-        <div style="padding:14px;" id="insightsList"></div>
-
       </div>
     </div>
   </div>
