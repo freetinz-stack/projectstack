@@ -850,7 +850,40 @@ async function loadDemoProfile(id, keepBanner) {
       };
     }),
     investments: (p.investments || []).map(function(inv) {
-      return Object.assign({}, inv);
+      // Demo profiles store price-per-share style fields (purchasePrice, currentPrice, shares).
+      // The investment renderer expects currentValue, costBasis, annualReturn, type, customLabel.
+      // Derive the correct fields here so cards display market value and cost basis correctly.
+      var shares       = inv.shares  || 0;
+      var buyPrice     = inv.purchasePrice || 0;
+      var sellPrice    = inv.currentPrice  || 0;
+      // currentValue: prefer shares × currentPrice, fall back to stored amount
+      var currentValue = shares > 0 && sellPrice > 0
+        ? Math.round(shares * sellPrice * 100) / 100
+        : (inv.currentPrice || inv.amount || 0);
+      // costBasis: prefer shares × purchasePrice, fall back to amount
+      var costBasis    = shares > 0 && buyPrice > 0
+        ? Math.round(shares * buyPrice * 100) / 100
+        : (inv.amount || 0);
+      // Estimate annual return from gain/basis if not explicitly set
+      var annualReturn = inv.annualReturn != null ? inv.annualReturn
+        : (costBasis > 0 ? Math.round(((currentValue - costBasis) / costBasis) * 100 * 10) / 10 : 0);
+      // Map demo type values to valid INV_TYPES values used by the renderer
+      var typeMap = { stock: 'brokerage', real_estate: 'realestate', 'real-estate': 'realestate' };
+      var mappedType = typeMap[inv.type] || inv.type || 'other';
+      return {
+        _id: 'demo-' + Math.random().toString(36).slice(2, 9),
+        name:         inv.name,
+        type:         mappedType,
+        customLabel:  inv.customLabel  || '',
+        symbol:       inv.symbol       || '',
+        shares:       shares,
+        currentValue: currentValue,
+        costBasis:    costBasis,
+        annualReturn: annualReturn,
+        notes:        inv.notes        || '',
+        lastUpdated:  inv.lastUpdated  || new Date().toISOString().slice(0, 10),
+        currency:     inv.currency     || (p.currency && p.currency.code) || 'USD'
+      };
     }),
     budgets: Object.assign({}, BDFT, p.budgets || {}),
     budgetRollover: {},
