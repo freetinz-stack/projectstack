@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   position: sticky;
-  top: 0;
+  top: var(--banner-h, 0px);
   z-index: 200;
   gap: 12px;
 }
@@ -111,7 +111,7 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   position: sticky;
-  top: 56px;
+  top: calc(var(--banner-h, 0px) + 56px);
   z-index: 199;
 }
 
