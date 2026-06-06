@@ -1100,7 +1100,10 @@
       <div style="font-size:16px;font-weight:700;color:var(--ink);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="2 13 6 7 9 10 13 4"/></svg> Investment Accounts</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Track portfolios, registered accounts, and assets — all currencies supported</div>
     </div>
-    <button class="nm-btn no-print" data-action="openInvModal" data-arg="-1">+ Add Account</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="tbtn no-print" onclick="resetInvestments()" style="font-size:12px;color:var(--danger);border-color:var(--danger-mid);" title="Delete all investment accounts">Reset</button>
+      <button class="nm-btn no-print" data-action="openInvModal" data-arg="-1">+ Add Account</button>
+    </div>
   </div>
   <div class="metrics-row" id="inv-metrics-row"></div>
   <div id="investmentsGrid" class="savings-grid" style="margin-top:12px;"></div>

@@ -1113,7 +1113,7 @@ async function resetAllData(){
   // Blank state — no demo data
   const blankWeeks=[{items:[]},{items:[]},{items:[]},{items:[]}];
   S={
-    loans:[],strategy:'avalanche',savings:[],
+    loans:[],strategy:'avalanche',savings:[],investments:[],
     budgets:{...BDFT},budgetRollover:{},financialGoals:[],customCategories:[],scheduledExpenses:[],
     darkMode:S?S.darkMode:false,archiveThreshold:6,archivedMonths:{},
     currency:{symbol:'$',code:'CAD',locale:'en-CA'},
@@ -1130,6 +1130,7 @@ async function resetAllData(){
   updateClaudeBtn();
   renderDash();
   updateHealth();
+  if(typeof renderInvestments==='function')renderInvestments();
   if(typeof updateArchiveBadge==='function')updateArchiveBadge();
   showToast('All data cleared. Starting fresh.');
   showOnboarding();

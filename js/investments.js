@@ -361,6 +361,16 @@ function deleteInvestment(i) {
   showToast('✓ Account deleted');
 }
 
+window.resetInvestments = function() {
+  if (!(S.investments || []).length) { showToast('No investment accounts to clear.'); return; }
+  if (!window.confirm('Delete all investment accounts? This cannot be undone.')) return;
+  S.investments = [];
+  persist();
+  renderInvestments();
+  if (typeof renderDash === 'function') renderDash();
+  showToast('Investment accounts cleared.');
+};
+
 // ── Dashboard mini-summary (called by renderDashSavings) ─────────────────────
 function renderDashInvestments() {
   const el = document.getElementById('dashInvestmentsList');
