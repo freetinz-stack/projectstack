@@ -276,7 +276,7 @@
             <li class="dim">Google Drive sync</li>
             <li class="dim">Multi-device (up to 3)</li>
           </ul>
-          <a href="signin.html#register" class="price-cta price-cta-outline">Get Starter — $49</a>
+          <a href="https://fincwin.lemonsqueezy.com/buy/starter" class="price-cta price-cta-outline" id="cta-starter">Get Starter — $49</a>
         </div>
 
         <!-- Pro — featured -->
@@ -297,7 +297,7 @@
             <li>CSV bank import</li>
             <li>3-device activation</li>
           </ul>
-          <a href="signin.html#register" class="price-cta price-cta-inv">Get Pro — $89</a>
+          <a href="https://fincwin.lemonsqueezy.com/buy/pro" class="price-cta price-cta-inv" id="cta-pro">Get Pro — $89</a>
         </div>
 
         <!-- Lifetime -->
@@ -317,7 +317,7 @@
             <li>Desktop app (Tauri) when released</li>
             <li>Lifetime updates — no renewals ever</li>
           </ul>
-          <a href="signin.html#register" class="price-cta price-cta-outline">Get Lifetime — $149</a>
+          <a href="https://fincwin.lemonsqueezy.com/buy/lifetime" class="price-cta price-cta-outline" id="cta-lifetime">Get Lifetime — $149</a>
         </div>
 
       </div>
@@ -500,6 +500,16 @@
       document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
       if (!isOpen) item.classList.add('open');
     }
+
+    // Append Lemon Squeezy redirect param so buyers land on signin with key pre-filled.
+    // {license_key} is a Lemon Squeezy template variable substituted at checkout completion.
+    const _redirectBase = encodeURIComponent(
+      window.location.origin + '/signin?key={license_key}'
+    );
+    ['cta-starter','cta-pro','cta-lifetime'].forEach(id => {
+      const a = document.getElementById(id);
+      if (a) a.href += '?checkout[redirect_url]=' + _redirectBase;
+    });
 
     const reveals = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver((entries) => {

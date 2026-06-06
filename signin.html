@@ -347,6 +347,27 @@
     };
     if (window.location.hash === '#register') window.switchTab('register');
 
+    // ── Post-purchase: ?key= auto-populate (Phase 6) ─────────────────────────
+    // Lemon Squeezy can redirect back to signin?key=XXXX-XXXX-XXXX-XXXX after
+    // a successful purchase. We pre-fill and reveal the key input so the user
+    // just needs to sign in (or register) and the key activates automatically.
+    (function autoFillKeyFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const key = params.get('key');
+      if (!key) return;
+      const formatted = key.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 16);
+      const display = (formatted.match(/.{1,4}/g) || []).join('-');
+      // Pre-fill both panels' key inputs and show the key row
+      ['signin', 'register'].forEach(panel => {
+        const input = document.getElementById('key-' + panel);
+        const row   = document.getElementById('key-row-' + panel);
+        if (input) input.value = display;
+        if (row)   row.classList.add('show');
+      });
+      // Switch to register tab for new buyers
+      window.switchTab('register');
+    })();
+
     // ── UI helpers ────────────────────────────────────────────────────────────
     window.toggleKeyInput = function(panel) {
       const row = document.getElementById('key-row-' + panel);

@@ -1617,6 +1617,28 @@
     </div>
 
     <!-- ── DANGER ZONE ── -->
+    <div class="settings-page-group" id="accountSettingsGroup">
+      <div class="settings-group-label">Account</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label">Sign out</div>
+          <div class="settings-row-sub">End your session on this device</div>
+        </div>
+        <button class="tbtn" id="settingsSignOutBtn" style="font-size:12px;flex-shrink:0;" onclick="(async()=>{
+          const btn=document.getElementById('settingsSignOutBtn');
+          btn.disabled=true; btn.textContent='Signing out…';
+          try {
+            const {getFirebase}=await import('./js/firebase-init.js');
+            const {auth,helpers}=await getFirebase();
+            await fetch('/api/session',{method:'DELETE'}).catch(()=>{});
+            await helpers.signOut(auth).catch(()=>{});
+          } catch(e) { console.warn('signOut error',e); }
+          ['fw_license_key','fw_instance_id','fw_plan','fw_last_validated'].forEach(k=>localStorage.removeItem(k));
+          window.location.replace('/signin');
+        })()">Sign out</button>
+      </div>
+    </div>
+
     <div class="settings-page-group">
       <div class="settings-group-label" style="color:var(--danger);">Danger Zone</div>
 

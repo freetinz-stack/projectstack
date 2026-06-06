@@ -1,0 +1,66 @@
+rules_version = '2';
+// FincWin — Firestore Security Rules (Phase 6)
+//
+// Architecture:
+//   users/{uid}      — profile, plan, licenseKey — owned by the user
+//   licenses/{key}   — purchase record — written only by server (Admin SDK via webhook/activate)
+//
+// All writes from the client are blocked on licenses/ — only our serverless
+// functions (which run with Admin SDK credentials) can create or update them.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── users/{uid} ──────────────────────────────────────────────────────────
+    // Each user can read and write only their own document.
+    // No user can read another user's document.
+    match /users/{uid} {
+      allow read:  if request.auth != null && request.auth.uid == uid;
+
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && validUserCreate(request.resource.data);
+
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && validUserUpdate(request.resource.data);
+
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── licenses/{key} ───────────────────────────────────────────────────────
+    // Any authenticated user can read a license document (needed to show plan
+    // info on account.html). Only the server-side Admin SDK may write.
+    match /licenses/{key} {
+      allow read:  if request.auth != null;
+      allow write: if false;  // Admin SDK only — never from the browser
+    }
+
+    // ── Catch-all: deny everything else ──────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+
+  // ── Validation helpers ────────────────────────────────────────────────────
+
+  function validUserCreate(data) {
+    return data.keys().hasOnly([
+             'firstName','lastName','displayName','email',
+             'plan','licenseKey','createdAt'
+           ])
+        && data.email is string
+        && data.email.size() < 256
+        && data.createdAt is int;
+  }
+
+  function validUserUpdate(data) {
+    // Permit updating only the safe subset of fields.
+    // UID, createdAt cannot be changed via client write.
+    return data.keys().hasOnly([
+             'firstName','lastName','displayName','email',
+             'plan','licenseKey','updatedAt'
+           ])
+        && (!('email' in data) || (data.email is string && data.email.size() < 256));
+  }
+}
