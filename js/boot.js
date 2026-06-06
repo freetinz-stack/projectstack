@@ -908,13 +908,22 @@ document.addEventListener('keydown',function(e){
       + '<button class="pwa-banner-dismiss" aria-label="Dismiss install prompt">'+icon('close',{label:'Dismiss'})+'</button>';
     banner.querySelector('.pwa-banner-install').addEventListener('click', function(){
       _triggerInstall(); banner.remove();
+      document.documentElement.style.removeProperty('--banner-h');
     });
     banner.querySelector('.pwa-banner-dismiss').addEventListener('click', function(){
-      localStorage.setItem('finflow_install_banner_dismissed', '1'); banner.remove();
+      localStorage.setItem('finflow_install_banner_dismissed', '1');
+      banner.remove();
+      document.documentElement.style.removeProperty('--banner-h');
     });
     var topbar = document.querySelector('.topbar');
-    if(topbar) topbar.insertAdjacentElement('afterend', banner);
-    else document.body.insertAdjacentElement('afterbegin', banner);
+    if(topbar) {
+      topbar.insertAdjacentElement('beforebegin', banner);
+      var bh = banner.getBoundingClientRect().height || 38;
+      document.documentElement.style.setProperty('--banner-h', bh + 'px');
+    } else {
+      document.body.insertAdjacentElement('afterbegin', banner);
+      document.documentElement.style.setProperty('--banner-h', '38px');
+    }
   }
 
   // D2 — already installed: suppress all install UI

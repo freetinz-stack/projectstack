@@ -1034,8 +1034,9 @@ tr.bulk-sel td { background: var(--sage-light) !important; }
   border-bottom: 1px solid var(--hairline);
   font-size: 13px;
   animation: _pwa-slide-in 0.22s ease;
-  z-index: 900;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 201;
 }
 @keyframes _pwa-slide-in {
   from { transform: translateY(-100%); opacity: 0; }
