@@ -188,7 +188,9 @@ function awardXP(reason) {
 // FEATURE 2 — ACHIEVEMENT BADGES
 // ══════════════════════════════════════════════
 function unlockAchievement(id) {
-  if (!ACHIEVEMENTS[id] || (S.achievements || []).includes(id)) return;
+  if (!ACHIEVEMENTS[id]) return;
+  var _ids = (S.achievements || []).map(function(e){ return (e && typeof e === 'object') ? e.id : e; });
+  if (_ids.includes(id)) return;
   S.achievements.push(id);
   var b = ACHIEVEMENTS[id];
   if (b.xp) { S.xp = (S.xp||0) + b.xp; }
@@ -208,9 +210,9 @@ function unlockAchievement(id) {
 
 function checkAchievements() {
   var ids = Array.from(arguments);
-  var earned = S.achievements || [];
+  var earnedSet = new Set((S.achievements || []).map(function(e){ return (e && typeof e === 'object') ? e.id : e; }));
   ids.forEach(function(id) {
-    if (earned.includes(id)) return;
+    if (earnedSet.has(id)) return;
     var ok = false;
     if (id === 'first_paid') {
       ok = Object.values(S.months).some(function(m){
@@ -341,20 +343,22 @@ function renderAchievementShelf() {
   var el = document.getElementById('d-achievement-shelf');
   if (!el) return;
   var earned = S.achievements || [];
+  // Normalise: achievements may be strings (live) or {id,...} objects (demo profiles).
+  var earnedIds = new Set(earned.map(function(e){ return (e && typeof e === 'object') ? e.id : e; }));
   var countEl = document.getElementById('d-ach-count');
-  if (countEl) countEl.textContent = earned.length + '/' + Object.keys(ACHIEVEMENTS).length;
+  if (countEl) countEl.textContent = earnedIds.size + '/' + Object.keys(ACHIEVEMENTS).length;
   // Sort by rarity (legendary first), then earned before locked
   var sorted = Object.entries(ACHIEVEMENTS).sort(function(a, b) {
     var ri = _RARITY_ORDER.indexOf(a[1].rarity||'common');
     var rj = _RARITY_ORDER.indexOf(b[1].rarity||'common');
     if (ri !== rj) return ri - rj;
-    var ei = earned.includes(a[0]) ? 0 : 1;
-    var ej = earned.includes(b[0]) ? 0 : 1;
+    var ei = earnedIds.has(a[0]) ? 0 : 1;
+    var ej = earnedIds.has(b[0]) ? 0 : 1;
     return ei - ej;
   });
   el.innerHTML = sorted.map(function(pair){
     var id = pair[0], b = pair[1];
-    var isEarned = earned.includes(id);
+    var isEarned = earnedIds.has(id);
     var rarity = b.rarity || 'common';
     var xpLabel = b.xp ? '+' + b.xp + ' XP' : '';
     return '<div class="ach-tile ' + (isEarned ? 'ach-earned' : 'ach-locked') + ' ach-rarity-' + rarity + '" data-ach-id="' + id + '" title="' + b.label + ': ' + b.desc + (xpLabel ? ' · ' + xpLabel : '') + '">'
@@ -604,9 +608,14 @@ function openScorecardModal(closingKey) {
   }
 
   var streak = calcStreak();
-  var recentBadges = (S.achievements || []).slice(-5).map(function(id){
-    return ACHIEVEMENTS[id] ? (typeof icon === 'function' && ACHIEVEMENTS[id].iconKey ? icon(ACHIEVEMENTS[id].iconKey, {label:ACHIEVEMENTS[id].label,size:16}) : '') : '';
-  }).join(' ');
+  // S.achievements stores either plain ID strings (live data) or {id, earned, earnedAt}
+  // objects (demo profiles). Normalise to string IDs before lookup.
+  var recentBadges = (S.achievements || []).slice(-5).map(function(entry){
+    var id = (entry && typeof entry === 'object') ? entry.id : entry;
+    var b = ACHIEVEMENTS[id];
+    if (!b) return '';
+    return (typeof icon === 'function' && b.iconKey) ? icon(b.iconKey, {label: b.label, size: 16}) : '';
+  }).filter(Boolean).join(' ');
 
   var gradeEl = document.getElementById('sc-grade');
   if (gradeEl) { gradeEl.textContent = grade; gradeEl.style.color = gradeColor; }
@@ -617,7 +626,7 @@ function openScorecardModal(closingKey) {
   if (cfEl) { cfEl.textContent = (net >= 0 ? '+' : '') + fmt(net); cfEl.style.color = net >= 0 ? 'var(--success)' : 'var(--danger)'; }
   var momEl = document.getElementById('sc-mom'); if (momEl) momEl.textContent = momText;
   var strEl = document.getElementById('sc-streak'); if (strEl) strEl.textContent = streak > 0 ? '🔥 ' + streak + '-month streak' : 'Start a streak next month!';
-  var badgeEl = document.getElementById('sc-badges'); if (badgeEl) badgeEl.textContent = recentBadges || '—';
+  var badgeEl = document.getElementById('sc-badges'); if (badgeEl) badgeEl.innerHTML = recentBadges || '<span style="color:var(--text-muted)">—</span>';
 
   var modal = document.getElementById('scorecardModal');
   if (!modal) return;
