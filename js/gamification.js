@@ -187,7 +187,7 @@ function awardXP(reason) {
 // ══════════════════════════════════════════════
 // FEATURE 2 — ACHIEVEMENT BADGES
 // ══════════════════════════════════════════════
-function unlockAchievement(id) {
+function unlockAchievement(id, _skipRender) {
   if (!ACHIEVEMENTS[id]) return;
   var _ids = (S.achievements || []).map(function(e){ return (e && typeof e === 'object') ? e.id : e; });
   if (_ids.includes(id)) return;
@@ -198,13 +198,17 @@ function unlockAchievement(id) {
   var xpNote = b.xp ? ' +' + b.xp + ' XP' : '';
   showToast('🏅 ' + b.label + ' unlocked!' + xpNote);
   launchConfetti(b.rarity === 'legendary' ? 120 : b.rarity === 'epic' ? 90 : 60);
-  renderAchievementShelf();
-  var tile = document.querySelector('[data-ach-id="' + id + '"]');
-  if (tile) {
-    tile.classList.add('ach-earned');
-    tile.classList.remove('ach-locked');
-    tile.classList.add('ach-pop');
-    setTimeout(function(){ tile.classList.remove('ach-pop'); }, 600);
+  // Skip shelf re-render when called from checkAchievements batch — the caller
+  // renders once after the whole batch so badges don't displace mid-loop.
+  if (!_skipRender) {
+    renderAchievementShelf();
+    var tile = document.querySelector('[data-ach-id="' + id + '"]');
+    if (tile) {
+      tile.classList.add('ach-earned');
+      tile.classList.remove('ach-locked');
+      tile.classList.add('ach-pop');
+      setTimeout(function(){ tile.classList.remove('ach-pop'); }, 600);
+    }
   }
 }
 
@@ -334,8 +338,12 @@ function checkAchievements() {
         return mo && mo.revenue && mo.revenue.length > 0;
       });
     }
-    if (ok) unlockAchievement(id);
+    if (ok) unlockAchievement(id, true /* skipRender — batch mode */);
   });
+  // One consolidated render after the full batch so the shelf updates
+  // once with the final state rather than once per newly unlocked badge.
+  renderAchievementShelf();
+  renderXPBar();
 }
 
 var _RARITY_ORDER = ['legendary','epic','rare','uncommon','common'];
@@ -646,11 +654,12 @@ function closeScorecardModal() {
 // MAIN RENDER ENTRY — called from renderDash()
 // ══════════════════════════════════════════════
 function renderGamification() {
-  renderStreakBadge();
-  renderChallengeCard();
-  renderAchievementShelf();
-  renderXPBar();
-  renderSpendingHeatmap();
+  // Check and award any newly earned badges FIRST so the shelf renders
+  // once with the final correct state. Without this, checkAchievements()
+  // called after renderAchievementShelf() would trigger a second render
+  // with a different sort order, causing visible badge displacement.
+  // checkAchievements awards badges in batch then calls renderAchievementShelf
+  // and renderXPBar once at the end — no intermediate re-renders, no displacement.
   checkAchievements(
     // Core
     'budget_boss', 'streak_3', 'streak_6',
@@ -667,4 +676,7 @@ function renderGamification() {
     // Income
     'income_logger'
   );
+  renderStreakBadge();
+  renderChallengeCard();
+  renderSpendingHeatmap();
 }
