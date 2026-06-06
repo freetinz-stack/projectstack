@@ -332,90 +332,203 @@
     </div>
   </div>
 
-  <script>
-    // Tab switching
-    function switchTab(tab) {
+  <script src="./js/config.fallback.js"></script>
+  <script src="./js/config.local.js" onerror=""></script>
+  <script type="module">
+    import { getFirebase } from './js/firebase-init.js';
+
+    // ── Tab switching ─────────────────────────────────────────────────────────
+    window.switchTab = function(tab) {
       document.querySelectorAll('.auth-tab').forEach((t, i) => {
         t.classList.toggle('active', (i === 0 && tab === 'signin') || (i === 1 && tab === 'register'));
       });
       document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
       document.getElementById('tab-' + tab).classList.add('active');
-    }
+    };
+    if (window.location.hash === '#register') window.switchTab('register');
 
-    // Check hash on load
-    if (window.location.hash === '#register') switchTab('register');
-
-    // Toggle licence key input
-    function toggleKeyInput(panel) {
+    // ── UI helpers ────────────────────────────────────────────────────────────
+    window.toggleKeyInput = function(panel) {
       const row = document.getElementById('key-row-' + panel);
       row.classList.toggle('show');
       if (row.classList.contains('show')) row.querySelector('input').focus();
-    }
+    };
 
-    // Format key input as XXXX-XXXX-XXXX-XXXX
-    function formatKey(input) {
+    window.formatKey = function(input) {
       let v = input.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 16);
-      let parts = v.match(/.{1,4}/g) || [];
-      input.value = parts.join('-');
+      input.value = (v.match(/.{1,4}/g) || []).join('-');
+    };
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      if (msg) el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function hideError(id) {
+      const el = document.getElementById(id);
+      el.style.display = 'none';
+      el.style.background = '';
+      el.style.borderColor = '';
+      el.style.color = '';
+    }
+    function setLoading(btn, loading) {
+      btn.disabled = loading;
+      btn.textContent = loading ? 'Please wait…' : btn.dataset.label;
+    }
+    document.querySelectorAll('.btn-submit').forEach(b => b.dataset.label = b.textContent);
+
+    // ── Firebase error → human message ────────────────────────────────────────
+    function friendlyError(code) {
+      const map = {
+        'auth/invalid-credential':     'Incorrect email or password.',
+        'auth/user-not-found':         'No account found with that email.',
+        'auth/wrong-password':         'Incorrect password.',
+        'auth/email-already-in-use':   'An account with that email already exists.',
+        'auth/weak-password':          'Password must be at least 8 characters.',
+        'auth/invalid-email':          'Please enter a valid email address.',
+        'auth/too-many-requests':      'Too many attempts. Try again in a few minutes.',
+        'auth/network-request-failed': 'Network error — check your connection.',
+      };
+      return map[code] || 'Something went wrong. Please try again.';
     }
 
-    // Activate licence key (calls Lemon Squeezy License API via proxy)
-    async function activateLicence() {
-      const key = document.getElementById('key-signin').value.trim();
-      if (!key || key.length < 19) { alert('Please enter a complete licence key.'); return; }
+    // ── Sign in ───────────────────────────────────────────────────────────────
+    window.handleSignin = async function(e) {
+      e.preventDefault();
+      hideError('signin-error');
+      const btn   = e.target.querySelector('.btn-submit');
+      const email = document.getElementById('si-email').value.trim();
+      const pass  = document.getElementById('si-pass').value;
+      setLoading(btn, true);
       try {
-        // In production: POST to your serverless proxy which calls
-        // https://api.lemonsqueezy.com/v1/licenses/activate
-        const instanceName = navigator.userAgent.slice(0, 60);
+        const { auth, helpers } = await getFirebase();
+        await helpers.signInWithEmailAndPassword(auth, email, pass);
+        window.location.replace('/app');
+      } catch (err) {
+        showError('signin-error', friendlyError(err.code));
+        setLoading(btn, false);
+      }
+    };
+
+    // ── Register ──────────────────────────────────────────────────────────────
+    window.handleRegister = async function(e) {
+      e.preventDefault();
+      hideError('reg-error');
+      document.getElementById('reg-success').style.display = 'none';
+      const btn       = e.target.querySelector('.btn-submit');
+      const firstName = document.getElementById('reg-fname').value.trim();
+      const lastName  = document.getElementById('reg-lname').value.trim();
+      const email     = document.getElementById('reg-email').value.trim();
+      const pass      = document.getElementById('reg-pass').value;
+      const licKey    = document.getElementById('reg-key').value.trim();
+      setLoading(btn, true);
+      try {
+        const { auth, db, helpers } = await getFirebase();
+        const cred = await helpers.createUserWithEmailAndPassword(auth, email, pass);
+        const uid  = cred.user.uid;
+
+        await helpers.setDoc(helpers.doc(db, 'users', uid), {
+          firstName,
+          lastName,
+          displayName: `${firstName} ${lastName}`.trim(),
+          email,
+          plan: null,
+          licenseKey: licKey || null,
+          createdAt: Date.now()
+        });
+
+        if (licKey && licKey.replace(/-/g, '').length === 16) {
+          try {
+            const res = await fetch('/api/activate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                license_key: licKey,
+                instance_name: navigator.userAgent.slice(0, 60)
+              })
+            });
+            const data = await res.json();
+            if (data.activated) {
+              localStorage.setItem('fw_license_key', licKey);
+              localStorage.setItem('fw_instance_id', data.instance.id);
+              localStorage.setItem('fw_plan', data.meta?.variant_name || 'Pro');
+              await helpers.setDoc(helpers.doc(db, 'users', uid),
+                { plan: data.meta?.variant_name || 'Pro', licenseKey: licKey },
+                { merge: true }
+              );
+            }
+          } catch {
+            // Non-fatal — user can add licence from account page later
+          }
+        }
+
+        document.getElementById('reg-success').style.display = 'block';
+        setTimeout(() => window.location.replace('/app'), 1500);
+      } catch (err) {
+        showError('reg-error', friendlyError(err.code));
+        setLoading(btn, false);
+      }
+    };
+
+    // ── Forgot password ───────────────────────────────────────────────────────
+    window.showForgot = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('si-email').value.trim();
+      if (!email) {
+        showError('signin-error', 'Enter your email address above, then click Forgot.');
+        return;
+      }
+      try {
+        const { auth, helpers } = await getFirebase();
+        await helpers.sendPasswordResetEmail(auth, email);
+      } catch {
+        // Intentionally silent — never reveal whether an account exists
+      }
+      hideError('signin-error');
+      const info = document.getElementById('signin-error');
+      info.style.background = '#f0fdf4';
+      info.style.borderColor = '#bbf7d0';
+      info.style.color = '#15803d';
+      info.textContent = 'If that email has an account, a reset link is on its way.';
+      info.style.display = 'block';
+    };
+
+    // ── Activate licence key ──────────────────────────────────────────────────
+    window.activateLicence = async function() {
+      const key = document.getElementById('key-signin').value.trim();
+      if (!key || key.length < 19) {
+        alert('Please enter a complete licence key (XXXX-XXXX-XXXX-XXXX).');
+        return;
+      }
+      const btn = document.querySelector('#key-row-signin .btn-activate');
+      btn.disabled = true;
+      btn.textContent = 'Activating…';
+      try {
         const res = await fetch('/api/activate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ license_key: key, instance_name: instanceName })
+          body: JSON.stringify({
+            license_key: key,
+            instance_name: navigator.userAgent.slice(0, 60)
+          })
         });
         const data = await res.json();
         if (data.activated) {
           localStorage.setItem('fw_license_key', key);
           localStorage.setItem('fw_instance_id', data.instance.id);
           localStorage.setItem('fw_plan', data.meta?.variant_name || 'Pro');
-          window.location.href = 'index.html';
+          window.location.replace('/app');
         } else {
           alert(data.error || 'Activation failed. Check your key and try again.');
+          btn.disabled = false;
+          btn.textContent = 'Activate';
         }
       } catch {
-        // Demo: accept any well-formed key
-        if (key.replace(/-/g,'').length === 16) {
-          localStorage.setItem('fw_license_key', key);
-          localStorage.setItem('fw_plan', 'Pro');
-          window.location.href = 'index.html';
-        }
+        alert('Network error — check your connection and try again.');
+        btn.disabled = false;
+        btn.textContent = 'Activate';
       }
-    }
-
-    function handleSignin(e) {
-      e.preventDefault();
-      const email = document.getElementById('si-email').value;
-      const pass  = document.getElementById('si-pass').value;
-      // TODO: authenticate against your backend
-      // For now redirect to app
-      if (email && pass.length >= 8) {
-        window.location.href = 'account.html';
-      } else {
-        document.getElementById('signin-error').style.display = 'block';
-      }
-    }
-
-    function handleRegister(e) {
-      e.preventDefault();
-      // TODO: POST to registration endpoint
-      document.getElementById('reg-error').style.display = 'none';
-      document.getElementById('reg-success').style.display = 'block';
-      setTimeout(() => switchTab('signin'), 2500);
-    }
-
-    function showForgot(e) {
-      e.preventDefault();
-      alert('Check your email — if an account exists, a reset link will arrive within 2 minutes.');
-    }
+    };
   </script>
 </body>
 </html>

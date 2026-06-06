@@ -1139,6 +1139,29 @@ async function resetAllData(){
 // BOOT
 // ══════════════════════════════════════════════
 (async function boot(){
+  // ── Phase 1: Firebase Auth gate ───────────────────────────────────────────
+  // Verify a Firebase session exists before loading any financial data.
+  // onAuthStateChanged resolves instantly from cached state — no network call.
+  // Skip if config is absent (local dev without config.local.js) so offline
+  // development still works.
+  if (window.__FINCWIN_CONFIG__ && !window.__FINCWIN_CONFIG__.apiKey.startsWith('REPLACE_')) {
+    const authGatePassed = await new Promise(async resolve => {
+      try {
+        const { getFirebase } = await import('./js/firebase-init.js');
+        const { auth, helpers } = await getFirebase();
+        const unsub = helpers.onAuthStateChanged(auth, user => {
+          unsub();
+          if (!user) { window.location.replace('/signin'); resolve(false); }
+          else { resolve(true); }
+        });
+      } catch {
+        resolve(true); // Firebase unavailable — allow boot (fail open for resilience)
+      }
+    });
+    if (!authGatePassed) return;
+  }
+  // ── Phase 1 end ───────────────────────────────────────────────────────────
+
   // checkLock() MUST run before initState() so that _sessionKey is derived
   // from the correct PIN before initState() attempts to decrypt IDB data.
   // checkLock() returns a Promise that resolves when the PIN is entered (or
