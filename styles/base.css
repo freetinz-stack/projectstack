@@ -6,8 +6,8 @@
   --surface: rgba(255,255,255,0.55);
   --ink: #222a22;
   --muted: #4e5a4a;
-  --hairline: rgba(34,42,34,0.14);
-  --hairline-soft: rgba(34,42,34,0.06);
+  --hairline: rgba(34,42,34,0.26);
+  --hairline-soft: rgba(34,42,34,0.13);
   --accent: #5a6e3f;
 
   /* ── SEMANTIC POLARITY ── */

@@ -73,8 +73,8 @@ body[data-design="clay"] {
   --surface:      #f6f7f9;
   --ink:          #1e1c3a;
   --muted:        #706e8e;
-  --hairline:     rgba(30,28,58,0.10);
-  --hairline-soft:rgba(30,28,58,0.05);
+  --hairline:     rgba(30,28,58,0.22);
+  --hairline-soft:rgba(30,28,58,0.11);
   --accent:       #8a3a58;
   --sage:         #8a3a58;
   --sage-light:   #f2dce6;
@@ -204,8 +204,8 @@ body[data-design="clay"].dark {
   --surface:      #22223a;
   --ink:          #e8e6ff;
   --muted:        #9894c8;
-  --hairline:     rgba(232,230,255,0.10);
-  --hairline-soft:rgba(232,230,255,0.05);
+  --hairline:     rgba(232,230,255,0.22);
+  --hairline-soft:rgba(232,230,255,0.11);
   --accent:       #d490aa;
   --sage:         #d490aa;
   --sage-light:   rgba(212,144,170,0.18);
@@ -253,8 +253,8 @@ body[data-design="glass"] {
   --surface:      rgba(255,255,255,0.60);
   --ink:          #27314a;
   --muted:        #6b7591;
-  --hairline:     rgba(120,130,160,0.20);
-  --hairline-soft:rgba(120,130,160,0.10);
+  --hairline:     rgba(120,130,160,0.36);
+  --hairline-soft:rgba(120,130,160,0.18);
   --accent:       #5b8def;
   --sage:         #5b8def;
   --sage-light:   rgba(91,141,239,0.10);
@@ -437,8 +437,8 @@ body[data-design="glass"].dark {
   --surface:      rgba(255,255,255,0.06);
   --ink:          #dce4f8;
   --muted:        #8898c8;
-  --hairline:     rgba(200,210,240,0.14);
-  --hairline-soft:rgba(200,210,240,0.07);
+  --hairline:     rgba(200,210,240,0.28);
+  --hairline-soft:rgba(200,210,240,0.14);
   --accent:       #7da8ff;
   --sage:         #7da8ff;
   --sage-light:   rgba(125,168,255,0.14);
@@ -516,8 +516,8 @@ body[data-design="neuro"] {
   --surface:      #eceef2;
   --ink:          #2d3052;
   --muted:        #7880a0;
-  --hairline:     rgba(45,48,82,0.12);
-  --hairline-soft:rgba(45,48,82,0.06);
+  --hairline:     rgba(45,48,82,0.26);
+  --hairline-soft:rgba(45,48,82,0.13);
   --accent:       #5b8def;
   --sage:         #5b8def;
   --sage-light:   rgba(91,141,239,0.10);
@@ -664,8 +664,8 @@ body[data-design="neuro"].dark {
   --surface:      #1e2030;
   --ink:          #d8dce8;
   --muted:        #8888a8;
-  --hairline:     rgba(216,220,232,0.10);
-  --hairline-soft:rgba(216,220,232,0.05);
+  --hairline:     rgba(216,220,232,0.24);
+  --hairline-soft:rgba(216,220,232,0.12);
   --accent:       #7da8ff;
   --sage:         #7da8ff;
   --sage-light:   rgba(125,168,255,0.14);
@@ -697,8 +697,8 @@ body[data-design="bento"] {
   --surface:      #ffffff;
   --ink:          #1e2035;
   --muted:        #687090;
-  --hairline:     rgba(30,32,53,0.10);
-  --hairline-soft:rgba(30,32,53,0.05);
+  --hairline:     rgba(30,32,53,0.24);
+  --hairline-soft:rgba(30,32,53,0.12);
   --accent:       #2d6b4e;
   --sage:         #2d6b4e;
   --sage-light:   #d4eadc;
@@ -828,8 +828,8 @@ body[data-design="bento"].dark {
   --surface:      #24263a;
   --ink:          #e4e6f8;
   --muted:        #8890b8;
-  --hairline:     rgba(228,230,248,0.10);
-  --hairline-soft:rgba(228,230,248,0.05);
+  --hairline:     rgba(228,230,248,0.24);
+  --hairline-soft:rgba(228,230,248,0.12);
   --accent:       #5aaa80;
   --sage:         #5aaa80;
   --sage-light:   rgba(90,170,128,0.16);
@@ -865,8 +865,8 @@ body[data-design="editorial-a"] {
   --surface:      rgba(255,255,255,0.55);
   --ink:          #2a2018;
   --muted:        #7a6a52;
-  --hairline:     rgba(42,32,24,0.14);
-  --hairline-soft:rgba(42,32,24,0.07);
+  --hairline:     rgba(42,32,24,0.28);
+  --hairline-soft:rgba(42,32,24,0.14);
   --accent:       #2f6b4f;
   --sage:         #2f6b4f;
   --sage-light:   #d4e8dc;
@@ -913,8 +913,8 @@ body[data-design="editorial-a"].dark {
   --surface:      rgba(255,255,255,0.05);
   --ink:          #e8e4d8;
   --muted:        #a09070;
-  --hairline:     rgba(232,228,216,0.12);
-  --hairline-soft:rgba(232,228,216,0.06);
+  --hairline:     rgba(232,228,216,0.26);
+  --hairline-soft:rgba(232,228,216,0.13);
   --accent:       #5cb07a;
   --sage:         #5cb07a;
   --sage-light:   rgba(92,176,122,0.14);
@@ -946,8 +946,8 @@ body[data-design="editorial-b"] {
   --surface:      rgba(255,255,255,0.60);
   --ink:          #1e2535;
   --muted:        #6070a0;
-  --hairline:     rgba(30,37,53,0.14);
-  --hairline-soft:rgba(30,37,53,0.07);
+  --hairline:     rgba(30,37,53,0.28);
+  --hairline-soft:rgba(30,37,53,0.14);
   --accent:       #3f5170;
   --sage:         #3f5170;
   --sage-light:   #d0d8e8;
@@ -994,8 +994,8 @@ body[data-design="editorial-b"].dark {
   --surface:      rgba(255,255,255,0.05);
   --ink:          #d8dce8;
   --muted:        #8898c8;
-  --hairline:     rgba(216,220,232,0.12);
-  --hairline-soft:rgba(216,220,232,0.06);
+  --hairline:     rgba(216,220,232,0.26);
+  --hairline-soft:rgba(216,220,232,0.13);
   --accent:       #8fa8d0;
   --sage:         #8fa8d0;
   --sage-light:   rgba(143,168,208,0.14);
@@ -1027,8 +1027,8 @@ body[data-design="editorial-c"] {
   --surface:      rgba(255,255,255,0.55);
   --ink:          #222a22;
   --muted:        #636d5e;
-  --hairline:     rgba(34,42,34,0.14);
-  --hairline-soft:rgba(34,42,34,0.06);
+  --hairline:     rgba(34,42,34,0.28);
+  --hairline-soft:rgba(34,42,34,0.13);
   --accent:       #5a6e3f;
   --sage:         #5a6e3f;
   --sage-light:   #dce8d4;
@@ -1075,8 +1075,8 @@ body[data-design="editorial-c"].dark {
   --surface:      rgba(255,255,255,0.06);
   --ink:          #dce8d4;
   --muted:        #7a8a72;
-  --hairline:     rgba(220,232,212,0.12);
-  --hairline-soft:rgba(220,232,212,0.06);
+  --hairline:     rgba(220,232,212,0.26);
+  --hairline-soft:rgba(220,232,212,0.13);
   --accent:       #7a9a55;
   --sage:         #7a9a55;
   --sage-light:   rgba(122,154,85,0.14);
@@ -1324,8 +1324,8 @@ body[data-design="editorial-c"].dark {
 body[data-design="editorial-a"].dark,
 body[data-design="editorial-b"].dark,
 body[data-design="editorial-c"].dark {
-  --hairline:     rgba(220,218,210,0.22);
-  --hairline-soft:rgba(220,218,210,0.12);
+  --hairline:     rgba(220,218,210,0.38);
+  --hairline-soft:rgba(220,218,210,0.20);
 }
 
 body[data-design="editorial-a"].dark .mc,

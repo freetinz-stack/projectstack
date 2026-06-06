@@ -851,6 +851,7 @@ tr:hover .del-btn, .del-btn:focus { opacity: 1; }
 .debt-item.loan-paid-off::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(58,107,72,.06),transparent); animation: shimmer 2s infinite; }
 
 /* Week all paid */
+.week-card.all-paid-card { border-color: var(--success-mid) !important; }
 .week-card.all-paid-card .week-header { background: var(--success-light) !important; border-bottom-color: var(--success-mid) !important; }
 .week-card.all-paid-card .week-title { color: var(--success) !important; }
 .week-card.all-paid-card .week-grand { color: var(--success) !important; }

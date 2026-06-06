@@ -5,8 +5,8 @@ body.dark {
   --surface: rgba(255,255,255,0.06);
   --ink: #dce8d4;
   --muted: #7a8a72;
-  --hairline: rgba(220,232,212,0.12);
-  --hairline-soft: rgba(220,232,212,0.06);
+  --hairline: rgba(220,232,212,0.26);
+  --hairline-soft: rgba(220,232,212,0.13);
   --accent: #7a9a55;
 
   /* Legacy aliases */
