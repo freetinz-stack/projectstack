@@ -410,6 +410,43 @@
       }
     }
 
+    // ── Key recovery + auto-activate (Phase 4) ───────────────────────────────
+    // After sign-in on a new device, if no licence key is in localStorage we ask
+    // the server to look one up from the user's Firestore record. If found, we
+    // activate this device silently so the app opens without a manual key entry.
+    async function recoverAndActivateKey(firebaseUser) {
+      if (localStorage.getItem('fw_license_key')) return; // already have it
+      try {
+        const idToken = await firebaseUser.getIdToken();
+        const res  = await fetch('/api/recover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
+        const data = await res.json();
+        if (!data.licenseKey) return; // no key stored yet
+
+        // Activate this new device with the recovered key
+        const actRes = await fetch('/api/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            license_key:   data.licenseKey,
+            instance_name: navigator.userAgent.slice(0, 60),
+            idToken,
+          }),
+        });
+        const actData = await actRes.json();
+        if (actData.activated) {
+          localStorage.setItem('fw_license_key', data.licenseKey);
+          localStorage.setItem('fw_instance_id', actData.instance?.id || '');
+          localStorage.setItem('fw_plan', actData.meta?.variant_name || data.plan || 'Pro');
+        }
+      } catch {
+        // Non-fatal — user can add key manually from account page
+      }
+    }
+
     // ── Sign in ───────────────────────────────────────────────────────────────
     window.handleSignin = async function(e) {
       e.preventDefault();
@@ -421,8 +458,11 @@
       try {
         const { auth, helpers } = await getFirebase();
         const cred = await helpers.signInWithEmailAndPassword(auth, email, pass);
-        await issueSessionCookie(cred.user);
-        // Honour ?next= redirect added by middleware when intercepting a direct URL visit
+        // Run cookie issuance and key recovery in parallel — both are non-blocking
+        await Promise.all([
+          issueSessionCookie(cred.user),
+          recoverAndActivateKey(cred.user),
+        ]);
         const next = new URLSearchParams(window.location.search).get('next') || '/app';
         window.location.replace(next.startsWith('/') ? next : '/app');
       } catch (err) {
@@ -526,12 +566,20 @@
       btn.disabled = true;
       btn.textContent = 'Activating…';
       try {
+        // Include idToken if already signed in so the key gets linked to the account
+        let idToken = null;
+        try {
+          const { auth } = await getFirebase();
+          if (auth.currentUser) idToken = await auth.currentUser.getIdToken();
+        } catch { /* not signed in — activate without linking */ }
+
         const res = await fetch('/api/activate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            license_key: key,
-            instance_name: navigator.userAgent.slice(0, 60)
+            license_key:   key,
+            instance_name: navigator.userAgent.slice(0, 60),
+            ...(idToken ? { idToken } : {}),
           })
         });
         const data = await res.json();
