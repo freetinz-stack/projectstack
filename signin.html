@@ -392,6 +392,24 @@
       return map[code] || 'Something went wrong. Please try again.';
     }
 
+    // ── Session cookie (Phase 2) ──────────────────────────────────────────────
+    // After Firebase client auth succeeds, exchange the ID token for an HttpOnly
+    // session cookie via the server. The cookie is what the Edge middleware checks.
+    // If /api/session is unavailable (local dev without Firebase Admin), we fall
+    // through silently — boot.js Firebase client check still guards the app.
+    async function issueSessionCookie(firebaseUser) {
+      try {
+        const idToken = await firebaseUser.getIdToken();
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
+      } catch {
+        // Non-fatal in dev — Edge middleware not active locally
+      }
+    }
+
     // ── Sign in ───────────────────────────────────────────────────────────────
     window.handleSignin = async function(e) {
       e.preventDefault();
@@ -402,8 +420,11 @@
       setLoading(btn, true);
       try {
         const { auth, helpers } = await getFirebase();
-        await helpers.signInWithEmailAndPassword(auth, email, pass);
-        window.location.replace('/app');
+        const cred = await helpers.signInWithEmailAndPassword(auth, email, pass);
+        await issueSessionCookie(cred.user);
+        // Honour ?next= redirect added by middleware when intercepting a direct URL visit
+        const next = new URLSearchParams(window.location.search).get('next') || '/app';
+        window.location.replace(next.startsWith('/') ? next : '/app');
       } catch (err) {
         showError('signin-error', friendlyError(err.code));
         setLoading(btn, false);
@@ -462,6 +483,7 @@
           }
         }
 
+        await issueSessionCookie(cred.user);
         document.getElementById('reg-success').style.display = 'block';
         setTimeout(() => window.location.replace('/app'), 1500);
       } catch (err) {
